@@ -3,15 +3,15 @@
         <div class="font-semibold text-xl">
             Nova consulta <i class="pi pi-pencil"></i>
         </div>
-        <Fluid class="flex justify-center items-center min-h-screen">
-            <div class="flex w-3/5">
-                <div class="flex flex-col gap-4 p-3 w-full">
+        <Fluid class="flex justify-center items-center container-fluid">
+            <div class="flex w-full md:w-3/5 ">
+                <div class="flex flex-col gap-4 md:px-3 py-3 w-full">
                     <ul>
                         <li 
-                            class="inline-flex mb-3 bg-emerald-100 p-2 rounded-xl"
-                            v-for="(item, index) in teste" :key="index"
+                            class="flex mb-3"
+                            v-for="(item, index) in chat" :key="index"
                         >
-                            <span>{{item}}</span>
+                            <span class="bg-emerald-100 p-2 rounded-xl">{{item}}</span>
                         </li>
                         <div 
                             v-if="loadingTranscript"
@@ -23,9 +23,17 @@
                         </div>
                     </ul>
 
-                    <div class="font-semibold text-4xl text-center">Como posso ajudar hoje?</div>
+                    <div
+                        v-if="!buttonRecognition"  
+                        class="font-semibold text-4xl text-center"
+                    >
+                        Como posso ajudar hoje?
+                    </div>
                     
-                    <div class="flex flex-wrap">
+                    <div
+                        v-if="!buttonRecognition"  
+                        class="flex flex-wrap"
+                    >
                         <label for="query-content">Contexto da consulta</label>
                         <Textarea
                             rows="1"
@@ -44,7 +52,10 @@
                     </div>
 
                     <div class="flex-column">
-                        <div class="flex items-center pr-1 py-1">
+                        <div
+                            v-if="!buttonRecognition" 
+                            class="flex items-center pr-1 py-1"
+                        >
                             <div class="content-microphone-test mr-1">
                                 <div id="bars-container" style="display: flex; gap: 2px; align-items: center; ">
                                     <div class="bar w-[4px] h-[15px] rounded-lg"></div>
@@ -88,7 +99,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const transcribedText = ref('');
-const teste = ref([]);
+const chat = ref([]);
 const buttonRecognition = ref(false);
 const loadingTranscript = ref(false);
 let recognition;
@@ -97,33 +108,43 @@ const setupSpeechRecognition = () => {
     recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.continuous = true;
     recognition.lang = 'pt-BR';
-    recognition.onerror = e => console.log('error: ', e)
+    // recognitio   n.onerror = e => console.log('error: ', e)
     recognition.interimResults = true;
-    // recognition.maxAlternatives = 1;
-
 
     recognition.onresult = (event) => {
         let transcript = '';
-        console.log('event: ', event.results)
+        // console.log('event: ', event.results)
         for(let i = event.resultIndex; i < event.results.length; i++) {
             if(event.results[i].isFinal) {
                 transcript += event.results[i][0].transcript;
                 loadingTranscript.value = false
-                teste.value.push(transcript);
+                chat.value.push(transcript);
             }
-            // console.log(transcript)
             loadingTranscript.value = true
         }
+        // loadingTranscript.value = false
 
         transcribedText.value = transcript;
         console.log("Transcribed text:", transcript);
     };
 
     recognition.onerror = (event) => {
+        console.error("Speech recognition error detected:", event.error);
+        if (event.error === 'no-speech' || event.error === 'audio-capture') {
+            console.warn("Attempting to restart recognition...");
+            recordConversation(); // Reinicia o reconhecimento
+        }
         buttonRecognition.value = false
         loadingTranscript.value = false
-        console.error("Speech recognition error detected:", event.error);
     };
+
+    recognition.onend = () => {
+        if (buttonRecognition.value) { // Se o botão ainda indica que está gravando
+            console.log("Recognition ended unexpectedly. Restarting...");
+            recognition.start(); // Reinicia a gravação automaticamente
+        }
+    };
+
 };
 
 const recordConversation = () => {
@@ -144,9 +165,7 @@ const stopConversation = () => {
     }
 };
 
-onMounted(() => {
-    setupSpeechRecognition();
-
+const setupMicrophoneAnalyser = () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(function (stream) {
@@ -192,6 +211,11 @@ onMounted(() => {
     } else {
         alert('API getUserMedia não suportada neste navegador.');
     }
+}
+
+onMounted(() => {
+    setupMicrophoneAnalyser();    
+    setupSpeechRecognition();
 });
 
 onBeforeUnmount(() => {
@@ -202,9 +226,13 @@ onBeforeUnmount(() => {
 </script>
 
 <style>
+.container-fluid {
+    min-height: calc(100vh - 10rem);
+    /* max-height: calc(100vh - 8rem); overflow-y: auto; */
+}
+
 .dot-container {
     display: inline-flex;
-    /* justify-content: center; */
     align-items: center;
     gap: 3px;
 }
@@ -213,7 +241,7 @@ onBeforeUnmount(() => {
     margin-top: 4px;
     width: 6px;
     height: 6px;
-    background-color: #333; /* Cor da reticência */
+    background-color: #333;
     border-radius: 50%;
     animation: bounce 0.6s infinite alternate;
 }
