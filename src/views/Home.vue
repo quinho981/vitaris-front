@@ -3,23 +3,30 @@
         <div class="font-semibold text-xl">
             Nova consulta <i class="pi pi-pencil"></i>
         </div>
-        <Fluid class="flex justify-center h-[calc(100dvh-13rem)] overflow-auto">
+        <Fluid
+            :class="{'items-center': stepStatus('not-started')}" 
+            class="flex justify-center h-[calc(100dvh-13rem)] overflow-auto"
+        >
             <div class="flex w-full md:w-3/5 ">
                 <div class="flex flex-col gap-3 md:px-3 w-full ">
                     <ul>
                         <li 
-                            class="flex mb-3"
+                            class="flex mb-3 items-center"
                             v-for="(item, index) in chat" :key="index"
                         >
-                            <span class="bg-slate-200 p-2 rounded-xl">{{item}}</span> 
+                            <Avatar label="V" class="mr-2" size="small" :style="{ 'background-color': '#2196F3', color: '#ffffff' }" shape="circle"></Avatar> 
+                            <span class="bg-slate-200 p-2 rounded-xl">{{ item }}</span> 
                         </li>
                         <div 
-                            v-if="loadingTranscript"
-                            class="dot-container bg-slate-200 p-2 rounded-xl"
+                            v-if="loadingTranscript && stepStatus('in-progress')"
+                            class="flex items-center"
                         >
-                            <div class="dot"></div>
-                            <div class="dot"></div>
-                            <div class="dot"></div>
+                            <Avatar label="V" class="mr-2" size="small" :style="{ 'background-color': '#2196F3', color: '#ffffff' }" shape="circle"></Avatar>
+                            <div class="dot-container bg-slate-200 p-2 rounded-xl">
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
                         </div>
                     </ul>
 
@@ -86,7 +93,8 @@
         </Fluid>
         <Fluid 
             v-if="stepStatus('in-progress') || stepStatus('paused')"
-            class="flex justify-center items-center px-4">
+            class="flex justify-center items-center px-4"
+        >
             <div class="flex flex-col md:w-3/5 mt-2">
                 <div class="flex gap-2 mt-2">
                     <Button
@@ -136,17 +144,16 @@ const setupSpeechRecognition = () => {
     recognition.lang = 'pt-BR';
     recognition.interimResults = true;
 
+    let transcript = '';
     recognition.onresult = (event) => {
-        let transcript = '';
         for(let i = event.resultIndex; i < event.results.length; i++) {
             if(event.results[i].isFinal) {
                 transcript += event.results[i][0].transcript;
                 loadingTranscript.value = false
-                chat.value.push(transcript);
+                chat.value.push(event.results[i][0].transcript);
             }
             loadingTranscript.value = true
         }
-
         transcribedText.value = transcript;
     };
 
