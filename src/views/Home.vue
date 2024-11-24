@@ -3,19 +3,19 @@
         <div class="font-semibold text-xl">
             Nova consulta <i class="pi pi-pencil"></i>
         </div>
-        <Fluid class="flex justify-center items-center container-fluid">
+        <Fluid class="flex justify-center h-[calc(100dvh-13rem)] overflow-auto">
             <div class="flex w-full md:w-3/5 ">
-                <div class="flex flex-col gap-4 md:px-3 py-3 w-full">
+                <div class="flex flex-col gap-3 md:px-3 w-full ">
                     <ul>
                         <li 
                             class="flex mb-3"
                             v-for="(item, index) in chat" :key="index"
                         >
-                            <span class="bg-emerald-100 p-2 rounded-xl">{{item}}</span>
+                            <span class="bg-slate-200 p-2 rounded-xl">{{item}}</span> 
                         </li>
                         <div 
                             v-if="loadingTranscript"
-                            class="dot-container bg-emerald-100 p-2 rounded-xl"
+                            class="dot-container bg-slate-200 p-2 rounded-xl"
                         >
                             <div class="dot"></div>
                             <div class="dot"></div>
@@ -24,14 +24,14 @@
                     </ul>
 
                     <div
-                        v-if="!buttonRecognition"  
-                        class="font-semibold text-4xl text-center"
+                        v-if="stepStatus('not-started')"  
+                        class="font-semibold text-4xl text-center mb-2"
                     >
                         Como posso ajudar hoje?
                     </div>
                     
                     <div
-                        v-if="!buttonRecognition"  
+                        v-if="stepStatus('not-started')"  
                         class="flex flex-wrap"
                     >
                         <label for="query-content">Contexto da consulta</label>
@@ -53,7 +53,7 @@
 
                     <div class="flex-column">
                         <div
-                            v-if="!buttonRecognition" 
+                            v-if="stepStatus('not-started')" 
                             class="flex items-center pr-1 py-1"
                         >
                             <div class="content-microphone-test mr-1">
@@ -71,25 +71,49 @@
                                 Testar microfone
                             </div>
                         </div>
-                        <div class="pt-2">
+                        <div class="pt-1">
                             <Button 
-                                v-if="!buttonRecognition"
+                                v-if="stepStatus('not-started')"
                                 icon="pi pi-microphone" 
                                 label="Gravar consulta" 
                                 rounded 
                                 @click="recordConversation"
                             />
-                            <Button
-                                v-if="buttonRecognition"
-                                icon="pi pi-times" 
-                                label="Parar gravação" 
-                                severity="danger"
-                                rounded 
-                                @click="stopConversation"
-                            />
                         </div>
                     </div>
                 </div>
+            </div>
+        </Fluid>
+        <Fluid 
+            v-if="stepStatus('in-progress') || stepStatus('paused')"
+            class="flex justify-center items-center px-4">
+            <div class="flex flex-col md:w-3/5 mt-2">
+                <div class="flex gap-2 mt-2">
+                    <Button
+                        v-if="stepStatus('in-progress')"
+                        icon="pi pi-stop-circle" 
+                        label="Pausar gravação" 
+                        severity="danger"
+                        rounded 
+                        @click="stopConversation"
+                    />
+                    <Button
+                        v-if="stepStatus('paused')"
+                        icon="pi pi-play" 
+                        label="Continuar gravação"
+                        severity="info"
+                        rounded 
+                        @click="recordConversation"
+                    />
+                    <Button
+                        v-if="stepStatus('in-progress') || stepStatus('paused')"
+                        icon="pi pi-check-circle" 
+                        label="Finalizar gravação" 
+                        rounded 
+                        @click="stopConversation"
+                    />
+                </div>
+                <p class="text-xs text-center mt-2">Vitaris pode cometer erros. Considere verificar informações importantes.</p>
             </div>
         </Fluid>
     </div>
@@ -102,18 +126,18 @@ const transcribedText = ref('');
 const chat = ref([]);
 const buttonRecognition = ref(false);
 const loadingTranscript = ref(false);
+const status = ref('not-started')
+
 let recognition;
 
 const setupSpeechRecognition = () => {
     recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.continuous = true;
     recognition.lang = 'pt-BR';
-    // recognitio   n.onerror = e => console.log('error: ', e)
     recognition.interimResults = true;
 
     recognition.onresult = (event) => {
         let transcript = '';
-        // console.log('event: ', event.results)
         for(let i = event.resultIndex; i < event.results.length; i++) {
             if(event.results[i].isFinal) {
                 transcript += event.results[i][0].transcript;
@@ -122,26 +146,22 @@ const setupSpeechRecognition = () => {
             }
             loadingTranscript.value = true
         }
-        // loadingTranscript.value = false
 
         transcribedText.value = transcript;
-        console.log("Transcribed text:", transcript);
     };
 
     recognition.onerror = (event) => {
-        console.error("Speech recognition error detected:", event.error);
         if (event.error === 'no-speech' || event.error === 'audio-capture') {
-            console.warn("Attempting to restart recognition...");
-            recordConversation(); // Reinicia o reconhecimento
+            recordConversation();
         }
+        
         buttonRecognition.value = false
         loadingTranscript.value = false
     };
 
     recognition.onend = () => {
-        if (buttonRecognition.value) { // Se o botão ainda indica que está gravando
-            console.log("Recognition ended unexpectedly. Restarting...");
-            recognition.start(); // Reinicia a gravação automaticamente
+        if (buttonRecognition.value) {
+            recognition.start();
         }
     };
 
@@ -150,18 +170,18 @@ const setupSpeechRecognition = () => {
 const recordConversation = () => {
     if (recognition) {
         recognition.start();
+        status.value = 'in-progress'
         buttonRecognition.value = true
         loadingTranscript.value = true
-        console.log("Recording started...");
     }
 };
 
 const stopConversation = () => {
     if (recognition) {
         recognition.stop();
+        status.value = 'paused'
         buttonRecognition.value = false
         loadingTranscript.value = false
-        console.log("Recording stopped.");
     }
 };
 
@@ -213,6 +233,10 @@ const setupMicrophoneAnalyser = () => {
     }
 }
 
+const stepStatus = (step) => {
+    return step === status.value
+}
+
 onMounted(() => {
     setupMicrophoneAnalyser();    
     setupSpeechRecognition();
@@ -225,12 +249,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style>
-.container-fluid {
-    min-height: calc(100vh - 10rem);
-    /* max-height: calc(100vh - 8rem); overflow-y: auto; */
-}
-
+<style scoped>
 .dot-container {
     display: inline-flex;
     align-items: center;
