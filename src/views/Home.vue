@@ -1,13 +1,18 @@
 <template>
     <div>
-        <div class="font-semibold text-xl">
-            Nova consulta <i class="pi pi-pencil"></i>
+        <div class="flex items-center justify-between mr-6 font-semibold text-xl">
+            <div>
+                Nova consulta <i class="pi pi-pencil"></i>
+            </div>
+            <div v-if="stepStatus('finished')">
+                <Button label="Copiar texto" icon="pi pi-copy" class="p-button-link !m-0 !p-0" />
+            </div>
         </div>
         <Fluid
             :class="{'items-center': stepStatus('not-started')}" 
             class="flex justify-center h-[calc(100dvh-13rem)] overflow-auto"
         >
-            <div class="flex w-full md:w-3/5 ">
+            <div class="flex w-full md:w-3/5">
                 <div class="flex flex-col gap-3 md:px-3 w-full ">
                     <ul>
                         <li 
@@ -15,17 +20,20 @@
                             v-for="(item, index) in chat" :key="index"
                         >
                             <Avatar label="V" class="mr-2" size="small" :style="{ 'background-color': '#2196F3', color: '#ffffff' }" shape="circle"></Avatar> 
-                            <span class="bg-slate-200 p-2 rounded-xl">{{ item }}</span> 
+                            <span
+                                class="bg-slate-200 p-2 rounded-xl" 
+                                v-html="item"
+                            ></span>
                         </li>
                         <div 
                             v-if="loadingTranscript && stepStatus('in-progress')"
                             class="flex items-center"
                         >
                             <Avatar label="V" class="mr-2" size="small" :style="{ 'background-color': '#2196F3', color: '#ffffff' }" shape="circle"></Avatar>
-                            <div class="dot-container bg-slate-200 p-2 rounded-xl">
-                                <div class="dot"></div>
-                                <div class="dot"></div>
-                                <div class="dot"></div>
+                            <div class="inline-flex items-center gap-[3px] bg-slate-200 p-2 rounded-xl">
+                                <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333]"></div>
+                                <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333]"></div>
+                                <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333]"></div>
                             </div>
                         </div>
                     </ul>
@@ -64,7 +72,7 @@
                             class="flex items-center pr-1 py-1"
                         >
                             <div class="content-microphone-test mr-1">
-                                <div id="bars-container" style="display: flex; gap: 2px; align-items: center; ">
+                                <div id="bars-container" class="flex gap-0.5 items-center">
                                     <div class="bar w-[4px] h-[15px] rounded-lg"></div>
                                     <div class="bar w-[4px] h-[15px] rounded-lg"></div>
                                     <div class="bar w-[4px] h-[15px] rounded-lg"></div>
@@ -98,10 +106,18 @@
             <div class="flex flex-col md:w-3/5 mt-2">
                 <div class="flex gap-2 mt-2">
                     <Button
+                        v-if="stepStatus('in-progress') || stepStatus('paused')"
+                        icon="pi pi-times-circle" 
+                        label="Cancelar gravação" 
+                        severity="danger"
+                        rounded 
+                        @click="cancelConversation"
+                    />
+                    <Button
                         v-if="stepStatus('in-progress')"
                         icon="pi pi-stop-circle" 
                         label="Pausar gravação" 
-                        severity="danger"
+                        severity="warn"
                         rounded 
                         @click="stopConversation"
                     />
@@ -116,9 +132,10 @@
                     <Button
                         v-if="stepStatus('in-progress') || stepStatus('paused')"
                         icon="pi pi-check-circle" 
-                        label="Finalizar gravação" 
+                        label="Finalizar gravação"
+                        :loading="loadingFinish"
                         rounded 
-                        @click="stopConversation"
+                        @click="finishConversation"
                     />
                 </div>
                 <p class="text-xs text-center mt-2">Vitaris pode cometer erros. Considere verificar informações importantes.</p>
@@ -129,11 +146,13 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { AnamneseService } from '@/service/AnamneseService';
 
 const transcribedText = ref('');
 const chat = ref([]);
 const buttonRecognition = ref(false);
 const loadingTranscript = ref(false);
+const loadingFinish = ref(false);
 const status = ref('not-started')
 
 let recognition;
@@ -187,6 +206,40 @@ const stopConversation = () => {
     if (recognition) {
         recognition.stop();
         status.value = 'paused'
+        buttonRecognition.value = false
+        loadingTranscript.value = false
+    }
+};
+
+const cancelConversation = () => {
+    if (recognition) {
+        recognition.abort();
+        status.value = 'not-started'
+        transcribedText.value = ''
+        chat.value = []
+        buttonRecognition.value = false
+        loadingTranscript.value = false
+    }
+};
+
+const finishConversation = () => {
+    if (recognition) {
+        recognition.stop();
+
+        loadingFinish.value = true
+        AnamneseService.generator(transcribedText.value)
+            .then((response) => {
+                chat.value = []
+                status.value = 'finished'
+                loadingFinish.value = false
+                chat.value.push(response);
+                // console.log(response)
+            })
+            .catch(e => {
+                console.log(e)
+                loadingFinish.value = false
+            })
+            
         buttonRecognition.value = false
         loadingTranscript.value = false
     }
@@ -257,18 +310,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.dot-container {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-}
-
 .dot {
-    margin-top: 4px;
-    width: 6px;
-    height: 6px;
-    background-color: #333;
-    border-radius: 50%;
     animation: bounce 0.6s infinite alternate;
 }
 
