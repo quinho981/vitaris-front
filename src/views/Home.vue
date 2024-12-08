@@ -9,6 +9,7 @@
             </div>
         </div>
         <Fluid
+            ref="fluidRef"
             :class="{'items-center': stepStatus('not-started')}" 
             class="flex justify-center h-[calc(100dvh-13rem)] overflow-auto"
         >
@@ -19,7 +20,11 @@
                             class="flex mb-3 items-center"
                             v-for="(item, index) in chat" :key="index"
                         >
-                            <Avatar label="V" class="mr-2" size="small" :style="{ 'background-color': '#2196F3', color: '#ffffff' }" shape="circle"></Avatar> 
+                            <Avatar 
+                                label="V" class="mr-2" size="small" 
+                                :style="{ 'background-color': '#2196F3', color: '#ffffff' }" 
+                                shape="circle">
+                            </Avatar> 
                             <span
                                 ref="typingElements"
                                 class="bg-slate-200 p-2 rounded-xl" 
@@ -315,6 +320,7 @@ const typeText = (el, text) => {
             // Adiciona um caractere por vez
             el.textContent += text.charAt(index)
             index++
+            loadingTranscript.value = false
             
             // Agenda o próximo caractere
             setTimeout(type, 10) // Velocidade de digitação (30ms entre caracteres)
@@ -325,6 +331,7 @@ const typeText = (el, text) => {
     type()
 }
 
+const fluidRef = ref(null);
 // Observa as mudanças no chat
 watch(() => chat.value, async (newChat) => {
     await nextTick() // Espera o DOM atualizar
@@ -332,6 +339,13 @@ watch(() => chat.value, async (newChat) => {
     if (newChat.length > 0) {
         const lastIndex = newChat.length - 1
         const lastTextEl = typingElements.value[lastIndex]
+
+        // Observa as mudanças no chat e rola para baixo automaticamente
+        if (fluidRef.value) {
+            // Rola para a parte inferior do elemento
+            fluidRef.value.$el.scrollTop = fluidRef.value.$el.scrollHeight;
+        }
+        // ---------------------------------
         
         if (lastTextEl) {
             // Se o texto contém HTML, usa innerHTML
