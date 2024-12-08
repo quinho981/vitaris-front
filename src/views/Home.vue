@@ -21,7 +21,9 @@
                             v-for="(item, index) in chat" :key="index"
                         >
                             <Avatar 
-                                label="V" class="mr-2" size="small" 
+                                label="V" 
+                                class="mr-2 flex-shrink-0" 
+                                size="small" 
                                 :style="{ 'background-color': '#2196F3', color: '#ffffff' }" 
                                 shape="circle">
                             </Avatar> 
@@ -153,6 +155,7 @@
 <script setup>
 import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import { AnamneseService } from '@/service/AnamneseService';
+import { setupMicrophoneAnalyser } from '@/utils/MicrophoneAnalyser'
 
 const transcribedText = ref('');
 const chat = ref([]);
@@ -250,54 +253,6 @@ const finishConversation = () => {
     }
 };
 
-const setupMicrophoneAnalyser = () => {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(function (stream) {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const analyser = audioContext.createAnalyser();
-                const microphone = audioContext.createMediaStreamSource(stream);
-                const scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1);
-
-                analyser.fftSize = 256;
-                microphone.connect(analyser);
-                analyser.connect(scriptProcessor);
-                scriptProcessor.connect(audioContext.destination);
-
-                const bars = document.querySelectorAll('.bar');
-
-                scriptProcessor.onaudioprocess = function () {
-                    const array = new Uint8Array(analyser.frequencyBinCount);
-                    analyser.getByteFrequencyData(array);
-
-                    // Calcula o volume médio e aplica um fator de amplificação
-                    const average = array.reduce((sum, value) => sum + value, 0) / array.length;
-                    const amplifiedAverage = average * 3; // Ajuste esse fator para alterar a sensibilidade
-
-                    // Limita o valor para não ultrapassar o máximo de 255
-                    const normalizedVolume = Math.min(amplifiedAverage, 255);
-
-                    // Define quantas barras devem ser "ativas" com base no volume
-                    const activeBarsCount = Math.floor((normalizedVolume / 255) * bars.length);
-
-                    // Atualiza a cor das barras da esquerda para a direita
-                    bars.forEach((bar, index) => {
-                        if (index < activeBarsCount) {
-                            bar.style.background = 'green'; // Barra ativa
-                        } else {
-                            bar.style.background = 'lightgray'; // Barra inativa
-                        }
-                    });
-                };
-            })
-            .catch(function (err) {
-                console.error('Erro ao acessar o microfone:', err);
-            });
-    } else {
-        alert('API getUserMedia não suportada neste navegador.');
-    }
-}
-
 const stepStatus = (step) => {
     return step === status.value
 }
@@ -379,15 +334,12 @@ onBeforeUnmount(() => {
 .dot {
     animation: bounce 0.6s infinite alternate;
 }
-
 .dot:nth-child(2) {
     animation-delay: 0.2s;
 }
-
 .dot:nth-child(3) {
     animation-delay: 0.4s;
 }
-
 @keyframes bounce {
     from {
         transform: translateY(0);
