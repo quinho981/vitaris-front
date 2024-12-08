@@ -21,6 +21,7 @@
                         >
                             <Avatar label="V" class="mr-2" size="small" :style="{ 'background-color': '#2196F3', color: '#ffffff' }" shape="circle"></Avatar> 
                             <span
+                                ref="typingElements"
                                 class="bg-slate-200 p-2 rounded-xl" 
                                 v-html="item"
                             ></span>
@@ -145,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import { AnamneseService } from '@/service/AnamneseService';
 
 const transcribedText = ref('');
@@ -233,7 +234,6 @@ const finishConversation = () => {
                 status.value = 'finished'
                 loadingFinish.value = false
                 chat.value.push(response);
-                // console.log(response)
             })
             .catch(e => {
                 console.log(e)
@@ -296,6 +296,58 @@ const setupMicrophoneAnalyser = () => {
 const stepStatus = (step) => {
     return step === status.value
 }
+
+
+
+
+
+// ADICIONAR O CÓDIGO ABAIXO EM UM HELPER
+// =============================================
+// =============================================
+const typingElements = ref([])
+const typeText = (el, text) => {
+    // Limpa o conteúdo anterior
+    el.textContent = ''
+    
+    let index = 0
+    const type = () => {
+        if (index < text.length) {
+            // Adiciona um caractere por vez
+            el.textContent += text.charAt(index)
+            index++
+            
+            // Agenda o próximo caractere
+            setTimeout(type, 10) // Velocidade de digitação (30ms entre caracteres)
+        }
+    }
+    
+    // Inicia a digitação
+    type()
+}
+
+// Observa as mudanças no chat
+watch(() => chat.value, async (newChat) => {
+    await nextTick() // Espera o DOM atualizar
+    
+    if (newChat.length > 0) {
+        const lastIndex = newChat.length - 1
+        const lastTextEl = typingElements.value[lastIndex]
+        
+        if (lastTextEl) {
+            // Se o texto contém HTML, usa innerHTML
+            if (newChat[lastIndex].includes('<')) {
+                typeTextHTML(lastTextEl, newChat[lastIndex])
+            } else {
+                typeText(lastTextEl, newChat[lastIndex])
+            }
+        }
+    }
+}, { deep: true })
+// =============================================
+// =============================================
+// =============================================
+
+
 
 onMounted(() => {
     setupMicrophoneAnalyser();    
