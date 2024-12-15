@@ -5,7 +5,7 @@
                 Nova consulta <i class="pi pi-pencil"></i>
             </div>
             <div v-if="stepStatus('finished')">
-                <Button label="Copiar texto" icon="pi pi-copy" class="p-button-link !m-0 !p-0" />
+                <Button label="Copiar texto" icon="pi pi-copy" class="p-button-link !m-0 !p-0" @click="copyText" />
             </div>
         </div>
         <Fluid
@@ -28,6 +28,7 @@
                                 shape="circle">
                             </Avatar> 
                             <span
+                                id="anamnese-result"
                                 ref="typingElements"
                                 class="bg-slate-200 p-2 rounded-xl" 
                                 v-html="item"
@@ -156,7 +157,9 @@
 import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import { AnamneseService } from '@/service/AnamneseService';
 import { setupMicrophoneAnalyser } from '@/utils/MicrophoneAnalyser'
+import { useToast } from 'primevue/usetoast';
 
+const toast = useToast();
 const transcribedText = ref('');
 const chat = ref([]);
 const buttonRecognition = ref(false);
@@ -241,6 +244,7 @@ const finishConversation = () => {
                 chat.value = []
                 status.value = 'finished'
                 loadingFinish.value = false
+                showSuccess('Sucesso!', 'Anamnese gerada com sucesso!', 3000)
                 chat.value.push(response);
             })
             .catch(e => {
@@ -257,7 +261,15 @@ const stepStatus = (step) => {
     return step === status.value
 }
 
+const copyText = () => {
+    let textToCopy = document.getElementById("anamnese-result").innerText;
+    navigator.clipboard.writeText(textToCopy);
+    showSuccess('Sucesso!', 'Texto copiado com sucesso!', 3000)
+};
 
+function showSuccess(summary, detail, life) {
+    toast.add({ severity: 'success', summary: summary, detail: detail, life: life });
+}
 
 
 
