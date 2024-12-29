@@ -5,7 +5,6 @@ export const register = async (payload) => {
         const response = await api.post('/register', payload);
         return response.data;
     } catch (error) {
-        console.error('Erro ao buscar dados:', error);
         return Promise.reject(error);
     }
 }
