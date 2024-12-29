@@ -47,7 +47,8 @@
                 </form>
 
                 <p class="text-md text-gray-600 text-center mt-4 dark:text-gray-300">
-                    Don’t have an account? <a href="register" class="text-primary hover:underline cursor-pointer">Sign up</a>
+                    Don’t have an account? 
+                    <router-link to="register" class="text-primary hover:underline cursor-pointer">Sign up</router-link>
                 </p>
             </div>
         </div>

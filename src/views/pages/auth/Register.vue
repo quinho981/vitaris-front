@@ -8,7 +8,7 @@
                 <h2 class="text-6xl font-bold text-gray-800 text-center mb-8 dark:text-gray-300">VITALFY</h2>
                 <h2 class="text-2xl font-bold text-gray-600 text-center mb-2 dark:text-gray-300">Create your account</h2>
 
-                <form @submit.prevent="handleLogin">
+                <form @submit.prevent="submit">
                     <div class="mb-4">
                         <label for="name" class="block text-md font-medium text-gray-700 dark:text-gray-300">Name</label>
                         <InputText 
@@ -65,11 +65,12 @@
                             </span>
                         </label>
                     </div>
-                    <Button label="Register now" class="w-full" as="router-link" to="/"></Button>
+                    <Button label="Register now" class="w-full" type="submit"></Button>
                 </form>
 
                 <p class="text-md text-gray-600 text-center mt-3 dark:text-gray-300">
-                    Already have an account? <a href="login" class="text-primary hover:underline cursor-pointer">Sign in</a>
+                    Already have an account? 
+                    <router-link to="login" class="text-primary hover:underline cursor-pointer">Sign in</router-link>
                 </p>
             </div>
         </div>
@@ -78,6 +79,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { register } from './api'
 import AsideImage from './components/AsideImage.vue'
 
 const form = ref({
@@ -87,6 +89,19 @@ const form = ref({
     password_confirmation: '',
     checked: false
 })
+
+const submit = () => {
+    // ADICIONAR VALIDAÇÃO DO CAMPOS DO FORM
+
+    register(form.value)
+        .then(response => {
+            // ADICIONAR MENSAGEM DE SUCESSO
+            console.log(response)
+        }).catch(error => {
+            // ADICIONAR MENSAGEM DE ERRO
+            console.log(error)
+        })
+}
 </script>
 
 <style scoped>
