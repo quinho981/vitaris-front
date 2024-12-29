@@ -16,7 +16,7 @@
                             type="text" 
                             placeholder="Enter your email" 
                             class="w-full" 
-                            v-model="name" 
+                            v-model="form.name" 
                         />
                     </div>
                     <div class="mb-4">
@@ -26,37 +26,37 @@
                             type="text" 
                             placeholder="Enter your email" 
                             class="w-full" 
-                            v-model="email" 
+                            v-model="form.email" 
                         />
                     </div>
                     <div class="mb-4">
                         <label for="password" class="block text-md font-medium text-gray-700 dark:text-gray-300">Password</label>
                         <Password 
                             id="password" 
-                            v-model="password" 
+                            v-model="form.password" 
                             placeholder="Enter your password" 
                             :toggleMask="true" 
                             class="mb-4" 
                             fluid 
-                            :feedback="false"
+                            :feedback="true"
                         ></Password>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label for="password_confirmation" class="block text-md font-medium text-gray-700 dark:text-gray-300">Password confirmation</label>
                         <Password 
                             id="password_confirmation" 
-                            v-model="password_confirmation" 
+                            v-model="form.password_confirmation" 
                             placeholder="Confirm your password" 
                             :toggleMask="true" 
-                            class="mb-2" 
+                            class="mb-3" 
                             fluid 
                             :feedback="false"
                         ></Password>
                     </div>
-                    <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center justify-between mb-3">
                         <label class="flex items-center">
                             <Checkbox 
-                                v-model="checked" 
+                                v-model="form.checked" 
                                 id="rememberme" 
                                 binary
                             ></Checkbox>
@@ -80,6 +80,13 @@
 import { ref } from "vue";
 import AsideImage from './components/AsideImage.vue'
 
+const form = ref({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    checked: false
+})
 </script>
 
 <style scoped>

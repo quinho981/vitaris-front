@@ -17,14 +17,14 @@
                             type="text" 
                             placeholder="Enter your email" 
                             class="w-full" 
-                            v-model="email" 
+                            v-model="form.email" 
                         />
                     </div>
                     <div class="mb-4">
                         <label for="password" class="block text-md font-medium text-gray-700 dark:text-gray-300">Password</label>
                         <Password 
                             id="password1" 
-                            v-model="password" 
+                            v-model="form.password" 
                             placeholder="Enter your password" 
                             :toggleMask="true" 
                             class="mb-4" 
@@ -35,7 +35,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <label class="flex items-center">
                             <Checkbox 
-                                v-model="checked" 
+                                v-model="form.checked" 
                                 id="rememberme1" 
                                 binary
                             ></Checkbox>
@@ -57,6 +57,12 @@
 <script setup>
 import { ref } from "vue";
 import AsideImage from './components/AsideImage.vue'
+
+const form = ref({
+    email: '',
+    password: '',
+    checked: false
+})
 
 </script>
 
