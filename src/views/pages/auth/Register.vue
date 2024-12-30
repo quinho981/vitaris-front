@@ -91,8 +91,10 @@ import AsideImage from './components/AsideImage.vue'
 import ToastService from 'primevue/toastservice';
 import { useToast } from 'primevue/usetoast';
 import { registerSchema } from '@/validations/authSchema.js';
+import { useRouter } from 'vue-router';
 
 const toast = useToast();
+const router = useRouter();
 const loadingRegister = ref(false)
 const errors = ref({});
 
@@ -106,7 +108,6 @@ const form = ref({
 
 const submit = () => {
     if (!validateForm()) {
-        showToastMessage('warn', 'Validation Error', 'Please check the form for errors', 4000);
         return;
     }
 
@@ -114,9 +115,10 @@ const submit = () => {
 
     register(form.value)
         .then(response => {
-            loadingRegister.value = false
             showToastMessage('success', 'Sucesso', 'Usuário criado com successo!', 4000)
-            resetForm()
+            setTimeout(() => {
+                router.push('login');
+            }, 1000);
         }).catch(error => {
             loadingRegister.value = false
             showToastMessage('error', 'Erro', 'Erro ao criar usuário!', 4000);
@@ -141,17 +143,6 @@ const validateForm = () => {
         });
         return false;
     }
-};
-
-const resetForm = () => {
-    form.value = {
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-        checked: false
-    };
-    errors.value = {};
 };
 </script>
 
