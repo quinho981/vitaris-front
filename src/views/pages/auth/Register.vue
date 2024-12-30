@@ -24,7 +24,7 @@
                         <label for="email" class="block text-md font-medium text-gray-700 dark:text-gray-300">Email Address</label>
                         <InputText 
                             id="email" 
-                            type="text" 
+                            type="email" 
                             placeholder="Enter your email" 
                             class="w-full"
                             :class="{ 'p-invalid': errors.email }"
@@ -71,7 +71,7 @@
                         </label>
                     </div>
                     <small class="p-error block mb-3" v-if="errors.checked">{{ errors.checked }}</small>
-                    <Button label="Register now" :loading="loadingRegister" class="w-full mt-3" type="submit"></Button>
+                    <Button label="Register now" :loading="loading" class="w-full mt-3" type="submit"></Button>
                 </form>
 
                 <p class="text-md text-gray-600 text-center mt-3 dark:text-gray-300">
@@ -95,7 +95,7 @@ import { useRouter } from 'vue-router';
 
 const toast = useToast();
 const router = useRouter();
-const loadingRegister = ref(false)
+const loading = ref(false)
 const errors = ref({});
 
 const form = ref({
@@ -111,16 +111,16 @@ const submit = () => {
         return;
     }
 
-    loadingRegister.value = true
+    loading.value = true
 
     register(form.value)
         .then(response => {
             showToastMessage('success', 'Sucesso', 'Usuário criado com successo!', 4000)
             setTimeout(() => {
-                router.push('login');
+                router.push({ name: 'login' });
             }, 1000);
         }).catch(error => {
-            loadingRegister.value = false
+            loading.value = false
             showToastMessage('error', 'Erro', 'Erro ao criar usuário!', 4000);
         })
 }

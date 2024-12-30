@@ -8,3 +8,12 @@ export const register = async (payload) => {
         return Promise.reject(error);
     }
 }
+
+export const login = async (payload) => {
+    try {
+        const response = await api.post('/login', payload);
+        return response.data;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
