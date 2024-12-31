@@ -3,7 +3,7 @@
         <FloatingConfigurator />
         <AsideImage />
 
-        <div class="w-full md:w-1/2 h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <div class="w-full md:w-1/2 h-screen flex items-center justify-center bg-white dark:bg-zinc-900">
             <div class="w-full max-w-md p-8">
                 <h2 class="text-6xl font-bold text-gray-800 text-center mb-8 dark:text-gray-300">VITALFY</h2>
                 <h2 class="text-2xl font-bold text-gray-600 text-center mb-2 dark:text-gray-300">Create your account</h2>
