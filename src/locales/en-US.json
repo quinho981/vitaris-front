@@ -1,0 +1,66 @@
+{
+    "app_name": "Vitalfy",
+    "welcome": "Welcome",
+    "form": {
+        "label": {
+            "email": "Email",
+            "name": "Name",
+            "phone": "Phone",
+            "cpf": "CPF",
+            "birthDate": "Birth Date"
+        },
+        "errors": {
+            "required": "This field is required",
+            "nameMin": "Name must be at least {min} characters",
+            "nameMax": "Name must be at most 50 characters",
+            "email": "Invalid email",
+            "passwordMin": "Password must be at least 6 characters",
+            "passwordUppercase": "Password must contain at least one uppercase letter",
+            "passwordLowercase": "Password must contain at least one lowercase letter",
+            "passwordNumber": "Password must contain at least one number",
+            "acceptTerms": "You must accept the terms of use",
+            "passwordDontMatch": "Passwords don't match"
+        }
+    },
+    "auth": {
+        "form": {
+            "label": {
+                "password": "Password",
+                "passowrdConfirmation": "Password confirmation",
+                "rememberMe": "Remember me",
+                "forgotPassword": "Forgot password",
+                "haveAnAccount": "Don't have an account?",
+                "declareTermsParcial": "I declare and certify that i am over 18 years old and accept the",
+                "terms": "terms of use",
+                "alredyHaveAnAccount": "Already have an account?",
+                "enterName": "Enter your name",
+                "enterEmail": "Enter your email",
+                "enterPassword": "Enter your password",
+                "confirmPassword": "Confirm your password"
+            },
+            "button": {
+                "signIn": "Sign In",
+                "signUp": "Sign Up",
+                "registerNow": "Register now"
+            }
+        },
+        "login": {
+            "description": "Welcome back! Please Log in to access the platform."
+        },
+        "register": {
+            "title": "Create your account"
+        }
+    },
+    "notifications": {
+        "titles": {
+            "success": "Success",
+            "error": "Error",
+            "warning": "Warning",
+            "info": "Information"
+        },
+        "messages": {
+            "wrongUserOrPassword": "Wrong user or password"
+        }
+    }
+    
+}

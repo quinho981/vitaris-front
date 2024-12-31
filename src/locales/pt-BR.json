@@ -1,0 +1,65 @@
+{
+    "app_name": "Vitalfy",
+    "welcome": "Bem-vindo",
+    "form": {
+        "label": {
+            "email": "E-mail",
+            "name": "Nome",
+            "phone": "Telefone",
+            "cpf": "CPF",
+            "birthDate": "Data de Nascimento"
+        },
+        "errors": {
+            "required": "Este campo é obrigatório",
+            "nameMin": "O nome deve ter no mínimo 2 caracteres",
+            "nameMax": "O nome deve ter no máximo 50 caracteres",
+            "email": "E-mail inválido",
+            "passwordMin": "A senha deve ter no mínimo 8 caracteres",
+            "passwordUppercase": "A senha deve conter pelo menos uma letra maiúscula",
+            "passwordLowercase": "A senha deve conter pelo menos uma letra minúscula",
+            "passwordNumber": "A senha deve conter pelo menos um número",
+            "acceptTerms": "Você deve aceitar os termos de uso",
+            "passwordDontMatch": "As senhas não coincidem"
+        }
+    },
+    "auth": {
+        "form": {
+            "label": {
+                "password": "Senha",
+                "passowrdConfirmation": "Confirmação de Senha",
+                "rememberMe": "Lembrar-me",
+                "forgotPassword": "Esqueceu a senha",
+                "haveAnAccount": "Não tem uma conta?",
+                "declareTermsParcial": "Declaro e certifico que tenho mais de 18 anos e aceito os",
+                "terms": "termos de uso",
+                "alredyHaveAnAccount": "Já possui uma conta?",
+                "enterName": "Digite seu nome",
+                "enterEmail": "Digite seu e-mail",
+                "enterPassword": "Digite sua senha",
+                "confirmPassword": "Confirme sua senha"
+            },
+            "button": {
+                "signIn": "Entrar",
+                "signUp": "Cadastrar-se",
+                "registerNow": "Registre-se agora"
+            }
+        },
+        "login": {
+            "description": "Faça login para acessar a plataforma."
+        },
+        "register": {
+            "title": "Crie sua conta"
+        }
+    },
+    "notifications": {
+        "titles": {
+            "success": "Sucesso",
+            "error": "Erro",
+            "warning": "Aviso",
+            "info": "Informação"
+        },
+        "messages": {
+            "wrongUserOrPassword": "Usuário ou senha incorretos"
+        }
+    }
+}

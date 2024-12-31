@@ -2,20 +2,20 @@ import { z } from 'zod';
 
 export const registerSchema = z.object({
     name: z.string()
-        .min(2, 'Name must be at least 2 characters')
-        .max(50, 'Name must be less than 50 characters'),
+        .min(2, 'O nome deve ter no mínimo 2 caracteres')
+        .max(50, 'O nome deve ter no máximo 50 caracteres'),
     email: z.string()
-        .email('Invalid email address'),
+        .email('E-mail inválido'),
     password: z.string()
-        .min(8, 'Password must be at least 8 characters')
-        .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-        .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-        .regex(/[0-9]/, 'Password must contain at least one number'),
+        .min(8, 'A senha deve ter no mínimo 8 caracteres')
+        .regex(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula')
+        .regex(/[a-z]/, 'A senha deve conter pelo menos uma letra minúscula')
+        .regex(/[0-9]/, 'A senha deve conter pelo menos um número'),
     password_confirmation: z.string(),
     checked: z.boolean().refine(val => val === true, {
-        message: 'You must accept the terms of use'
+        message: 'Você deve aceitar os termos de uso'
     })
 }).refine((data) => data.password === data.password_confirmation, {
-    message: "Passwords don't match",
+    message: "As senhas não coincidem",
     path: ["password_confirmation"],
 });

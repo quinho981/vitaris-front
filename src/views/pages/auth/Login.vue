@@ -6,35 +6,35 @@
         <div class="w-full md:w-1/2 h-screen flex items-center justify-center bg-white dark:bg-zinc-900">
             <div class="w-full max-w-md p-8">
                 <h2 class="text-6xl font-bold text-gray-800 text-center mb-8 dark:text-gray-300">VITALFY</h2>
-                <h2 class="text-3xl font-bold text-gray-800 text-center mb-2 dark:text-gray-300">Login</h2>
-                <p class="text-lg text-gray-600 text-center mb-6 dark:text-gray-300">Welcome back! Please login to your account.</p>
+                <h2 class="text-3xl font-bold text-gray-800 text-center mb-2 dark:text-gray-300">{{ $t("welcome") }}</h2>
+                <p class="text-lg text-gray-600 text-center mb-3 dark:text-gray-300">{{ $t("auth.login.description") }}</p>
 
                 <Message 
                     v-if="errorMessage" 
                     class="mb-4" 
                     severity="error"
                 >
-                    Wrong email or password
+                    {{ $t("notifications.messages.wrongUserOrPassword") }}
                 </Message>
 
                 <form @submit.prevent="submit">
                     <div class="mb-4">
-                        <label for="email" class="block text-md font-medium text-gray-700 dark:text-gray-300">Email Address</label>
+                        <label for="email" class="block text-md font-medium text-gray-700 dark:text-gray-300">{{ $t("form.label.email") }}</label>
                         <InputText 
                             id="email" 
                             type="email" 
-                            placeholder="Enter your email" 
+                            :placeholder='$t("auth.form.label.enterEmail")' 
                             class="w-full" 
                             :class="{ 'p-invalid': errorMessage }"
                             v-model="form.email" 
                         />
                     </div>
                     <div class="mb-4">
-                        <label for="password" class="block text-md font-medium text-gray-700 dark:text-gray-300">Password</label>
+                        <label for="password" class="block text-md font-medium text-gray-700 dark:text-gray-300">{{ $t("auth.form.label.password") }}</label>
                         <Password 
                             id="password" 
                             v-model="form.password" 
-                            placeholder="Enter your password" 
+                            :placeholder='$t("auth.form.label.enterPassword")' 
                             :toggleMask="true" 
                             :class="{ 'p-invalid': errorMessage }"
                             fluid 
@@ -48,16 +48,16 @@
                                 id="rememberme" 
                                 binary
                             ></Checkbox>
-                            <span class="ml-2 text-md text-gray-600 dark:text-gray-300">Remember me</span>
+                            <span class="ml-2 text-md text-gray-600 dark:text-gray-300">{{ $t("auth.form.label.rememberMe") }}</span>
                         </label>
-                        <a href="#" class="text-md text-primary hover:underline">Forgot password?</a>
+                        <a href="#" class="text-md text-primary hover:underline">{{ $t("auth.form.label.forgotPassword") }}?</a>
                     </div>
-                    <Button label="Sign In" class="w-full" :loading="loading" type="submit"></Button>
+                    <Button :label='$t("auth.form.button.signIn")' class="w-full" :loading="loading" type="submit"></Button>
                 </form>
 
                 <p class="text-md text-gray-600 text-center mt-4 dark:text-gray-300">
-                    Don’t have an account? 
-                    <router-link to="register" class="text-primary hover:underline cursor-pointer">Sign up</router-link>
+                    {{ $t("auth.form.label.haveAnAccount") }} 
+                    <router-link to="register" class="text-primary hover:underline cursor-pointer">{{ $t("auth.form.button.signUp") }}</router-link>
                 </p>
             </div>
         </div>
