@@ -74,7 +74,7 @@
                                 binary
                             />
                             <span class="ml-2 text-sm text-gray-600 dark:text-gray-300 leading-tight">
-                                {{ $t("auth.form.label.declareTermsParcial") }} <a href="#" class="text-md text-primary hover:underline cursor-pointer">{{ $t("auth.form.label.terms") }}</a>
+                                {{ $t("auth.form.label.declareTermsParcial") }} <a href="#" @click.prevent="showTerms" class="text-md text-primary hover:underline cursor-pointer">{{ $t("auth.form.label.terms") }}</a>
                             </span>
                         </label>
                     </div>
@@ -89,6 +89,10 @@
             </div>
         </div>
         <Toast />
+        <TermOfUse 
+            :active="activeTerms" 
+            @close="closeTerms" 
+        />
     </div>
 </template>
 
@@ -100,10 +104,12 @@ import ToastService from 'primevue/toastservice';
 import { useToast } from 'primevue/usetoast';
 import { registerSchema } from '@/validations/authSchema.js';
 import { useRouter } from 'vue-router';
+import TermOfUse from '@/components/Modal/TermOfUse.vue';
 
 const toast = useToast();
 const router = useRouter();
 const loading = ref(false)
+const activeTerms = ref(false)
 const errors = ref({});
 
 const form = ref({
@@ -132,10 +138,6 @@ const submit = () => {
         })
 }
 
-const showToastMessage = (severity, summary, detail, life = 3000) => {
-    toast.add({ severity: severity, summary: summary, detail: detail, life: life });
-}
-
 const validateForm = () => {
     try {
         const result = registerSchema.parse(form.value);
@@ -151,6 +153,18 @@ const validateForm = () => {
         return false;
     }
 };
+
+const showToastMessage = (severity, summary, detail, life = 3000) => {
+    toast.add({ severity: severity, summary: summary, detail: detail, life: life });
+}
+
+const showTerms = () => {
+    activeTerms.value = true;
+}
+
+const closeTerms = () => {
+    activeTerms.value = false;
+}
 </script>
 
 <style scoped>

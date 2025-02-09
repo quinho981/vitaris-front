@@ -1,6 +1,12 @@
 {
     "app_name": "Vitalfy",
     "welcome": "Welcome",
+    "termOfUse": "Term of use",
+    "button": {
+        "accept": "Accept",
+        "cancel": "Cancel",
+        "close": "Close"
+    },
     "form": {
         "label": {
             "email": "Email",
@@ -61,6 +67,5 @@
         "messages": {
             "wrongUserOrPassword": "Wrong user or password"
         }
-    }
-    
+    } 
 }
