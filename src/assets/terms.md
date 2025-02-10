@@ -22,7 +22,7 @@ Ao acessar e utilizar o Aplicativo, o Usuário declara que leu, compreendeu e co
 <br />
 
 <h2>4. OBJETO E DESCRIÇÃO DOS SERVIÇOS</h2>
-O Aplicativo tem como finalidade principal oferecer serviços de transcrição de anamnese, transformando gravações (áudio ou vídeo) em texto, facilitando o registro e a análise de informações clínicas. O serviço poderá incluir, dentre outras funcionalidades, a correção e formatação do texto transcrito. 
+O Aplicativo tem como finalidade principal oferecer serviços de transcrição de anamnese, transformando gravações (áudio) em texto, facilitando o registro e a análise de informações clínicas. O serviço poderá incluir, dentre outras funcionalidades, a correção e formatação do texto transcrito. 
 <br />
 <br />
 

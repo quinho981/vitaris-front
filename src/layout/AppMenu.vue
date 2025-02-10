@@ -4,9 +4,20 @@ import { ref } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
 
 const model = ref([
+    // {
+    //     label: 'Home',
+    //     items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
+    // },
     {
-        label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
+        label: 'Hoje',
+        items: [{ label: 'Anamnese médica para...', icon: 'pi pi-fw pi-home', to: '/' }]
+    },
+    {
+        label: 'Ontem',
+        items: [
+            { label: 'Paciente relata dores no...', icon: 'pi pi-fw pi-home', to: '/' },
+            { label: 'Consulta dor de cabeça', icon: 'pi pi-fw pi-home', to: '/' }
+        ]
     },
     {
         label: 'UI Components',
