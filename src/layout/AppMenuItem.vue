@@ -114,8 +114,12 @@ const onPopoverHide = () => {
 
         <Popover ref="op" @hide="onPopoverHide">
             <ul>
-                <li class="p-1 mb-1"><i class="pi pi-fw pi-pencil mr-1"></i> Renomear</li>
-                <li class="p-1"><i class="pi pi-fw pi-trash mr-1"></i> Excluir</li>
+                <li >
+                    <Button class="w-full !justify-start" label="Renomear" plain text icon="pi pi-fw pi-pencil" @click="onEdit" />
+                </li>
+                <li>
+                    <Button class="w-full !justify-start" label="Excluir" plain text icon="pi pi-fw pi-trash" @click="onEdit" />
+                </li>
             </ul>
         </Popover>
     </div>
@@ -139,5 +143,9 @@ router-link:hover .layout-submenu-actions {
 
 .actions-visible {
     opacity: 1;
+}
+
+.layout-menu ul a {
+    border-radius: 20px !important;
 }
 </style>
