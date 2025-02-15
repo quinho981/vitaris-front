@@ -10,13 +10,13 @@ const model = ref([
     // },
     {
         label: 'Hoje',
-        items: [{ label: 'Anamnese médica para...', icon: 'pi pi-fw pi-home', to: '/' }]
+        items: [{ label: 'Anamnese médica para...', icon: 'pi pi-fw pi-home', to: '/c' }]
     },
     {
         label: 'Ontem',
         items: [
-            { label: 'Paciente relata dores no...', icon: 'pi pi-fw pi-home', to: '/' },
-            { label: 'Consulta dor de cabeça', icon: 'pi pi-fw pi-home', to: '/' }
+            { label: 'Paciente relata dores no...', icon: 'pi pi-fw pi-home', to: '/b' },
+            { label: 'Consulta dor de cabeça', icon: 'pi pi-fw pi-home', to: '/a' }
         ]
     },
     {

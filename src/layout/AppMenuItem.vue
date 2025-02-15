@@ -28,6 +28,8 @@ const props = defineProps({
 
 const isActiveMenu = ref(false);
 const itemKey = ref(null);
+const op = ref();
+const isPopoverVisible = ref(false);
 
 onBeforeMount(() => {
     itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
@@ -66,28 +68,76 @@ function itemClick(event, item) {
 function checkActiveRoute(item) {
     return route.path === item.to;
 }
+
+const toggle = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    isPopoverVisible.value = !isPopoverVisible.value;
+    op.value.toggle(event);
+}
+
+const onPopoverHide = () => {
+    isPopoverVisible.value = false;
+}
 </script>
 
 <template>
-    <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
-        <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
-        <a v-if="(!item.to || item.items) && item.visible !== false" :href="item.url" @click="itemClick($event, item, index)" :class="item.class" :target="item.target" tabindex="0">
-            <i :class="item.icon" class="layout-menuitem-icon"></i>
-            <span class="layout-menuitem-text">{{ item.label }}</span>
-            <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
-        </a>
-        <router-link v-if="item.to && !item.items && item.visible !== false" @click="itemClick($event, item, index)" :class="[item.class, { 'active-route': checkActiveRoute(item) }]" tabindex="0" :to="item.to">
-            <!-- <i :class="item.icon" class="layout-menuitem-icon"></i> -->
-            <span class="layout-menuitem-text">{{ item.label }}</span>  
-            <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
-            <span class="layout-submenu-actions">...</span>
-        </router-link>
-        <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
-            <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
-                <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false"></app-menu-item>
+    <div>
+        <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
+            <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
+            <a v-if="(!item.to || item.items) && item.visible !== false" :href="item.url" @click="itemClick($event, item, index)" :class="item.class" :target="item.target" tabindex="0">
+                <i :class="item.icon" class="layout-menuitem-icon"></i>
+                <span class="layout-menuitem-text">{{ item.label }}</span>
+                <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
+            </a>
+            <router-link v-if="item.to && !item.items && item.visible !== false" @click="itemClick($event, item, index)" :class="[item.class, { 'active-route': checkActiveRoute(item) }]" tabindex="0" :to="item.to">
+                <!-- <i :class="item.icon" class="layout-menuitem-icon"></i> -->
+                <span class="layout-menuitem-text">{{ item.label }}</span>  
+                <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
+                <span 
+                    :class="[
+                        'layout-submenu-actions text-gray-900 hover:text-gray-500 dark:text-gray-300',
+                        { 'actions-visible': isPopoverVisible || checkActiveRoute(item) }
+                    ]"
+                    v-tooltip.top="$t('form.label.options')"
+                    @click.stop.prevent="toggle"
+                >
+                    ...
+                </span>
+            </router-link>
+            <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
+                <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
+                    <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false"></app-menu-item>
+                </ul>
+            </Transition>
+        </li>
+
+        <Popover ref="op" @hide="onPopoverHide">
+            <ul>
+                <li class="p-1 mb-1"><i class="pi pi-fw pi-pencil mr-1"></i> Renomear</li>
+                <li class="p-1"><i class="pi pi-fw pi-trash mr-1"></i> Excluir</li>
             </ul>
-        </Transition>
-    </li>
+        </Popover>
+    </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.layout-submenu-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.router-link-active .layout-submenu-actions,
+a:hover .layout-submenu-actions,
+router-link:hover .layout-submenu-actions {
+    opacity: 1;
+}
+
+.layout-submenu-actions:hover {
+    transition: 0.2s;
+}
+
+.actions-visible {
+    opacity: 1;
+}
+</style>

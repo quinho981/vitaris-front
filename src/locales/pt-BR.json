@@ -13,7 +13,8 @@
             "name": "Nome",
             "phone": "Telefone",
             "cpf": "CPF",
-            "birthDate": "Data de Nascimento"
+            "birthDate": "Data de Nascimento",
+            "options": "Opções"
         },
         "errors": {
             "required": "Este campo é obrigatório",
