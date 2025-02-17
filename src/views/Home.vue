@@ -2,10 +2,10 @@
     <div>
         <div class="flex items-center justify-between mr-6 font-semibold text-xl">
             <div>
-                Nova consulta <i class="pi pi-pencil"></i>
+                {{ $t("newConsultation") }} <i class="pi pi-pencil"></i>
             </div>
             <div v-if="stepStatus('finished')">
-                <Button label="Copiar texto" icon="pi pi-copy" class="p-button-link !m-0 !p-0" @click="copyText" />
+                <Button :label='$t("button.copyText")' icon="pi pi-copy" class="p-button-link !m-0 !p-0" @click="copyText" />
             </div>
         </div>
         <Fluid
@@ -51,14 +51,14 @@
                         v-if="stepStatus('not-started')"  
                         class="font-semibold text-4xl text-center mb-2"
                     >
-                        Como posso ajudar hoje?
+                        {{ $t("transcription.howCanIHelpToday") }}
                     </div>
                     
                     <div
                         v-if="stepStatus('not-started')"  
                         class="flex flex-wrap"
                     >
-                        <label for="query-content">Contexto da consulta</label>
+                        <label for="query-content">{{ $t("transcription.queryContext") }}</label>
                         <Textarea
                             rows="1"
                             autoResize  
@@ -67,10 +67,10 @@
                             v-model="transcribedText"
                         />
                         <span class="pt-1 flex items-center">
-                            Enviar arquivo de áudio 
+                            {{ $t("transcription.sendAudioFile") }} 
                             <i 
                                 class="pi pi-info-circle pl-1" 
-                                v-tooltip.top="'Permitido apenas arquivos .mp3'"
+                                v-tooltip.top='$t("transcription.onlyMp3")'
                             ></i> 
                         </span>
                     </div>
@@ -92,14 +92,14 @@
                                 </div>
                             </div>
                             <div class="label-microphone-test">
-                                Testar microfone
+                                {{ $t("transcription.testMicrophone") }}
                             </div>
                         </div>
                         <div class="pt-1">
                             <Button 
                                 v-if="stepStatus('not-started')"
                                 icon="pi pi-microphone" 
-                                label="Gravar consulta" 
+                                :label='$t("transcription.button.recordQuery")'
                                 rounded 
                                 @click="recordConversation"
                             />
@@ -117,7 +117,7 @@
                     <Button
                         v-if="stepStatus('in-progress') || stepStatus('paused')"
                         icon="pi pi-times-circle" 
-                        label="Cancelar gravação" 
+                        :label='$t("transcription.button.cancelRecord")' 
                         severity="danger"
                         rounded 
                         @click="cancelConversation"
@@ -125,7 +125,7 @@
                     <Button
                         v-if="stepStatus('in-progress')"
                         icon="pi pi-stop-circle" 
-                        label="Pausar gravação" 
+                        :label='$t("transcription.button.pauseRecord")' 
                         severity="warn"
                         rounded 
                         @click="stopConversation"
@@ -133,7 +133,7 @@
                     <Button
                         v-if="stepStatus('paused')"
                         icon="pi pi-play" 
-                        label="Continuar gravação"
+                        :label='$t("transcription.button.continueRecord")' 
                         severity="info"
                         rounded 
                         @click="recordConversation"
@@ -141,13 +141,13 @@
                     <Button
                         v-if="stepStatus('in-progress') || stepStatus('paused')"
                         icon="pi pi-check-circle" 
-                        label="Finalizar gravação"
+                        :label='$t("transcription.button.finishRecord")' 
                         :loading="loadingFinish"
                         rounded 
                         @click="finishConversation"
                     />
                 </div>
-                <p class="text-xs text-center mt-2">Vitaris pode cometer erros. Considere verificar informações importantes.</p>
+                <p class="text-xs text-center mt-2">{{ $t("transcription.vitalfyError") }}</p>
             </div>
         </Fluid>
     </div>

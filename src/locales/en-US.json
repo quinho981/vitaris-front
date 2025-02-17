@@ -2,10 +2,15 @@
     "app_name": "Vitalfy",
     "welcome": "Welcome",
     "termOfUse": "Term of use",
+    "newConsultation": "Nova consulta",
     "button": {
         "accept": "Accept",
         "cancel": "Cancel",
-        "close": "Close"
+        "close": "Close",
+        "newTranscription": "New transcription",
+        "copyText": "Copiar texto",
+        "rename": "Rename",
+        "exclude": "Exclude"
     },
     "form": {
         "label": {
@@ -68,5 +73,20 @@
         "messages": {
             "wrongUserOrPassword": "Wrong user or password"
         }
-    } 
+    },
+    "transcription": {
+        "howCanIHelpToday": "How can I help you today?",
+        "queryContext": "Query context",
+        "sendAudioFile": "Send audio file",
+        "onlyMp3": "Only .mp3 files allowed",
+        "testMicrophone": "Test microphone",
+        "vitalfyError": "Vitaris may make mistakes. Consider checking important information.",
+        "button": {
+            "recordQuery": "Record query",
+            "cancelRecord": "Cancel record",
+            "pauseRecord": "Pause record",
+            "continueRecord": "Continue record",
+            "finishRecord": "Finish record"
+        }
+    }
 }

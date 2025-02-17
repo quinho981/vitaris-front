@@ -152,7 +152,7 @@ const model = ref([
 
 <template>
     <ul class="layout-menu">
-        <Button class="w-full my-2" label="Primary" rounded />
+        <Button class="w-full my-2" :label='$t("button.newTranscription")' icon="pi pi-fw pi-plus" rounded />
         <template v-for="(item, i) in model" :key="item">
             <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>

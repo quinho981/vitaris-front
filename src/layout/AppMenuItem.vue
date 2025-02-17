@@ -115,10 +115,10 @@ const onPopoverHide = () => {
         <Popover ref="op" @hide="onPopoverHide">
             <ul>
                 <li >
-                    <Button class="w-full !justify-start" label="Renomear" plain text icon="pi pi-fw pi-pencil" @click="onEdit" />
+                    <Button class="w-full !justify-start" :label='$t("button.rename")' plain text icon="pi pi-fw pi-pencil" @click="onEdit" />
                 </li>
                 <li>
-                    <Button class="w-full !justify-start" label="Excluir" plain text icon="pi pi-fw pi-trash" @click="onEdit" />
+                    <Button class="w-full !justify-start" :label='$t("button.exclude")' plain text icon="pi pi-fw pi-trash" @click="onEdit" />
                 </li>
             </ul>
         </Popover>
