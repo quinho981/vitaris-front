@@ -151,13 +151,23 @@ const model = ref([
 </script>
 
 <template>
-    <ul class="layout-menu">
-        <Button class="w-full my-2" :label='$t("button.newTranscription")' icon="pi pi-fw pi-plus" rounded />
-        <template v-for="(item, i) in model" :key="item">
-            <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
-            <li v-if="item.separator" class="menu-separator"></li>
-        </template>
-    </ul>
+    <div class="layout-sidebar">
+        <div class="px-[1rem]">
+            <Button class="w-full my-2 " :label='$t("button.newTranscription")' icon="pi pi-fw pi-plus" rounded />
+        </div>
+
+        <div class="layout-menu">
+            <template v-for="(item, i) in model" :key="item">
+                <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
+                <li v-if="item.separator" class="menu-separator"></li>
+            </template>
+        </div>
+
+        <div class="layout-sidebar-footer">
+            <Button class="w-full p-3" label="Upgrade para Premium" icon="pi pi-star" severity="warning" />
+            <p>teste</p>
+        </div>
+    </div>
 </template>
 
 <style lang="scss" scoped></style>
