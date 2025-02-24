@@ -239,7 +239,7 @@ const finishConversation = () => {
         recognition.stop();
 
         loadingFinish.value = true
-        AnamneseService.generator(transcribedText.value)
+        AnamneseService.generator(transcribedText.value, 'finished')
             .then((response) => {
                 chat.value = []
                 status.value = 'finished'
