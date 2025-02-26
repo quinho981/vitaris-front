@@ -1,8 +1,16 @@
 <template>
     <div>
         <div class="flex items-center justify-between mr-6 font-semibold text-xl">
-            <div>
-                {{ $t("newConsultation") }} <i class="pi pi-pencil"></i>
+            <div v-if="!isEditTitle">
+                {{ $t("newConsultation") }} <i class="pi pi-pencil cursor-pointer" @click="isEditTitle = true"></i>
+            </div>
+            <div 
+                v-else
+                class="flex gap-2"
+            >
+                <InputText id="name1" type="text" size="small" class="!rounded-3xl !w-[30rem]" />
+                <Button @click="isEditTitle = false" icon="pi pi-times" severity="secondary" rounded outlined />
+                <Button icon="pi pi-check" rounded />
             </div>
             <div v-if="stepStatus('finished')">
                 <Button :label='$t("button.copyText")' icon="pi pi-copy" class="p-button-link !m-0 !p-0" @click="copyText" />
@@ -165,7 +173,8 @@ const chat = ref([]);
 const buttonRecognition = ref(false);
 const loadingTranscript = ref(false);
 const loadingFinish = ref(false);
-const status = ref('not-started')
+const status = ref('not-started');
+const isEditTitle = ref(false);
 
 let recognition;
 
