@@ -1,7 +1,8 @@
 <template>
     <Dialog 
         :header='$t("termOfUse")' 
-        v-model:visible="props.active" 
+        :visible="isVisible" 
+        @update:visible="updateVisibility"
         :breakpoints="{ '960px': '75vw' }" 
         :style="{ width: '60vw' }" 
         :modal="true"
@@ -14,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 import { marked } from "marked";
 import terms from '@/assets/terms.md?raw';
 
@@ -26,6 +27,15 @@ const props = defineProps({
         default: false
     }
 });
+
+const isVisible = computed(() => props.active);
+
+const updateVisibility = (value) => {
+    if (!value) {
+        close();
+    }
+};
+
 const htmlTerms = marked(terms);
 
 const close = () => {
