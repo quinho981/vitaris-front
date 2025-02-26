@@ -147,5 +147,6 @@ router-link:hover .layout-submenu-actions {
 
 .layout-menu ul a {
     border-radius: 20px !important;
+    margin-right: 5px;
 }
 </style>

@@ -10,7 +10,12 @@
         "newTranscription": "Nova transcrição",
         "copyText": "Copiar texto",
         "rename": "Renomear",
-        "exclude": "Excluir"
+        "exclude": "Excluir",
+        "signature": {
+            "unlockProPlan": "Desbloquear plano Pro",
+            "onlyRemaining": "Restam apenas",
+            "transcriptions": "transcrições"
+        }
     },
     "form": {
         "label": {
@@ -88,5 +93,9 @@
             "continueRecord": "Continuar gravação",
             "finishRecord": "Finalizar gravação"
         }
+    },
+    "sidebar": {
+        "allConsults": "Todas as consultas",
+        "helpAndSupport": "Ajuda e suporte"
     }
 }

@@ -153,21 +153,89 @@ const model = ref([
 <template>
     <div class="layout-sidebar">
         <div class="px-[1rem]">
-            <Button class="w-full my-2 " :label='$t("button.newTranscription")' icon="pi pi-fw pi-plus" rounded />
+            <Button 
+                class="w-full my-2" 
+                :label='$t("button.newTranscription")' 
+                icon="pi pi-fw pi-plus" 
+                rounded
+                as="router-link"
+                to="/home"
+            />
         </div>
-
         <div class="layout-menu">
             <template v-for="(item, i) in model" :key="item">
                 <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
-                <li v-if="item.separator" class="menu-separator"></li>
+                <li v-if="item.separator" class="menu-separator e"></li>
             </template>
         </div>
-
         <div class="layout-sidebar-footer">
-            <Button class="w-full p-3" label="Upgrade para Premium" icon="pi pi-star" severity="warning" />
-            <p>teste</p>
+            <div class="flex flex-col">
+                <a href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] rounded-3xl">
+                    <i class="pi pi-fw pi-file-edit !text-sm mr-1 ml-2"></i>
+                    <p>{{ $t("sidebar.allConsults") }}</p>
+                </a>
+                <a href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] rounded-2xl">
+                    <i class="pi pi-fw pi-phone !text-sm mr-1 ml-2"></i>
+                    <p>{{ $t("sidebar.helpAndSupport") }}</p>
+                </a>
+                <div class="bg-gradient-to-r from-teal-500 to-green-400 rounded-[5px] p-[0.150rem] my-1">
+                    <div class="flex gap-x-2 justify-center items-center rounded-[5px] bg-white dark:bg-[#18181b] p-1 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-teal-400/50 div-icon-transition">
+                        <div class="mr-2">
+                            <i class="gradient-text pi pi-fw pi-bolt !text-xl icon-transition"></i>
+                        </div>
+                        <div class="text-sm">
+                            <ul>
+                                <li class="gradient-text font-bold">{{ $t("button.signature.unlockProPlan") }}</li>
+                                <li>{{ $t("button.signature.onlyRemaining") }} <b>3</b> {{ $t("button.signature.transcriptions") }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center pt-3 pb-3 relative">
+                    <div class="relative flex flex-col items-center">
+                        <Avatar 
+                            label="T" 
+                            class="mr-3 flex-shrink-0" 
+                            size="small" 
+                            :style="{ 'background-color': '#16b8a6', color: '#ffffff', border: '2px solid #3b82f6', height: '2.4rem', width: '2.4rem' }" 
+                            shape="circle">
+                        </Avatar> 
+                        <span class="absolute top-[25px] right-[9px] bg-blue-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                            Free
+                        </span>
+                    </div>
+                    <div class="flex flex-col w-full">
+                        <span class="text-base font-bold flex justify-start">Test user</span>
+                        <span class="text-sm font-medium text-gray-500 flex justify-start">test-user111@test.com</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.gradient-text {
+    background: linear-gradient(to right, #14b8a6, rgb(29, 242, 150));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.icon-transition {
+  transition: all 0.3s ease;
+}
+.div-icon-transition:hover .icon-transition {
+  animation: pulse-and-rotate 1s infinite alternate;
+  transform-origin: center;
+}
+@keyframes pulse-and-rotate {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.5) rotate(10deg);
+  }
+  100% {
+    transform: scale(1.3) rotate(-10deg);
+  }
+}
+</style>
