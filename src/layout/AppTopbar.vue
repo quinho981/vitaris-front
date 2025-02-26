@@ -6,7 +6,7 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 </script>
 
 <template>
-    <div class="layout-topbar">
+    <div class="layout-topbar !border-b-2 dark:border-gray-700">
         <div class="layout-topbar-logo-container">
             <button class="layout-menu-button layout-topbar-action" @click="onMenuToggle">
                 <i class="pi pi-bars"></i>

@@ -168,13 +168,13 @@ const model = ref([
                 <li v-if="item.separator" class="menu-separator e"></li>
             </template>
         </div>
-        <div class="layout-sidebar-footer">
+        <div class="layout-sidebar-footer border-t dark:border-gray-700">
             <div class="flex flex-col">
-                <a href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] rounded-3xl">
+                <a href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-3xl">
                     <i class="pi pi-fw pi-file-edit !text-sm mr-1 ml-2"></i>
                     <p>{{ $t("sidebar.allConsults") }}</p>
                 </a>
-                <a href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] rounded-2xl">
+                <a href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-2xl">
                     <i class="pi pi-fw pi-phone !text-sm mr-1 ml-2"></i>
                     <p>{{ $t("sidebar.helpAndSupport") }}</p>
                 </a>
@@ -205,8 +205,8 @@ const model = ref([
                         </span>
                     </div>
                     <div class="flex flex-col w-full">
-                        <span class="text-base font-bold flex justify-start">Test user</span>
-                        <span class="text-sm font-medium text-gray-500 flex justify-start">test-user111@test.com</span>
+                        <span class="flex justify-start text-base font-bold">Test user</span>
+                        <span class="flex justify-start text-sm font-medium text-gray-500 dark:text-gray-300">test-user111@test.com</span>
                     </div>
                 </div>
             </div>
