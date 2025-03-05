@@ -3,6 +3,8 @@ import { ref } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
 
+const modalHelpAndSupport = ref(false);
+
 const model = ref([
     // {
     //     label: 'Home',
@@ -174,7 +176,10 @@ const model = ref([
                     <i class="pi pi-fw pi-file-edit !text-sm mr-1 ml-2"></i>
                     <p>{{ $t("sidebar.allConsults") }}</p>
                 </a>
-                <a href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-2xl transition-all duration-300">
+                <a 
+                    href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-2xl transition-all duration-300" 
+                    @click.prevent="modalHelpAndSupport = !modalHelpAndSupport"
+                >
                     <i class="pi pi-fw pi-phone !text-sm mr-1 ml-2"></i>
                     <p>{{ $t("sidebar.helpAndSupport") }}</p>
                 </a>
@@ -201,7 +206,7 @@ const model = ref([
                             shape="circle">
                         </Avatar> 
                         <span class="absolute top-[25px] right-[9px] bg-blue-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
-                            Free
+                            {{ $t("sidebar.signature.free") }}
                         </span>
                     </div>
                     <div class="flex flex-col w-full">
@@ -211,6 +216,48 @@ const model = ref([
                 </div>
             </div>
         </div>
+        <Dialog 
+            :header='$t("sidebar.buttons.helpAndSupport")' 
+            :visible="modalHelpAndSupport" 
+            :breakpoints="{ '960px': '75vw' }" 
+            :style="{ width: '27vw' }" 
+            :modal="true"
+            @update:visible="modalHelpAndSupport = $event"
+            :dismissable-mask="true"
+        >
+            <div class="flex flex-col gap-y-2">
+                <Button 
+                    class="w-full"
+                    :label='$t("sidebar.buttons.feedback")' 
+                    icon="pi pi-fw pi-comments " 
+                    rounded
+                    severity="secondary"
+                />
+                <Button 
+                    class="w-full"
+                    :label='$t("sidebar.buttons.talkToSupport")'
+                    icon="pi pi-fw pi-phone " 
+                    rounded
+                    severity="secondary"
+                />
+            </div>
+            <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row xl:justify-between justify-between my-1 font-semibold">
+                <a 
+                    href="https://wa.me/5571999999999?text=Quero%20suporte" 
+                    target="_blank"
+                    class="flex justify-center sm:justify-start lg:justify-center xl:justify-start"    
+                >
+                    <Button label="+55 (71) 9 9999-9999" class="p-button-link" />
+                </a>
+                <a 
+                    href="mailto:suportevital@vitalfy.com.br"
+                    target="_blank"
+                    class="flex justify-center sm:justify-start lg:justify-center xl:justify-start"
+                >
+                    <Button label="suportevital@vitalfy.com.br" class="p-button-link" />
+                </a>
+            </div>
+        </Dialog>
     </div>
 </template>
 

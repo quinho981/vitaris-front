@@ -96,6 +96,15 @@
     },
     "sidebar": {
         "allConsults": "Todas as consultas",
-        "helpAndSupport": "Ajuda e suporte"
+        "helpAndSupport": "Ajuda e suporte",
+        "signature": {
+            "free": "Free",
+            "pro": "Pro"
+        },
+        "buttons": {
+            "helpAndSupport": "Ajuda e suporte",
+            "feedback": "Feedback",
+            "talkToSupport": "Falar com suporte"
+        }
     }
 }
