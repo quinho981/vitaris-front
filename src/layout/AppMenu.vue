@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
+import Signature from '@/components/Modal/Signature.vue';
 
 const modalHelpAndSupport = ref(false);
 
@@ -150,6 +151,10 @@ const model = ref([
         ]
     }
 ]);
+
+const redirectTo = (to) => {
+    window.open(to, "_blank");
+};
 </script>
 
 <template>
@@ -202,7 +207,7 @@ const model = ref([
                             label="T" 
                             class="mr-3 flex-shrink-0" 
                             size="small" 
-                            :style="{ 'background-color': '#16b8a6', color: '#ffffff', border: '2px solid #3b82f6', height: '2.4rem', width: '2.4rem' }" 
+                            :style="{ 'background-color': '#14b8a6', color: '#ffffff', border: '2px solid #3b82f6', height: '2.4rem', width: '2.4rem' }" 
                             shape="circle">
                         </Avatar> 
                         <span class="absolute top-[25px] right-[9px] bg-blue-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
@@ -232,6 +237,7 @@ const model = ref([
                     icon="pi pi-fw pi-comments " 
                     rounded
                     severity="secondary"
+                    @click='redirectTo("https://wa.me/5571999999999?text=Gostaria%20de%20passar%20um%20feedback")'
                 />
                 <Button 
                     class="w-full"
@@ -239,11 +245,12 @@ const model = ref([
                     icon="pi pi-fw pi-phone " 
                     rounded
                     severity="secondary"
+                    @click='redirectTo("https://wa.me/5571999999999?text=Quero%20de%20solicitar%20suporte")'
                 />
             </div>
             <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row xl:justify-between justify-between my-1 font-semibold">
                 <a 
-                    href="https://wa.me/5571999999999?text=Quero%20suporte" 
+                    href="https://wa.me/5571999999999" 
                     target="_blank"
                     class="flex justify-center sm:justify-start lg:justify-center xl:justify-start"    
                 >
@@ -258,6 +265,8 @@ const model = ref([
                 </a>
             </div>
         </Dialog>
+
+        <Signature />
     </div>
 </template>
 
