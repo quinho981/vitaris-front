@@ -109,7 +109,13 @@ const router = createRouter({
                     path: '/documentation',
                     name: 'documentation',
                     component: () => import('@/views/pages/Documentation.vue')
-                }
+                },
+
+                {
+                    path: '/transcripts/list',
+                    name: 'list',
+                    component: () => import('@/views/transcripts/List.vue')
+                },
             ]
         },
         {

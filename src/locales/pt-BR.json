@@ -92,10 +92,13 @@
             "pauseRecord": "Pausar gravação",
             "continueRecord": "Continuar gravação",
             "finishRecord": "Finalizar gravação"
+        },
+        "listPage": {
+            "allTranscripts":"Todas as transcrições"
         }
     },
     "sidebar": {
-        "allConsults": "Todas as consultas",
+        "allTranscripts": "Todas as transcrições",
         "helpAndSupport": "Ajuda e suporte",
         "signature": {
             "free": "Free",
@@ -114,7 +117,7 @@
             "forty": "40%",
             "thirty": "30%",
             "twenty": "20%",
-            "signatureDescription": "Maximize suas consultas com a Vitalfy Pro! Tenha acesso ilimitado a ferramentas exclusivas e eleve a qualidade do seu atendimento.",
+            "signatureDescription": "Maximize suas transcrições com a Vitalfy Pro! Tenha acesso ilimitado a ferramentas exclusivas e eleve a qualidade do seu atendimento.",
             "month": "/mês",
             "signaturePrice": "de R${priceTotal} por R${pricePromotion} por {signatureType}",
             "totalDoctorsDescription": "❤️ Mais de {totalDoctors} médicos utilizando a Vitalfy Pro",

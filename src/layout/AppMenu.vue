@@ -185,7 +185,7 @@ const closeSignatureModal = () => {
             <div class="flex flex-col">
                 <a href="#" class="flex items-center py-2 my-1 mt-2 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-3xl transition-all duration-300">
                     <i class="pi pi-fw pi-file-edit !text-sm mr-1 ml-2"></i>
-                    <p>{{ $t("sidebar.allConsults") }}</p>
+                    <p>{{ $t("sidebar.allTranscripts") }}</p>
                 </a>
                 <a 
                     href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-2xl transition-all duration-300" 
