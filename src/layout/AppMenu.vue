@@ -5,6 +5,7 @@ import AppMenuItem from './AppMenuItem.vue';
 import Signature from '@/components/Modal/Signature.vue';
 
 const modalHelpAndSupport = ref(false);
+const modalSignatureActive = ref(false);
 
 const model = ref([
     // {
@@ -155,6 +156,11 @@ const model = ref([
 const redirectTo = (to) => {
     window.open(to, "_blank");
 };
+
+const closeSignatureModal = () => {
+    modalSignatureActive.value = false;
+};
+
 </script>
 
 <template>
@@ -188,7 +194,10 @@ const redirectTo = (to) => {
                     <i class="pi pi-fw pi-phone !text-sm mr-1 ml-2"></i>
                     <p>{{ $t("sidebar.helpAndSupport") }}</p>
                 </a>
-                <div class="bg-gradient-to-r from-teal-500 to-green-400 rounded-[5px] p-[0.150rem] my-1">
+                <div 
+                    class="bg-gradient-to-r from-teal-500 to-green-400 rounded-[5px] p-[0.150rem] my-1"
+                    @click="modalSignatureActive = !modalSignatureActive"
+                >
                     <div class="flex gap-x-2 justify-center items-center rounded-[5px] bg-white dark:bg-[#18181b] p-1 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-teal-400/50 div-icon-transition">
                         <div class="mr-2">
                             <i class="gradient-text pi pi-fw pi-bolt !text-xl icon-transition"></i>
@@ -266,7 +275,10 @@ const redirectTo = (to) => {
             </div>
         </Dialog>
 
-        <Signature />
+        <Signature 
+            :active="modalSignatureActive"
+            @close="closeSignatureModal" 
+        />
     </div>
 </template>
 

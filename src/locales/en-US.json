@@ -105,5 +105,28 @@
             "feedback": "Feedback",
             "talkToSupport": "Falar com suporte"
         }
+    },
+    "signature": {
+        "modal": {
+            "proPlan": "PRO plan",
+            "economize": "Economize",
+            "forty": "40%",
+            "thirty": "30%",
+            "twenty": "20%",
+            "signatureDescription": "Maximize your consultations with Vitalfy Pro! Get unlimited access to exclusive tools and improve the quality of your service.",
+            "month": "/month",
+            "signaturePrice": "by R${priceTotal} by R${pricePromotion} by {signatureType}",
+            "totalDoctorsDescription": "❤️ More from {totalDoctors} doctors using Vitalfy Pro",
+            "seeTheBenefits": "See the benefits:",
+            "benefits": {
+                "benefit1": "Unlimited queries",
+                "benefit2": "More than 30 anamnesis templates",
+                "benefit3": "Unlimited real-time collaboration on queries",
+                "benefit4": "Personalized printing of generated documents",
+                "benefit5": "Improving anamnesis with AI",
+                "benefit6": "Generation of other clinical documents",
+                "benefit7": "Sharing of all generated documents"
+            }
+        }
     }
 }

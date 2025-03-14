@@ -106,5 +106,28 @@
             "feedback": "Feedback",
             "talkToSupport": "Falar com suporte"
         }
+    },
+    "signature": {
+        "modal": {
+            "proPlan": "Plano PRO",
+            "economize": "Economize",
+            "forty": "40%",
+            "thirty": "30%",
+            "twenty": "20%",
+            "signatureDescription": "Maximize suas consultas com a Vitalfy Pro! Tenha acesso ilimitado a ferramentas exclusivas e eleve a qualidade do seu atendimento.",
+            "month": "/mês",
+            "signaturePrice": "de R${priceTotal} por R${pricePromotion} por {signatureType}",
+            "totalDoctorsDescription": "❤️ Mais de {totalDoctors} médicos utilizando a Vitalfy Pro",
+            "seeTheBenefits": "Veja os benefícios:",
+            "benefits": {
+                "benefit1": "Consultas ilimitadas",
+                "benefit2": "Mais de 30 modelos de anamneses",
+                "benefit3": "Colaboração ilimitada em tempo real em consultas",
+                "benefit4": "Impressão personalizada dos documentos gerados",
+                "benefit5": "Melhorar anamnese com IA",
+                "benefit6": "Geração de outros documentos clínicos",
+                "benefit7": "Compartilhamento de todos documentos gerados"
+            }
+        }
     }
 }
