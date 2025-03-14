@@ -3,7 +3,7 @@
         :visible="isVisible"
         @update:visible="close"
         :dismissable-mask="true"
-        :breakpoints="{ '1024px': '75vw', '960px': '75vw' }" 
+        :breakpoints="{ '1024px': '75vw', '960px': '75vw', '350px': '85vw' }" 
         :style="{ width: '55vw' }" 
         modal
         class="!border-none"
