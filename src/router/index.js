@@ -113,7 +113,7 @@ const router = createRouter({
 
                 {
                     path: '/transcripts/list',
-                    name: 'list',
+                    name: 'transcriptsList',
                     component: () => import('@/views/transcripts/List.vue')
                 },
             ]

@@ -183,10 +183,10 @@ const closeSignatureModal = () => {
         </div>
         <div class="layout-sidebar-footer border-t dark:border-gray-700">
             <div class="flex flex-col">
-                <a href="#" class="flex items-center py-2 my-1 mt-2 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-3xl transition-all duration-300">
+                <router-link to="/transcripts/list" class="flex items-center py-2 my-1 mt-2 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-3xl transition-all duration-300">
                     <i class="pi pi-fw pi-file-edit !text-sm mr-1 ml-2"></i>
                     <p>{{ $t("sidebar.allTranscripts") }}</p>
-                </a>
+                </router-link>
                 <a 
                     href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-2xl transition-all duration-300" 
                     @click.prevent="modalHelpAndSupport = !modalHelpAndSupport"
@@ -235,9 +235,14 @@ const closeSignatureModal = () => {
             :visible="modalHelpAndSupport" 
             :breakpoints="{ '960px': '75vw' }" 
             :style="{ width: '27vw' }" 
-            :modal="true"
+            modal
             @update:visible="modalHelpAndSupport = $event"
             :dismissable-mask="true"
+            :pt="{
+                mask: {
+                    style: 'backdrop-filter: blur(2px)'
+                }
+            }"
         >
             <div class="flex flex-col gap-y-2">
                 <Button 
