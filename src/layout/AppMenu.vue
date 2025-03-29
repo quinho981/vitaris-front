@@ -230,6 +230,8 @@ const closeSignatureModal = () => {
                 </div>
             </div>
         </div>
+
+        <!--- TODO: Transformar em componente -->
         <Dialog 
             :header='$t("sidebar.buttons.helpAndSupport")' 
             :visible="modalHelpAndSupport" 
