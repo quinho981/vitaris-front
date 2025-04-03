@@ -67,7 +67,7 @@
 <script setup>
 import { ref } from "vue";
 import AsideImage from './components/AsideImage.vue'
-import { login } from './api'
+import { login, getUser } from './api'
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -80,7 +80,7 @@ const form = ref({
     checked: false
 })
 
-const submit = () => {
+const submit = async () => {
     if (!validateForm()) {
         return;
     }
@@ -88,15 +88,17 @@ const submit = () => {
     errorMessage.value = false;
     loading.value = true;
 
-    login(form.value)
-        .then(response => {
-            loading.value = false;
-            router.push({ name: 'home' });
-        }).catch(error => {
-            loading.value = false;
-            errorMessage.value = true;
-        })
-}
+    try {
+        await login(form.value);
+        await getUser();
+        router.push({ name: 'home' });
+    } catch (error) {
+        errorMessage.value = true;
+    } finally {
+        loading.value = false;
+    }
+};
+
 
 const validateForm = () => {
     if (!form.value.email && !form.value.password) {
