@@ -3,9 +3,6 @@ import { ref, computed } from 'vue'
 import api from '@/services/axios';
 import Cookies from 'js-cookie'
 import { useUserStore } from '@/stores/userStore'
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
 
 export const authStore = defineStore('auth', () => {
     const token = ref(Cookies.get('token') || null)
