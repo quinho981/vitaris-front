@@ -3,6 +3,8 @@ import App from './App.vue';
 import router from './router';
 import i18n from './i18n';
 
+import { createPinia } from 'pinia'
+
 import Aura from '@primevue/themes/aura';
 import { definePreset } from '@primevue/themes';
 import PrimeVue from 'primevue/config';
@@ -12,6 +14,7 @@ import ToastService from 'primevue/toastservice';
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
 
+const pinia = createPinia()
 const app = createApp(App);
 
 // Documentation to alter project's primary color  https://primevue.org/theming/styled/#noir
@@ -42,6 +45,7 @@ app.use(PrimeVue, {
         }
     }
 });
+app.use(pinia);
 app.use(ToastService);
 app.use(ConfirmationService);
 app.use(i18n);

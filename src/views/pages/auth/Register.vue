@@ -98,7 +98,8 @@
 
 <script setup>
 import { ref } from "vue";
-import { register } from './api'
+// import { register } from './api'
+import { authStore } from '@/stores/authStore'
 import AsideImage from './components/AsideImage.vue'
 import ToastService from 'primevue/toastservice';
 import { useToast } from 'primevue/usetoast';
@@ -106,6 +107,7 @@ import { registerSchema } from '@/validations/authSchema.js';
 import { useRouter } from 'vue-router';
 import TermOfUse from '@/components/Modal/TermOfUse.vue';
 
+const auth = authStore();
 const toast = useToast();
 const router = useRouter();
 const loading = ref(false)
@@ -126,7 +128,7 @@ const submit = () => {
     }
 
     loading.value = true
-    register(form.value)
+    auth.register(form.value)
         .then(response => {
             showToastMessage('success', 'Sucesso', 'Usuário criado com successo!', 4000)
             setTimeout(() => {

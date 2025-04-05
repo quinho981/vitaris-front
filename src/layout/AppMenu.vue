@@ -1,9 +1,13 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
 import Signature from '@/components/Modal/Signature.vue';
+import { useUserStore } from '@/stores/userStore'
 
+const userStore = useUserStore();
+
+const FREE_PLAN = 'free';
 const modalHelpAndSupport = ref(false);
 const modalSignatureActive = ref(false);
 
@@ -153,6 +157,14 @@ const model = ref([
     }
 ]);
 
+const planColor = computed(() => {
+    return userStore.plan === FREE_PLAN ? 'bg-blue-500' : 'bg-yellow-500';
+});
+
+const planColorHexdecimal = computed(() => {
+    return userStore.plan === FREE_PLAN ? '#3b82f6' : '#eab308';
+});
+
 const redirectTo = (to) => {
     window.open(to, "_blank");
 };
@@ -213,19 +225,23 @@ const closeSignatureModal = () => {
                 <div class="flex items-center pt-3 pb-3 relative">
                     <div class="relative flex flex-col items-center">
                         <Avatar 
-                            label="T" 
-                            class="mr-3 flex-shrink-0" 
+                            :label="userStore.username.charAt(0)"
+                            :class="{'mr-[8px]': userStore.plan !== 'free'}"
+                            class="mr-3 flex-shrink-0 uppercase" 
                             size="small" 
-                            :style="{ 'background-color': '#14b8a6', color: '#ffffff', border: '2px solid #3b82f6', height: '2.4rem', width: '2.4rem' }" 
+                            :style="{ 'background-color': '#14b8a6', color: '#ffffff', border: `3px solid ${planColorHexdecimal}`, height: '2.4rem', width: '2.4rem' }" 
                             shape="circle">
                         </Avatar> 
-                        <span class="absolute top-[25px] right-[9px] bg-blue-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
-                            {{ $t("sidebar.signature.free") }}
+                        <span 
+                            class="absolute top-[26px] right-[9px] text-white text-xs font-semibold px-2 py-0.5 rounded-full"
+                            :class="planColor"
+                        >
+                            {{ userStore.plan }}
                         </span>
                     </div>
                     <div class="flex flex-col w-full">
-                        <span class="flex justify-start text-base font-bold">Test user</span>
-                        <span class="flex justify-start text-sm font-medium text-gray-500 dark:text-gray-300">test-user111@test.com</span>
+                        <span class="flex justify-start text-base font-bold">{{ userStore.username }}</span>
+                        <span class="flex justify-start text-sm font-medium text-gray-500 dark:text-gray-300">{{ userStore.userEmail }}</span>
                     </div>
                 </div>
             </div>

@@ -67,8 +67,12 @@
 <script setup>
 import { ref } from "vue";
 import AsideImage from './components/AsideImage.vue'
-import { login, getUser } from './api'
 import { useRouter } from 'vue-router';
+import { authStore } from '@/stores/authStore'
+import { useUserStore } from '@/stores/userStore'
+
+const auth = authStore();
+const userStore = useUserStore();
 
 const router = useRouter();
 const loading = ref(false);
@@ -89,8 +93,8 @@ const submit = async () => {
     loading.value = true;
 
     try {
-        await login(form.value);
-        await getUser();
+        await auth.login(form.value);
+        await userStore.getUserInfo();
         router.push({ name: 'home' });
     } catch (error) {
         errorMessage.value = true;
