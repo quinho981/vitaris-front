@@ -33,6 +33,7 @@
                     />
                 </template>
             </Column>
+            <template #empty>{{ $t("transcription.noTranscriptsFound") }}...</template>
         </DataTable>
     </div>
 </template>

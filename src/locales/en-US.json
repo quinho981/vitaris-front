@@ -86,6 +86,7 @@
         "onlyMp3": "Only .mp3 files allowed",
         "testMicrophone": "Test microphone",
         "vitalfyError": "Vitaris may make mistakes. Consider checking important information.",
+        "noTranscriptsFound": "No transcripts found",
         "button": {
             "recordQuery": "Record query",
             "cancelRecord": "Cancel record",
