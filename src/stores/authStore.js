@@ -2,6 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import api from '@/services/axios';
 import Cookies from 'js-cookie'
+import { useUserStore } from '@/stores/userStore'
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 export const authStore = defineStore('auth', () => {
     const token = ref(Cookies.get('token') || null)
@@ -28,14 +32,35 @@ export const authStore = defineStore('auth', () => {
         }
     }
 
-    const logout = () => {
-        token.value = null
+    const logout = async () => {
+        const userStore = useUserStore()
+        const authToken = Cookies.get('token')
 
-        Cookies.remove('id')
-        Cookies.remove('token')
-        Cookies.remove('username')
-        Cookies.remove('user_email')
-        Cookies.remove('plan')
+        try {
+            const response = await api.post('/logout', null, {
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            })
+
+            token.value = null
+            userStore.userId = null
+            userStore.username = null
+            userStore.userEmail = null
+            userStore.plan = null
+            userStore.active = null
+
+            Cookies.remove('id')
+            Cookies.remove('token')
+            Cookies.remove('username')
+            Cookies.remove('user_email')
+            Cookies.remove('plan')
+            Cookies.remove('active')
+            
+            return response.data
+        } catch (error) {
+            return Promise.reject(error)
+        }
     }
 
     const isAuthenticated = computed(() => !!token.value)
