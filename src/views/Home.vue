@@ -38,7 +38,7 @@
                             <span
                                 id="anamnese-result"
                                 ref="typingElements"
-                                class="bg-slate-200 p-2 rounded-xl" 
+                                class="bg-slate-200 dark:bg-[#18181b] p-2 rounded-xl" 
                                 v-html="item"
                             ></span>
                         </li>
@@ -47,10 +47,10 @@
                             class="flex items-center"
                         >
                             <Avatar label="V" class="mr-2" size="small" :style="{ 'background-color': '#2196F3', color: '#ffffff' }" shape="circle"></Avatar>
-                            <div class="inline-flex items-center gap-[3px] bg-slate-200 p-2 rounded-xl">
-                                <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333]"></div>
-                                <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333]"></div>
-                                <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333]"></div>
+                            <div class="inline-flex items-center gap-[3px] bg-slate-200 dark:bg-[#18181b] p-2 rounded-xl">
+                                <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333] dark:bg-slate-400"></div>
+                                <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333] dark:bg-slate-400"></div>
+                                <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333] dark:bg-slate-400"></div>
                             </div>
                         </div>
                     </ul>
@@ -240,6 +240,8 @@ const cancelConversation = () => {
         chat.value = []
         buttonRecognition.value = false
         loadingTranscript.value = false
+
+        setupMicrophoneAnalyser();
     }
 };
 
@@ -325,9 +327,9 @@ watch(() => chat.value, async (newChat) => {
         
         if (lastTextEl) {
             // Se o texto contém HTML, usa innerHTML
-            if (newChat[lastIndex].includes('<')) {
-                typeTextHTML(lastTextEl, newChat[lastIndex])
-            } else {
+            if (!newChat[lastIndex].includes('<')) {
+            //     typeTextHTML(lastTextEl, newChat[lastIndex])
+            // } else {
                 typeText(lastTextEl, newChat[lastIndex])
             }
         }

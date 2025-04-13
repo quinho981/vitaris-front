@@ -1,20 +1,22 @@
+import api from '@/services/axios';
+import Cookies from 'js-cookie';
+
 export const AnamneseService = {
 
     async generator(payload, status) {
+        const token = Cookies.get('token');
         try {
-            const response = await fetch('http://localhost:8000/api/generate-document', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
+            const response = await api.post('/generate-document',
+                {
                     conversation: payload,
-                    status: status
-                })
-            })
-
-            const data = await response.json();
-            return data.content;
+                    status: status,
+                },
+                {   
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            
+            return response.data.content;
         } catch (error) {
             console.error(error);
         }
