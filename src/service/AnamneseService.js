@@ -21,5 +21,4 @@ export const AnamneseService = {
             console.error(error);
         }
     }
-
 }

@@ -5,10 +5,8 @@
         <DataTable 
             :value="transcripts" 
             tableStyle="min-width: 50rem" 
-            paginator 
-            :rows="7" 
-            :rowsPerPageOptions="[7, 10, 20, 50]"
             :loading="loading"
+            scrollable scrollHeight="480px"
         >
             <Column field="code" header="Título" class="w-[88%]">
                 <template #body="{ data }">
@@ -21,20 +19,26 @@
                     <Button 
                         icon="pi pi-trash" 
                         severity="secondary" 
-                        @click="renameItem(data)" 
+                        @click="deleteItem(data)"
                         class="mr-3 mb-2 xl:mb-0" 
                         v-tooltip.top="$t('button.exclude')"
                     />
                     <Button 
                         icon="pi pi-pencil" 
                         severity="primary" 
-                        @click="deleteItem(data)" 
+                        @click="renameItem(data)" 
                         v-tooltip.top="$t('button.rename')"
                     />
                 </template>
             </Column>
             <template #empty>{{ $t("transcription.noTranscriptsFound") }}...</template>
         </DataTable>
+        <Paginator 
+            class="mt-5"
+            :rows="10" 
+            :totalRecords="total" 
+            @page="onPage"
+        ></Paginator>
     </div>
 </template>
 
@@ -44,26 +48,49 @@ import { TranscriptsService } from '@/service/TranscriptsService';
 
 const transcripts = ref([]);
 const loading = ref(false);
+const total = ref(0);
+const page = ref(1);
 
-const index = () => {
+const index = async () => {
     loading.value = true;
 
-    TranscriptsService.index()
-        .then((response) => {
-            transcripts.value = response;
-        }).catch((error) => {
-            console.error("Erro ao carregar os dados:", error);
-        }).finally(() => {
-            loading.value = false;
-        });
+    try {
+        const response = await TranscriptsService.index(page.value);
+
+        transcripts.value = response.transcripts;
+        total.value = response.total;
+    } catch (error) {
+        console.error("Erro ao carregar os dados:", error);   
+    } finally {
+        loading.value = false;
+    }
 }
+
+const onPage = (event) => {
+    page.value = event.page + 1;
+
+    index();
+};
 
 const renameItem = (item) => {
     console.log("Editar", item.id);
 };
 
-const deleteItem = (item) => {
-    console.log("Excluir", item);
+const deleteItem = async (item) => {
+    try {
+        const response = await TranscriptsService.delete(item.id);
+
+        if (response.status === 200) {
+            transcripts.value = transcripts.value.filter(transcript => transcript.id !== item.id);
+            total.value -= 1;
+
+            await index();
+        }
+
+        return response;
+    } catch (error) {
+        console.error("Erro ao excluir o item:", error);
+    }
 };
 
 onMounted(() => {
