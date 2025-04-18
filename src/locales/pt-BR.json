@@ -133,5 +133,15 @@
                 "benefit7": "Compartilhamento de todos documentos gerados"
             }
         }
+    },
+    "dialog": {
+        "exclude": {
+            "title": "Confirmar exclusão",
+            "description": "Você tem certeza de que deseja excluir esta transcrição?",
+            "button": {
+                "cancel": "Cancelar",
+                "confirm": "Confirmar"
+            }
+        }
     }
 }

@@ -19,7 +19,7 @@
                     <Button 
                         icon="pi pi-trash" 
                         severity="secondary" 
-                        @click="deleteItem(data)"
+                        @click="deleteConfirmation(data)"
                         class="mr-3 mb-2 xl:mb-0" 
                         v-tooltip.top="$t('button.exclude')"
                     />
@@ -39,6 +39,14 @@
             :totalRecords="total" 
             @page="onPage"
         ></Paginator>
+
+        <DeleteConfirmation 
+            :active="dialogConfirmation"
+            :item="item"
+            :loading="dialogLoading"
+            @close="dialogConfirmation = false" 
+            @confirm="deleteItem"
+        />
     </div>
 </template>
 
@@ -50,6 +58,9 @@ const transcripts = ref([]);
 const loading = ref(false);
 const total = ref(0);
 const page = ref(1);
+const item = ref({});
+const dialogConfirmation = ref(false);
+const dialogLoading = ref(false);
 
 const index = async () => {
     loading.value = true;
@@ -77,20 +88,29 @@ const renameItem = (item) => {
 };
 
 const deleteItem = async (item) => {
+    dialogLoading.value = true;
+
     try {
         const response = await TranscriptsService.delete(item.id);
 
         if (response.status === 200) {
             transcripts.value = transcripts.value.filter(transcript => transcript.id !== item.id);
             total.value -= 1;
-
+            dialogConfirmation.value = false;
             await index();
         }
 
         return response;
     } catch (error) {
         console.error("Erro ao excluir o item:", error);
+    } finally {
+        dialogLoading.value = false;
     }
+};
+
+const deleteConfirmation = (selectedItem) => {
+    item.value = selectedItem;
+    dialogConfirmation.value = !dialogConfirmation.value;
 };
 
 onMounted(() => {

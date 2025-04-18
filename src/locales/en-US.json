@@ -132,5 +132,15 @@
                 "benefit7": "Sharing of all generated documents"
             }
         }
+    },
+    "dialog": {
+        "exclude": {
+            "title": "Confirm exclusion",
+            "description": "Are you sure you want to exclude this transcription?",
+            "button": {
+                "cancel": "Cancel",
+                "confirm": "Confirm"
+            }
+        }
     }
 }
