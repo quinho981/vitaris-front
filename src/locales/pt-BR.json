@@ -6,6 +6,7 @@
     "button": {
         "accept": "Aceitar",
         "cancel": "Cancelar",
+        "save": "Salvar",
         "close": "Fechar",
         "newTranscription": "Nova transcrição",
         "copyText": "Copiar texto",

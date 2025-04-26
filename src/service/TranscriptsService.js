@@ -24,11 +24,24 @@ export const TranscriptsService = {
             // toast.add({ severity: 'success', summary: 'Error!', detail: 'Tente novamente', life: 4000 });
         }
     },
-
     delete(id) {
         const token = Cookies.get('token');
         try {
             const response = api.delete(`/transcripts/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    },
+    update(data) {
+        const token = Cookies.get('token');
+        try {
+            const response = api.put(`/transcripts`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

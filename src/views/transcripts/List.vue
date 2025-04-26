@@ -1,7 +1,6 @@
 <template>
     <div className="card mr-5">
         <div class="font-semibold text-xl mb-4">{{ $t("transcription.listPage.allTranscripts") }}</div>
-
         <DataTable 
             :value="transcripts" 
             tableStyle="min-width: 50rem" 
@@ -10,25 +9,55 @@
         >
             <Column field="code" header="Título" class="w-[88%]">
                 <template #body="{ data }">
-                    <p class="cursor-pointer">{{data.title}}</p>
+                    <p 
+                        class="cursor-pointer"
+                        v-if="editingId !== data.id"
+                    >
+                        {{data.title}}
+                    </p>
+                    <InputText 
+                        v-else-if="editingId === data.id"
+                        type="text" 
+                        v-model="data.title" 
+                        class="w-full text-base" 
+                    />
                 </template>
             </Column>
-
             <Column header="Ações" >
                 <template #body="{ data }">
-                    <Button 
-                        icon="pi pi-trash" 
-                        severity="secondary" 
-                        @click="deleteConfirmation(data)"
-                        class="mr-3 mb-2 xl:mb-0" 
-                        v-tooltip.top="$t('button.exclude')"
-                    />
-                    <Button 
-                        icon="pi pi-pencil" 
-                        severity="primary" 
-                        @click="renameItem(data)" 
-                        v-tooltip.top="$t('button.rename')"
-                    />
+                    <div v-if="editingId !== data.id">
+                        <Button 
+                            icon="pi pi-trash" 
+                            severity="secondary" 
+                            @click="deleteConfirmation(data)"
+                            class="mr-3 mb-2 xl:mb-0" 
+                            v-tooltip.top="$t('button.exclude')"
+                        />
+                        <Button 
+                            icon="pi pi-pencil" 
+                            severity="primary" 
+                            @click="toggleEdit(data)" 
+                            v-tooltip.top="$t('button.rename')"
+                        />
+                    </div>
+                    <div v-else-if="editingId === data.id">
+                        <Button 
+                            icon="pi pi-times" 
+                            severity="secondary" 
+                            outlined
+                            @click="toggleEdit(data)" 
+                            class="mr-3 mb-2 xl:mb-0" 
+                            v-tooltip.top="$t('button.cancel')"
+                        />
+                        <Button 
+                            icon="pi pi-check" 
+                            severity="primary" 
+                            outlined
+                            @click="renameItem(data)" 
+                            class="mr-3 mb-2 xl:mb-0" 
+                            v-tooltip.top="$t('button.save')"
+                        />
+                    </div>
                 </template>
             </Column>
             <template #empty>{{ $t("transcription.noTranscriptsFound") }}...</template>
@@ -39,7 +68,6 @@
             :totalRecords="total" 
             @page="onPage"
         ></Paginator>
-
         <DeleteConfirmation 
             :active="dialogConfirmation"
             :item="item"
@@ -61,6 +89,7 @@ const page = ref(1);
 const item = ref({});
 const dialogConfirmation = ref(false);
 const dialogLoading = ref(false);
+const editingId = ref(null);
 
 const index = async () => {
     loading.value = true;
@@ -83,10 +112,11 @@ const onPage = (event) => {
     index();
 };
 
-const renameItem = (item) => {
-    console.log("Editar", item.id);
+const toggleEdit = (item) => {
+    editingId.value = editingId.value === item.id ? null : item.id;
 };
 
+// TODO: RETIRAR O TRY..CATCH
 const deleteItem = async (item) => {
     dialogLoading.value = true;
 
@@ -111,6 +141,27 @@ const deleteItem = async (item) => {
 const deleteConfirmation = (selectedItem) => {
     item.value = selectedItem;
     dialogConfirmation.value = !dialogConfirmation.value;
+};
+
+const renameItem = async (item) => {
+    loading.value = true;
+
+    try {
+        const response = await TranscriptsService.update(item);
+
+        if (response.status === 200) {
+            transcripts.value = transcripts.value.map(transcript => 
+                transcript.id === item.id ? { ...transcript, title: item.title } : transcript
+            );
+            editingId.value = null;
+        }
+
+        return response;
+    } catch (error) {
+        console.error("Erro ao renomear o item:", error);
+    } finally {
+        loading.value = false;
+    }
 };
 
 onMounted(() => {
