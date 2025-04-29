@@ -92,7 +92,7 @@ const onPopoverHide = () => {
             </a>
             <router-link v-if="item.to && !item.items && item.visible !== false" @click="itemClick($event, item, index)" :class="[item.class, { 'active-route': checkActiveRoute(item) }]" tabindex="0" :to="item.to">
                 <!-- <i :class="item.icon" class="layout-menuitem-icon"></i> -->
-                <span :class="{'layout-menuitem-text': item.label.length > 29}">
+                <span :class="{'layout-menuitem-text': item.label.length > 29}" class="text-[13.5px]">
                     {{ item.label.slice(0, 29) }}
                 </span>
                 <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
