@@ -92,7 +92,9 @@ const onPopoverHide = () => {
             </a>
             <router-link v-if="item.to && !item.items && item.visible !== false" @click="itemClick($event, item, index)" :class="[item.class, { 'active-route': checkActiveRoute(item) }]" tabindex="0" :to="item.to">
                 <!-- <i :class="item.icon" class="layout-menuitem-icon"></i> -->
-                <span class="layout-menuitem-text">{{ item.label }}</span>  
+                <span :class="{'layout-menuitem-text': item.label.length > 29}">
+                    {{ item.label.slice(0, 29) }}
+                </span>
                 <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
                 <span 
                     :class="[
@@ -130,23 +132,27 @@ const onPopoverHide = () => {
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
 }
-
 .router-link-active .layout-submenu-actions,
 a:hover .layout-submenu-actions,
 router-link:hover .layout-submenu-actions {
     opacity: 1;
 }
-
 .layout-submenu-actions:hover {
     transition: 0.2s;
 }
-
 .actions-visible {
     opacity: 1;
 }
-
 .layout-menu ul a {
     border-radius: 20px !important;
     margin-right: 5px;
+}
+.layout-menuitem-text {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 </style>

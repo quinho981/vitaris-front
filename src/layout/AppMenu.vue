@@ -1,9 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
 import Signature from '@/components/Modal/Signature.vue';
 import { useUserStore } from '@/stores/userStore'
+import { TranscriptsService } from '@/service/TranscriptsService';
 
 const userStore = useUserStore();
 
@@ -157,6 +158,15 @@ const model = ref([
     }
 ]);
 
+const index = async () => {
+    try {
+        const response = await TranscriptsService.indexPerDate();
+        model.value = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 const planColor = computed(() => {
     return userStore.plan === FREE_PLAN ? 'bg-blue-500' : 'bg-yellow-500';
 });
@@ -173,6 +183,9 @@ const closeSignatureModal = () => {
     modalSignatureActive.value = false;
 };
 
+onMounted(() => {
+    index();
+});
 </script>
 
 <template>
@@ -190,7 +203,7 @@ const closeSignatureModal = () => {
         <div class="layout-menu">
             <template v-for="(item, i) in model" :key="item">
                 <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
-                <li v-if="item.separator" class="menu-separator e"></li>
+                <li v-if="item.separator" class="menu-separator"></li>
             </template>
         </div>
         <div class="layout-sidebar-footer border-t dark:border-gray-700">

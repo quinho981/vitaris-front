@@ -24,6 +24,20 @@ export const TranscriptsService = {
             // toast.add({ severity: 'success', summary: 'Error!', detail: 'Tente novamente', life: 4000 });
         }
     },
+    async indexPerDate() {
+        const token = Cookies.get('token');
+        try {
+            const response = await api.get(`/user/transcripts/perDate`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    },
     delete(id) {
         const token = Cookies.get('token');
         try {
