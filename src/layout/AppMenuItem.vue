@@ -152,7 +152,7 @@ router-link:hover .layout-submenu-actions {
     display: inline-block;
     max-width: 100%;
     overflow: hidden;
-    mask-image: linear-gradient(to right, black 85%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 93%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 93%, transparent 100%);
 }
 </style>
