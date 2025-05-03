@@ -5,14 +5,14 @@
                 <ul class="flex text-[1rem]">
                     <li 
                         :class="tabStatus === 'conversation' ? 'border-[#14B8A6]' : ''"
-                        class="p-2 border-b-2 dark:border-[#18181b] dark:text-gray-300 duration-300 cursor-pointer"
+                        class="p-2 border-b-2 dark:border-[#18181b] dark:text-gray-100 duration-300 cursor-pointer"
                         @click="handleClickTab('conversation')"
                     >
                         {{ $t('transcription.tab.conversation') }}
                     </li>
                     <li 
                         :class="tabStatus === 'document' ? 'border-[#14B8A6]' : ''"
-                        class="p-2 border-b-2 dark:border-[#18181b] dark:text-gray-300 duration-300 cursor-pointer"
+                        class="p-2 border-b-2 dark:border-[#18181b] dark:text-gray-100 duration-300 cursor-pointer"
                         @click="handleClickTab('document')"
                     >
                         {{ $t('transcription.tab.transcription') }}
@@ -25,19 +25,19 @@
         </div>
         <ChatResponse
             :active="true"
-            :item="tabStatus === 'conversation' ? chat : document"
+            :item="tabStatus === 'conversation' ? chat : documentContent"
         />
     </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { TranscriptsService } from '@/service/TranscriptsService';
-import {useRoute} from "vue-router";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
-const document = ref([]);
+const documentContent = ref([]);
 const tabStatus = ref('document')
 const toast = useToast();
 const chat = ref([]);
@@ -63,14 +63,14 @@ const handleClickTab = (tab) => {
 
 const showTranscript = async (id) => {
     chat.value = []
-    document.value = []
+    documentContent.value = []
     
     try {
         const response = await TranscriptsService.show(id);
 
         status.value = response.status
         chat.value.push(response.conversation);
-        document.value.push(response.document.result);
+        documentContent.value.push(response.document.result);
     } catch (error) {
         console.error("Erro ao carregar os dados:", error);   
     } 
@@ -87,25 +87,7 @@ onMounted(async () => {
     const id = route.params.id;
     await showTranscript(id);
 });
-
 </script>
 
 <style scoped>
-.dot {
-    animation: bounce 0.6s infinite alternate;
-}
-.dot:nth-child(2) {
-    animation-delay: 0.2s;
-}
-.dot:nth-child(3) {
-    animation-delay: 0.4s;
-}
-@keyframes bounce {
-    from {
-        transform: translateY(0);
-    }
-    to {
-        transform: translateY(-5px); /* Ajuste da altura do "pulo" */
-    }
-}
 </style>
