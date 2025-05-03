@@ -97,6 +97,10 @@
         },
         "listPage": {
             "allTranscripts":"Todas as transcrições"
+        },
+        "tab": {
+            "conversation": "Conversa",
+            "transcription": "Transcrição"
         }
     },
     "sidebar": {

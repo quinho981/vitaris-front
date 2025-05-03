@@ -38,6 +38,20 @@ export const TranscriptsService = {
             console.error(error);
         }
     },
+    async show(id) {
+        const token = Cookies.get('token');
+        try {
+            const response = await api.get(`/transcripts/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    },
     delete(id) {
         const token = Cookies.get('token');
         try {

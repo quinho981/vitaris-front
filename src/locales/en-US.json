@@ -97,6 +97,10 @@
         },
         "listPage": {
             "allTranscripts":"All transcripts"
+        },
+        "tab": {
+            "conversation": "Conversation",
+            "transcription": "Transcription"
         }
     },
     "sidebar": {
