@@ -5,7 +5,7 @@
             class="flex justify-center items-center "
         >
             <Skeleton width="3%" height="35px" class="mb-2 mr-2 !rounded-3xl"></Skeleton>
-            <Skeleton width="55%" height="30dvh" class="mb-2 !rounded-xl"></Skeleton>
+            <Skeleton width="55%" height="15dvh" class="mb-2 !rounded-xl"></Skeleton>
         </div>
         <Fluid
             v-else

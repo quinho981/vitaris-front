@@ -81,7 +81,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { TranscriptsService } from '@/service/TranscriptsService';
+import { useShowToast } from '@/utils/useShowToast';
 
+const { showSuccess, showError } = useShowToast();
 const transcripts = ref([]);
 const loading = ref(false);
 const total = ref(0);
@@ -127,12 +129,13 @@ const deleteItem = async (item) => {
             transcripts.value = transcripts.value.filter(transcript => transcript.id !== item.id);
             total.value -= 1;
             dialogConfirmation.value = false;
+            showSuccess('Sucesso', 'Item excluído com sucesso!', 3000);
             await index();
         }
 
         return response;
     } catch (error) {
-        console.error("Erro ao excluir o item:", error);
+        showError('Erro', 'Erro ao excluir o item!', 3000);
     } finally {
         dialogLoading.value = false;
     }
@@ -154,11 +157,12 @@ const renameItem = async (item) => {
                 transcript.id === item.id ? { ...transcript, title: item.title } : transcript
             );
             editingId.value = null;
+            showSuccess('Sucesso', 'Dados salvos com sucesso!', 3000);
         }
 
         return response;
     } catch (error) {
-        console.error("Erro ao renomear o item:", error);
+        showError('Erro', 'Erro ao salvar os dados!', 3000);
     } finally {
         loading.value = false;
     }

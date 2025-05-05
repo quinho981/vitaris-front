@@ -98,17 +98,17 @@
 
 <script setup>
 import { ref } from "vue";
-// import { register } from './api'
 import { authStore } from '@/stores/authStore'
 import AsideImage from './components/AsideImage.vue'
 import ToastService from 'primevue/toastservice';
-import { useToast } from 'primevue/usetoast';
 import { registerSchema } from '@/validations/authSchema.js';
 import { useRouter } from 'vue-router';
 import TermOfUse from '@/components/Modal/TermOfUse.vue';
+import { useShowToast } from '@/utils/useShowToast';
+
+const { showSuccess, showError } = useShowToast();
 
 const auth = authStore();
-const toast = useToast();
 const router = useRouter();
 const loading = ref(false)
 const activeTerms = ref(false)
@@ -130,13 +130,13 @@ const submit = () => {
     loading.value = true
     auth.register(form.value)
         .then(response => {
-            showToastMessage('success', 'Sucesso', 'Usuário criado com successo!', 4000)
+            showSuccess('Sucesso!', 'Usuário criado com sucesso!', 4000)
             setTimeout(() => {
                 router.push({ name: 'login' });
             }, 1000);
         }).catch(error => {
             loading.value = false
-            showToastMessage('error', 'Erro', 'Erro ao criar usuário!', 4000);
+            showError('Erro!', 'Erro ao criar usuário!', 4000)
         })
 }
 
@@ -156,9 +156,9 @@ const validateForm = () => {
     }
 };
 
-const showToastMessage = (severity, summary, detail, life = 3000) => {
-    toast.add({ severity: severity, summary: summary, detail: detail, life: life });
-}
+// const showToastMessage = (severity, summary, detail, life = 3000) => {
+//     toast.add({ severity: severity, summary: summary, detail: detail, life: life });
+// }
 
 const showTerms = () => {
     activeTerms.value = true;

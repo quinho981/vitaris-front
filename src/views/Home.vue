@@ -165,9 +165,10 @@
 import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import { AnamneseService } from '@/service/AnamneseService';
 import { setupMicrophoneAnalyser } from '@/utils/MicrophoneAnalyser'
-import { useToast } from 'primevue/usetoast';
+import { useShowToast } from '@/utils/useShowToast';
 
-const toast = useToast();
+const { showSuccess, showError } = useShowToast();
+
 const transcribedText = ref('');
 const chat = ref([]);
 const buttonRecognition = ref(false);
@@ -259,7 +260,7 @@ const finishConversation = () => {
                 chat.value.push(response);
             })
             .catch(e => {
-                console.log(e)
+                showError('Erro', 'Erro ao gerar a anamnese. Tente novamente!', 3000)
                 loadingFinish.value = false
             })
             
@@ -277,10 +278,6 @@ const copyText = () => {
     navigator.clipboard.writeText(textToCopy);
     showSuccess('Sucesso!', 'Texto copiado com sucesso!', 3000)
 };
-
-function showSuccess(summary, detail, life) {
-    toast.add({ severity: 'success', summary: summary, detail: detail, life: life });
-}
 
 
 

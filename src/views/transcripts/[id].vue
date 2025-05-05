@@ -32,14 +32,15 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute } from "vue-router";
+import { useShowToast } from '@/utils/useShowToast';
+
+const { showSuccess, showError } = useShowToast();
 
 const route = useRoute();
 const documentContent = ref([]);
 const tabStatus = ref('document')
-const toast = useToast();
 const chat = ref([]);
 const status = ref('finished');
 
@@ -52,10 +53,6 @@ const copyText = () => {
     navigator.clipboard.writeText(textToCopy);
     showSuccess('Sucesso!', 'Texto copiado com sucesso!', 3000)
 };
-
-function showSuccess(summary, detail, life) {
-    toast.add({ severity: 'success', summary: summary, detail: detail, life: life });
-}
 
 const handleClickTab = (tab) => {
     tabStatus.value = tab
@@ -72,7 +69,7 @@ const showTranscript = async (id) => {
         chat.value.push(response.conversation);
         documentContent.value.push(response.document.result);
     } catch (error) {
-        console.error("Erro ao carregar os dados:", error);   
+        showError('Erro', 'Erro ao carregar os dados. Tente novamente!', 3000)  
     } 
 }
 
