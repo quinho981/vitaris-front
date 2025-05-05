@@ -158,10 +158,6 @@ const validateForm = () => {
     }
 };
 
-// const showToastMessage = (severity, summary, detail, life = 3000) => {
-//     toast.add({ severity: severity, summary: summary, detail: detail, life: life });
-// }
-
 const showTerms = () => {
     activeTerms.value = true;
 }
