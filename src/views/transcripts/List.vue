@@ -10,6 +10,7 @@
             <Column field="code" header="Título" class="w-[88%]">
                 <template #body="{ data }">
                     <p 
+                        @click="redirectTo(data)"
                         class="cursor-pointer"
                         v-if="editingId !== data.id"
                     >
@@ -83,9 +84,11 @@ import { ref, onMounted } from 'vue';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useShowToast } from '@/utils/useShowToast';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from "vue-router";
 
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
+const router = useRouter();
 
 const transcripts = ref([]);
 const loading = ref(false);
@@ -170,6 +173,13 @@ const renameItem = async (item) => {
         loading.value = false;
     }
 };
+
+const redirectTo = (data) => {
+    router.push({
+        name: 'transcriptsShow',
+        params: { id: data.id }
+    });
+}
 
 onMounted(() => {
     index();

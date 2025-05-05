@@ -183,6 +183,14 @@ const closeSignatureModal = () => {
     modalSignatureActive.value = false;
 };
 
+const truncate = (text, maxLength) => {
+    if (!text) return '';
+    return (text.length >= maxLength) ? text.slice(0, maxLength) + '...' : text;
+}
+
+const truncatedUsername = computed(() => truncate(userStore.username, 29));
+const truncatedEmail = computed(() => truncate(userStore.userEmail, 35));
+
 onMounted(() => {
     index();
 });
@@ -253,8 +261,12 @@ onMounted(() => {
                         </span>
                     </div>
                     <div class="flex flex-col w-full">
-                        <span class="flex justify-start text-base font-bold">{{ userStore.username }}</span>
-                        <span class="flex justify-start text-sm font-medium text-gray-500 dark:text-gray-300">{{ userStore.userEmail }}</span>
+                        <span class="flex justify-start text-base font-bold">
+                            {{ truncatedUsername }}
+                        </span>
+                        <span class="flex justify-start text-sm font-medium text-gray-500 dark:text-gray-300">
+                            {{ truncatedEmail }}
+                        </span>
                     </div>
                 </div>
             </div>
