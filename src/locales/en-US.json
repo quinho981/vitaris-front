@@ -77,7 +77,19 @@
             "info": "Information"
         },
         "messages": {
-            "wrongUserOrPassword": "Wrong user or password"
+            "wrongUserOrPassword": "Wrong user or password",
+            "itemExcludedSuccessfully": "Item excluded successfully",
+            "itemExcludingError": "Error excluding item",
+            "dataSavedSuccessfully": "Data saved successfully",
+            "dataSavingError": "Error saving data",
+            "dataLoadingError": "Error loading data",
+            "textCopiedSuccessfully": "Text copied successfully",
+            "anamnesisSavedSuccessfully": "Anamnesis saved successfully",
+            "anamnesisSavingError": "Error saving anamnesis",
+            "anamnesisGeneratedSuccessfully": "Anamnesis generated successfully",
+            "anamnesisGeneratingError": "Error generating anamnesis",
+            "userCreatedSuccessfully": "User created successfully",
+            "userCreatingError": "Error creating user"
         }
     },
     "transcription": {

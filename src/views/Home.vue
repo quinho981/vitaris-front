@@ -166,7 +166,9 @@ import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import { AnamneseService } from '@/service/AnamneseService';
 import { setupMicrophoneAnalyser } from '@/utils/MicrophoneAnalyser'
 import { useShowToast } from '@/utils/useShowToast';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
 
 const transcribedText = ref('');
@@ -256,11 +258,11 @@ const finishConversation = () => {
                 chat.value = []
                 status.value = 'finished'
                 loadingFinish.value = false
-                showSuccess('Sucesso!', 'Anamnese gerada com sucesso!', 3000)
+                showSuccess(t('notifications.titles.success'), t('notifications.messages.anamneseGeneratedSuccessfully'), 3000)
                 chat.value.push(response);
             })
             .catch(e => {
-                showError('Erro', 'Erro ao gerar a anamnese. Tente novamente!', 3000)
+                showError(t('notifications.titles.error'), t('notifications.messages.anamnesisGeneratingError'), 3000)
                 loadingFinish.value = false
             })
             
@@ -276,7 +278,7 @@ const stepStatus = (step) => {
 const copyText = () => {
     let textToCopy = document.getElementById("anamnese-result").innerText;
     navigator.clipboard.writeText(textToCopy);
-    showSuccess('Sucesso!', 'Texto copiado com sucesso!', 3000)
+    showSuccess(t('notifications.titles.success'), t('notifications.messages.textCopiedSuccessfully'), 3000)
 };
 
 

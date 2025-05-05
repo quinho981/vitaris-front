@@ -82,8 +82,11 @@
 import { ref, onMounted } from 'vue';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useShowToast } from '@/utils/useShowToast';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
+
 const transcripts = ref([]);
 const loading = ref(false);
 const total = ref(0);
@@ -102,7 +105,7 @@ const index = async () => {
         transcripts.value = response.transcripts;
         total.value = response.total;
     } catch (error) {
-        console.error("Erro ao carregar os dados:", error);   
+        showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000);
     } finally {
         loading.value = false;
     }
@@ -129,13 +132,13 @@ const deleteItem = async (item) => {
             transcripts.value = transcripts.value.filter(transcript => transcript.id !== item.id);
             total.value -= 1;
             dialogConfirmation.value = false;
-            showSuccess('Sucesso', 'Item excluído com sucesso!', 3000);
+            showSuccess(t('notifications.titles.success'), t('notifications.messages.itemExcludedSuccessfully'), 3000);
             await index();
         }
 
         return response;
     } catch (error) {
-        showError('Erro', 'Erro ao excluir o item!', 3000);
+        showError(t('notifications.titles.error'), t('notifications.messages.itemExcludingError'), 3000);
     } finally {
         dialogLoading.value = false;
     }
@@ -157,12 +160,12 @@ const renameItem = async (item) => {
                 transcript.id === item.id ? { ...transcript, title: item.title } : transcript
             );
             editingId.value = null;
-            showSuccess('Sucesso', 'Dados salvos com sucesso!', 3000);
+            showSuccess(t('notifications.titles.success'), t('notifications.messages.dataSavedSuccessfully'), 3000);
         }
 
         return response;
     } catch (error) {
-        showError('Erro', 'Erro ao salvar os dados!', 3000);
+        showError(t('notifications.titles.error'), t('notifications.messages.dataSavingError'), 3000);
     } finally {
         loading.value = false;
     }

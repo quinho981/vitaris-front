@@ -105,7 +105,9 @@ import { registerSchema } from '@/validations/authSchema.js';
 import { useRouter } from 'vue-router';
 import TermOfUse from '@/components/Modal/TermOfUse.vue';
 import { useShowToast } from '@/utils/useShowToast';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
 
 const auth = authStore();
@@ -130,13 +132,13 @@ const submit = () => {
     loading.value = true
     auth.register(form.value)
         .then(response => {
-            showSuccess('Sucesso!', 'Usuário criado com sucesso!', 4000)
+            showSuccess(t('notifications.titles.success'), t('notifications.messages.userCreatedSuccessfully'), 4000)
             setTimeout(() => {
                 router.push({ name: 'login' });
             }, 1000);
         }).catch(error => {
             loading.value = false
-            showError('Erro!', 'Erro ao criar usuário!', 4000)
+            showError(t('notifications.titles.error'), t('notifications.messages.userCreatingError'), 4000)
         })
 }
 

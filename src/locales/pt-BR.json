@@ -77,7 +77,19 @@
             "info": "Informação"
         },
         "messages": {
-            "wrongUserOrPassword": "Usuário ou senha incorretos"
+            "wrongUserOrPassword": "Usuário ou senha incorretos",
+            "itemExcludedSuccessfully": "Item excluído com sucesso",
+            "itemExcludingError": "Erro ao excluir o item",
+            "dataSavedSuccessfully": "Dados salvos com sucesso",
+            "dataSavingError": "Erro ao salvar os dados",
+            "dataLoadingError": "Erro ao carregar os dados. Tente novamente mais tarde.",
+            "textCopiedSuccessfully": "Texto copiado com sucesso",
+            "anamnesisSavedSuccessfully": "Anamnese salva com sucesso",
+            "anamnesisSavingError": "Erro ao salvar a anamnese",
+            "anamnesisGeneratedSuccessfully": "Anamnese gerada com sucesso",
+            "anamnesisGeneratingError": "Erro ao gerar a anamnese",
+            "userCreatedSuccessfully": "Usuário criado com sucesso",
+            "userCreatingError": "Erro ao criar o usuário"
         }
     },
     "transcription": {

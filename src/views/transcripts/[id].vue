@@ -35,7 +35,9 @@ import { ref, watch, onMounted } from 'vue';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute } from "vue-router";
 import { useShowToast } from '@/utils/useShowToast';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
 
 const route = useRoute();
@@ -51,7 +53,7 @@ const stepStatus = (step) => {
 const copyText = () => {
     let textToCopy = document.getElementById("anamnese-result").innerText;
     navigator.clipboard.writeText(textToCopy);
-    showSuccess('Sucesso!', 'Texto copiado com sucesso!', 3000)
+    showSuccess(t('notifications.titles.success'), t('notifications.messages.textCopiedSuccessfully'), 3000)
 };
 
 const handleClickTab = (tab) => {
@@ -69,7 +71,7 @@ const showTranscript = async (id) => {
         chat.value.push(response.conversation);
         documentContent.value.push(response.document.result);
     } catch (error) {
-        showError('Erro', 'Erro ao carregar os dados. Tente novamente!', 3000)  
+        showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000)  
     } 
 }
 
