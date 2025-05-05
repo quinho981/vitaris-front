@@ -213,6 +213,14 @@ onMounted(() => {
                 <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
                 <li v-if="item.separator" class="menu-separator"></li>
             </template>
+            <div v-if="!model.length" class="flex flex-col items-center justify-center px-8 h-full">
+                <img 
+                    class="w-32 mb-4"
+                    src="/demo/images/data-storage.svg"
+                    alt="No transcription finded"
+                />
+                <p>Sem transcrições cadastradas até o momento...</p>
+            </div>
         </div>
         <div class="layout-sidebar-footer border-t dark:border-gray-700">
             <div class="flex flex-col">
@@ -247,14 +255,14 @@ onMounted(() => {
                     <div class="relative flex flex-col items-center">
                         <Avatar 
                             :label="userStore.username.charAt(0)"
-                            :class="{'mr-[8px]': userStore.plan !== 'free'}"
+                            :class="{'mr-[7px]': userStore.plan !== 'free'}"
                             class="mr-3 flex-shrink-0 uppercase" 
                             size="small" 
                             :style="{ 'background-color': '#14b8a6', color: '#ffffff', border: `3px solid ${planColorHexdecimal}`, height: '2.4rem', width: '2.4rem' }" 
                             shape="circle">
                         </Avatar> 
                         <span 
-                            class="absolute top-[26px] right-[9px] text-white text-xs font-semibold px-2 py-0.5 rounded-full"
+                            class="absolute top-[26px] right-[10px] text-white text-xs font-semibold px-2 py-0.5 rounded-full"
                             :class="planColor"
                         >
                             {{ userStore.plan }}
