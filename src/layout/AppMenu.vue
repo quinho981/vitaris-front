@@ -215,13 +215,13 @@ onMounted(() => {
                 <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
                 <li v-if="item.separator" class="menu-separator"></li>
             </template>
-            <div v-if="!model.length" class="flex flex-col items-center justify-center px-8 h-full">
+            <div v-if="!model.length" class="flex flex-col items-center justify-center px-6 h-full pr-[2rem]">
                 <img 
                     class="w-10 mb-4 opacity-65 dark:invert dark:opacity-80"
                     src="/demo/images/issue-loupe.svg"
                     alt="No transcription finded"
                 />
-                <p class="text-sm">Sem transcrições cadastradas até o momento...</p>
+                <p class="text-base">{{ $t('transcription.noTranscriptsRegisteredYet') }}</p>
             </div>
         </div>
         <div class="layout-sidebar-footer border-t dark:border-gray-700">
@@ -248,7 +248,7 @@ onMounted(() => {
                         <div class="text-sm">
                             <ul>
                                 <li class="gradient-text font-bold">{{ $t("button.signature.unlockProPlan") }}</li>
-                                <li>{{ $t("button.signature.onlyRemaining") }} <b>3</b> {{ $t("button.signature.transcriptions") }}</li>
+                                <li class="dark:text-white font-semibold">{{ $t("button.signature.onlyRemaining") }} <b>3</b> {{ $t("button.signature.transcriptions") }}</li>
                             </ul>
                         </div>
                     </div>

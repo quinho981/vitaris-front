@@ -100,6 +100,7 @@
         "testMicrophone": "Test microphone",
         "vitalfyError": "Vitaris may make mistakes. Consider checking important information.",
         "noTranscriptsFound": "No transcripts found",
+        "noTranscriptsRegisteredYet": "No transcripts registered yet...",
         "button": {
             "recordQuery": "Record query",
             "cancelRecord": "Cancel record",

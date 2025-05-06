@@ -100,6 +100,7 @@
         "testMicrophone": "Testar microfone",
         "vitalfyError": "Vitaris pode cometer erros. Considere verificar informações importantes.",
         "noTranscriptsFound": "Nenhuma transcrição encontrada",
+        "noTranscriptsRegisteredYet": "Sem transcrições cadastradas até o momento...",
         "button": {
             "recordQuery": "Gravar consulta",
             "cancelRecord": "Cancelar gravação",
