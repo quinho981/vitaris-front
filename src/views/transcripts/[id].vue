@@ -4,15 +4,15 @@
             <div>
                 <ul class="flex text-[1rem]">
                     <li 
-                        :class="tabStatus === 'conversation' ? 'border-[#14B8A6]' : ''"
-                        class="p-2 border-b-2 dark:border-[#18181b] dark:text-gray-100 duration-300 cursor-pointer"
+                        :class="tabStatus === 'conversation' ? 'border-[#14B8A6]' : 'dark:border-[#18181b]'"
+                        class="p-2 border-b-2 dark:text-gray-300 duration-300 cursor-pointer"
                         @click="handleClickTab('conversation')"
                     >
                         {{ $t('transcription.tab.conversation') }}
                     </li>
                     <li 
-                        :class="tabStatus === 'document' ? 'border-[#14B8A6]' : ''"
-                        class="p-2 border-b-2 dark:border-[#18181b] dark:text-gray-100 duration-300 cursor-pointer"
+                        :class="tabStatus === 'document' ? 'border-[#14B8A6]' : 'dark:border-[#18181b]'"
+                        class="p-2 border-b-2 dark:text-gray-300 duration-300 cursor-pointer"
                         @click="handleClickTab('document')"
                     >
                         {{ $t('transcription.tab.transcription') }}

@@ -61,32 +61,29 @@
                     >
                         {{ $t("transcription.howCanIHelpToday") }}
                     </div>
-                    
+
                     <div
                         v-if="stepStatus('not-started')"  
-                        class="flex flex-wrap"
+                        class="flex flex-col"
                     >
                         <label for="query-content">{{ $t("transcription.queryContext") }}</label>
-                        <Textarea
-                            rows="1"
-                            autoResize  
-                            id="query-content" 
-                            class="text-lg !max-h-44 border !rounded-3xl py-2"
-                            v-model="transcribedText"
-                        />
-                        <span class="pt-1 flex items-center">
-                            {{ $t("transcription.sendAudioFile") }} 
-                            <i 
-                                class="pi pi-info-circle pl-1" 
-                                v-tooltip.top='$t("transcription.onlyMp3")'
-                            ></i> 
-                        </span>
-                    </div>
-
-                    <div class="flex-column">
+                        <div class="flex gap-2">
+                            <Textarea
+                                rows="1"
+                                autoResize  
+                                id="query-content" 
+                                class="text-lg !max-h-44 border "
+                                v-model="transcribedText"
+                            />
+                            <Button 
+                                v-if="stepStatus('not-started')"
+                                icon="pi pi-microphone" 
+                                @click="recordConversation"
+                            />
+                        </div>
                         <div
                             v-if="stepStatus('not-started')" 
-                            class="flex items-center pr-1 py-1"
+                            class="flex items-center pr-1 mt-[0.5px]"
                         >
                             <div class="content-microphone-test mr-1">
                                 <div id="bars-container" class="flex gap-0.5 items-center">
@@ -102,15 +99,6 @@
                             <div class="label-microphone-test">
                                 {{ $t("transcription.testMicrophone") }}
                             </div>
-                        </div>
-                        <div class="pt-1">
-                            <Button 
-                                v-if="stepStatus('not-started')"
-                                icon="pi pi-microphone" 
-                                :label='$t("transcription.button.recordQuery")'
-                                rounded 
-                                @click="recordConversation"
-                            />
                         </div>
                     </div>
                 </div>

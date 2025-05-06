@@ -202,10 +202,9 @@ onMounted(() => {
     <div class="layout-sidebar">
         <div class="px-[1rem]">
             <Button 
-                class="w-full my-2" 
+                class="w-full mt-1 mb-2" 
                 :label='$t("button.newTranscription")' 
                 icon="pi pi-fw pi-plus" 
-                rounded
                 as="router-link"
                 to="/home"
             />

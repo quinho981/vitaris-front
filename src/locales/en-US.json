@@ -98,7 +98,7 @@
         "sendAudioFile": "Send audio file",
         "onlyMp3": "Only .mp3 files allowed",
         "testMicrophone": "Test microphone",
-        "vitalfyError": "Vitaris may make mistakes. Consider checking important information.",
+        "vitalfyError": "Vitalfy may make mistakes. Consider checking important information.",
         "noTranscriptsFound": "No transcripts found",
         "noTranscriptsRegisteredYet": "No transcripts registered yet...",
         "button": {
