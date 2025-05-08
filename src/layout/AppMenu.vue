@@ -12,6 +12,7 @@ const FREE_PLAN = 'free';
 const modalHelpAndSupport = ref(false);
 const modalSignatureActive = ref(false);
 const model = ref([]);
+const loading = ref(false);
 
 // TODO: REMOVE COMMENT
 // const model = ref([
@@ -161,11 +162,14 @@ const model = ref([]);
 // ]);
 
 const index = async () => {
+    loading.value = true;
+
     try {
         const response = await TranscriptsService.indexPerDate();
         model.value = response.data;
+        loading.value = false;
     } catch (error) {
-        console.error(error);
+        loading.value = false;
     }
 }
 
@@ -214,7 +218,14 @@ onMounted(() => {
                 <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
                 <li v-if="item.separator" class="menu-separator"></li>
             </template>
-            <div v-if="!model.length" class="flex flex-col items-center justify-center px-6 h-full pr-[2rem]">
+            <div v-if="loading" class="flex flex-col gap-2 pr-10 pt-3">
+                <Skeleton width="4rem" class="mb-2"></Skeleton>
+                <Skeleton class="mb-2 ml-6"></Skeleton>
+                <Skeleton width="5rem" class="mb-2"></Skeleton>
+                <Skeleton class="mb-2 ml-6"></Skeleton>
+                <Skeleton class="mb-2 ml-6"></Skeleton>
+            </div>
+            <div v-if="!model.length && !loading" class="flex flex-col items-center justify-center px-6 h-full pr-[2rem]">
                 <img 
                     class="w-10 mb-4 opacity-65 dark:invert dark:opacity-80"
                     src="/demo/images/issue-loupe.svg"
