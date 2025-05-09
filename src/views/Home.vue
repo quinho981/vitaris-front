@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="flex items-center justify-between mr-6 font-semibold text-xl">
-            <div v-if="!isEditTitle">
-                {{ $t("newConsultation") }} <i class="pi pi-pencil cursor-pointer" @click="isEditTitle = true"></i>
+        <div class="flex items-center justify-between mr-6 ">
+            <div class="flex items-center cursor-pointer" v-if="!isEditTitle" @click="isEditTitle = true">
+                {{ $t("newConsultation") }} <i class="pi pi-pencil ml-1"></i>
             </div>
             <div 
                 v-else
