@@ -36,7 +36,7 @@
                             {{ $t("signature.modal.signaturePrice", {priceTotal: '4.788,00', pricePromotion: '2.988,00', signatureType: 'ano'}) }}
                         </p>
                     </div>
-                    <Button label="Desbloquear plano Pro" class=" mt-6 mb-5 w-11/12 m-auto" rounded severity="secondary"/>
+                    <Button label="Desbloquear plano Pro" class=" mt-6 mb-5 w-11/12 m-auto"  severity="secondary"/>
                     <p class="text-sm mt-2 pb-2">
                         {{ $t("signature.modal.totalDoctorsDescription", {totalDoctors: 18.001}) }}
                     </p>

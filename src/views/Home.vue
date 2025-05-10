@@ -8,9 +8,9 @@
                 v-else
                 class="flex gap-2"
             >
-                <InputText id="name1" type="text" size="small" class="!rounded-3xl !w-[30rem]" />
-                <Button @click="isEditTitle = false" icon="pi pi-times" severity="secondary" rounded outlined />
-                <Button icon="pi pi-check" rounded />
+                <InputText id="name1" type="text" size="small" class="!w-[30rem]" />
+                <Button @click="isEditTitle = false" icon="pi pi-times" severity="secondary" outlined />
+                <Button icon="pi pi-check" />
             </div>
             <div v-if="stepStatus('finished')">
                 <Button :label='$t("button.copyText")' icon="pi pi-copy" class="p-button-link !m-0 !p-0" @click="copyText" />

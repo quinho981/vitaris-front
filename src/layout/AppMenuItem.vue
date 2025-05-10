@@ -144,8 +144,8 @@ router-link:hover .layout-submenu-actions {
     opacity: 1;
 }
 .layout-menu ul a {
-    border-radius: 20px !important;
-    margin-right: 5px;
+    border-radius: 7px !important;
+    margin-right: 7px;
 }
 .layout-menuitem-text {
     position: relative;

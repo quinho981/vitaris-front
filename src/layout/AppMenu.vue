@@ -236,12 +236,12 @@ onMounted(() => {
         </div>
         <div class="layout-sidebar-footer border-t dark:border-gray-700">
             <div class="flex flex-col">
-                <router-link to="/transcripts/list" class="flex items-center py-2 my-1 mt-2 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-3xl transition-all duration-300">
+                <router-link to="/transcripts/list" class="flex items-center py-2 my-1 mt-2 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-lg transition-all duration-300">
                     <i class="pi pi-fw pi-file-edit !text-sm mr-1 ml-2"></i>
                     <p>{{ $t("sidebar.allTranscripts") }}</p>
                 </router-link>
                 <a 
-                    href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-2xl transition-all duration-300" 
+                    href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-lg transition-all duration-300 !w-full" 
                     @click.prevent="modalHelpAndSupport = !modalHelpAndSupport"
                 >
                     <i class="pi pi-fw pi-phone !text-sm mr-1 ml-2"></i>
@@ -312,7 +312,6 @@ onMounted(() => {
                     class="w-full"
                     :label='$t("sidebar.buttons.feedback")' 
                     icon="pi pi-fw pi-comments " 
-                    rounded
                     severity="secondary"
                     @click='redirectTo("https://wa.me/5571999999999?text=Gostaria%20de%20passar%20um%20feedback")'
                 />
@@ -320,7 +319,6 @@ onMounted(() => {
                     class="w-full"
                     :label='$t("sidebar.buttons.talkToSupport")'
                     icon="pi pi-fw pi-phone " 
-                    rounded
                     severity="secondary"
                     @click='redirectTo("https://wa.me/5571999999999?text=Quero%20de%20solicitar%20suporte")'
                 />
