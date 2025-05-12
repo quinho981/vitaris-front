@@ -14,9 +14,9 @@ const auth = authStore();
             <router-link to="/" class="layout-topbar-logo !gap-0">
                 <img src="/logo-vitalfy.png" alt="VITALFY" class="w-14 h-14" />
 
-                <span >Vitalfy</span>
+                <span >VITALFY</span>
             </router-link>
-            <button class="layout-menu-button layout-topbar-action ml-[7.8rem]" @click="onMenuToggle">
+            <button class="layout-menu-button layout-topbar-action ml-[6.6rem]" @click="onMenuToggle">
                 <i class="pi pi-bars"></i>
             </button>
         </div>
