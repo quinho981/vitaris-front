@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
 import { authStore } from '@/stores/authStore'
@@ -6,6 +7,12 @@ import { authStore } from '@/stores/authStore'
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 
 const auth = authStore();
+
+const op = ref(null)
+
+const toggleMenu = (event) => {
+  op.value.toggle(event)
+}
 </script>
 
 <template>
@@ -55,12 +62,26 @@ const auth = authStore();
                         <i class="pi pi-inbox"></i>
                         <span>Messages</span>
                     </button> -->
-                    <button type="button" class="layout-topbar-action" @click="auth.logout()">
+                    <button type="button" class="layout-topbar-action" @click="toggleMenu">
                         <i class="pi pi-user"></i>
                         <span>Profile</span>
                     </button>
+
+                    <OverlayPanel ref="op">
+                        <div class="flex flex-col gap-2 min-w-[150px]">
+                            <NuxtLink to="/usuario" class="px-3 py-2 hover:bg-gray-100 rounded cursor-pointer">
+                                <i class="pi pi-user-edit mr-2"></i> Meu Perfil
+                            </NuxtLink>
+
+                            <button @click="logout" class="px-3 py-2 hover:bg-gray-100 text-left w-full rounded cursor-pointer">
+                                <i class="pi pi-sign-out mr-2"></i> Sair
+                            </button>
+                        </div>
+                    </OverlayPanel>
                 </div>
             </div>
         </div>
+
+        
     </div>
 </template>

@@ -2,15 +2,15 @@
     <div>
         <div class="flex items-center justify-between mr-6 ">
             <div class="flex items-center cursor-pointer" v-if="!isEditTitle" @click="isEditTitle = true">
-                {{ $t("newConsultation") }} <i class="pi pi-pencil ml-1"></i>
+                {{ title ? title : $t("newConsultation") }} <i class="pi pi-pencil ml-1" v-if="!title"></i>
             </div>
             <div 
                 v-else
                 class="flex gap-2"
             >
-                <InputText id="name1" type="text" size="small" class="!w-[30rem]" />
-                <Button @click="isEditTitle = false" icon="pi pi-times" severity="secondary" outlined />
-                <Button icon="pi pi-check" />
+                <InputText id="name1" type="text" size="small" class="!w-[30rem]" v-model="title"/>
+                <Button @click="title = ''; isEditTitle = false" icon="pi pi-times" severity="secondary" outlined />
+                <Button @click="isEditTitle = false" icon="pi pi-check" />
             </div>
             <div v-if="stepStatus('finished')">
                 <Button :label='$t("button.copyText")' icon="pi pi-copy" class="p-button-link !m-0 !p-0" @click="copyText" />
@@ -115,7 +115,6 @@
                         icon="pi pi-times-circle" 
                         :label='$t("transcription.button.cancelRecord")' 
                         severity="danger"
-                        rounded 
                         @click="cancelConversation"
                     />
                     <Button
@@ -123,7 +122,6 @@
                         icon="pi pi-stop-circle" 
                         :label='$t("transcription.button.pauseRecord")' 
                         severity="warn"
-                        rounded 
                         @click="stopConversation"
                     />
                     <Button
@@ -131,7 +129,6 @@
                         icon="pi pi-play" 
                         :label='$t("transcription.button.continueRecord")' 
                         severity="info"
-                        rounded 
                         @click="recordConversation"
                     />
                     <Button
@@ -139,7 +136,6 @@
                         icon="pi pi-check-circle" 
                         :label='$t("transcription.button.finishRecord")' 
                         :loading="loadingFinish"
-                        rounded 
                         @click="finishConversation"
                     />
                 </div>
@@ -166,6 +162,7 @@ const loadingTranscript = ref(false);
 const loadingFinish = ref(false);
 const status = ref('not-started');
 const isEditTitle = ref(false);
+const title = ref('');
 
 let recognition;
 
