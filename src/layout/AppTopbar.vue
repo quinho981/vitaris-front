@@ -73,7 +73,7 @@ const toggleMenu = (event) => {
                                 <i class="pi pi-user-edit mr-2"></i> Meu Perfil
                             </NuxtLink>
 
-                            <button @click="logout" class="px-3 py-2 hover:bg-gray-100 text-left w-full rounded cursor-pointer">
+                            <button @click="auth.logout()" class="px-3 py-2 hover:bg-gray-100 text-left w-full rounded cursor-pointer">
                                 <i class="pi pi-sign-out mr-2"></i> Sair
                             </button>
                         </div>

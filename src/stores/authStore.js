@@ -41,11 +41,7 @@ export const authStore = defineStore('auth', () => {
             })
 
             token.value = null
-            userStore.userId = null
-            userStore.username = null
-            userStore.userEmail = null
-            userStore.plan = null
-            userStore.active = null
+            userStore.reset()
 
             Cookies.remove('id')
             Cookies.remove('token')

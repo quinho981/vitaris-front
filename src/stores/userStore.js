@@ -35,12 +35,21 @@ export const useUserStore = defineStore('user', () => {
         }
     }
 
+    const reset = () => {
+        userId.value = null
+        username.value = null
+        userEmail.value = null
+        plan.value = null
+        active.value = null
+    }
+
     return {
         userId,
         username,
         userEmail,
         plan,
         active,
-        getUserInfo
+        getUserInfo,
+        reset
     }
 })
