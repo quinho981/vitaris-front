@@ -215,10 +215,15 @@ onMounted(() => {
         </div>
         <div class="layout-menu">
             <template v-for="(item, i) in model" :key="item">
-                <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
+                <app-menu-item
+                    v-if="!item.separator" 
+                    :item="item" 
+                    :index="i"
+                    @refresh-sidebar="index"
+                ></app-menu-item>
                 <li v-if="item.separator" class="menu-separator"></li>
             </template>
-            <div v-if="loading" class="flex flex-col gap-2 pr-10 pt-3">
+            <div v-if="loading && !model.length" class="flex flex-col gap-2 pr-10 pt-3">
                 <Skeleton width="4rem" class="mb-2"></Skeleton>
                 <Skeleton class="mb-2 ml-6"></Skeleton>
                 <Skeleton width="5rem" class="mb-2"></Skeleton>

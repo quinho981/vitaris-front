@@ -243,7 +243,7 @@ const finishConversation = () => {
                 chat.value = []
                 status.value = 'finished'
                 loadingFinish.value = false
-                showSuccess(t('notifications.titles.success'), t('notifications.messages.anamneseGeneratedSuccessfully'), 3000)
+                showSuccess(t('notifications.titles.success'), t('notifications.messages.anamnesisGeneratedSuccessfully'), 3000)
                 chat.value.push(response);
             })
             .catch(e => {

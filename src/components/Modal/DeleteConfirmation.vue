@@ -44,7 +44,7 @@ const props = defineProps({
         required: true
     },
     item: {
-        type: Object,
+        type: Object || String,
         required: true
     },
     loading: {

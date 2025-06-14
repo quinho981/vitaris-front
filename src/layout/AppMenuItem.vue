@@ -2,10 +2,16 @@
 import { useLayout } from '@/layout/composables/layout';
 import { onBeforeMount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { TranscriptsService } from '@/service/TranscriptsService';
+import { useShowToast } from '@/utils/useShowToast';
+import { useI18n } from 'vue-i18n';
 
+const emit = defineEmits(['refresh-sidebar']);
+
+const { t } = useI18n();
 const route = useRoute();
-
 const { layoutState, setActiveMenuItem, onMenuToggle } = useLayout();
+const { showSuccess, showError } = useShowToast();
 
 const props = defineProps({
     item: {
@@ -30,6 +36,9 @@ const isActiveMenu = ref(false);
 const itemKey = ref(null);
 const op = ref();
 const isPopoverVisible = ref(false);
+const dialogConfirmation = ref(false);
+const dialogLoading = ref(false);
+const itemID = ref(null);
 
 onBeforeMount(() => {
     itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
@@ -69,7 +78,7 @@ function checkActiveRoute(item) {
     return route.path === item.to;
 }
 
-const toggle = (event) => {
+const toggle = (event, item) => {
     event.preventDefault();
     event.stopPropagation();
     isPopoverVisible.value = !isPopoverVisible.value;
@@ -79,6 +88,42 @@ const toggle = (event) => {
 const onPopoverHide = () => {
     isPopoverVisible.value = false;
 }
+
+const extractIdFromPath = (path) => {
+    return path ? path.split('/').pop() : null;
+}
+
+const onEdit = () => {
+    const id = extractIdFromPath(props.item.to);
+
+    console.log(`EDITTT ID: ${id}`);
+}
+
+const deleteConfirmation = () => {
+    itemID.value = extractIdFromPath(props.item.to);
+    dialogConfirmation.value = !dialogConfirmation.value;
+};
+
+// TODO: REMOVER TRY/CATCH
+const deleteItem = async (item) => {
+    dialogLoading.value = true;
+
+    try {
+        const response = await TranscriptsService.delete(item);
+
+        if (response.status === 200) {
+            dialogConfirmation.value = false;
+            emit('refresh-sidebar');
+            showSuccess(t('notifications.titles.success'), t('notifications.messages.itemExcludedSuccessfully'), 3000);
+        }
+
+        return response;
+    } catch (error) {
+        showError(t('notifications.titles.error'), t('notifications.messages.itemExcludingError'), 3000);
+    } finally {
+        dialogLoading.value = false;
+    }
+};
 </script>
 
 <template>
@@ -90,8 +135,13 @@ const onPopoverHide = () => {
                 <span class="layout-menuitem-text">{{ item.label }}</span>
                 <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
             </a>
-            <router-link v-if="item.to && !item.items && item.visible !== false" @click="itemClick($event, item, index)" :class="[item.class, { 'active-route': checkActiveRoute(item) }]" tabindex="0" :to="item.to">
-                <!-- <i :class="item.icon" class="layout-menuitem-icon"></i> -->
+            <router-link 
+                v-if="item.to && !item.items && item.visible !== false" 
+                @click="itemClick($event, item, index)" 
+                :class="[item.class, { 'active-route': checkActiveRoute(item) }]" 
+                tabindex="0" 
+                :to="item.to"
+            >
                 <span :class="{'layout-menuitem-text': item.label.length > 29}" class="text-[13.5px]">
                     {{ item.label.slice(0, 29) }}
                 </span>
@@ -102,14 +152,22 @@ const onPopoverHide = () => {
                         { 'actions-visible': isPopoverVisible || checkActiveRoute(item) }
                     ]"
                     v-tooltip.top="$t('form.label.options')"
-                    @click.stop.prevent="toggle"
+                    @click.stop.prevent="toggle($event, item)"
                 >
                     ...
                 </span>
             </router-link>
             <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
                 <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
-                    <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false"></app-menu-item>
+                    <app-menu-item 
+                        v-for="(child, i) in item.items" 
+                        :key="child.to || `${itemKey}-${i}`"  
+                        :index="i" 
+                        :item="child" 
+                        :parentItemKey="itemKey" 
+                        :root="false"
+                        @refresh-sidebar="emit('refresh-sidebar')"
+                    ></app-menu-item>
                 </ul>
             </Transition>
         </li>
@@ -120,10 +178,18 @@ const onPopoverHide = () => {
                     <Button class="w-full !justify-start" :label='$t("button.rename")' plain text icon="pi pi-fw pi-pencil" @click="onEdit" />
                 </li>
                 <li>
-                    <Button class="w-full !justify-start" :label='$t("button.exclude")' plain text icon="pi pi-fw pi-trash" @click="onEdit" />
+                    <Button class="w-full !justify-start" :label='$t("button.exclude")' plain text icon="pi pi-fw pi-trash" @click="deleteConfirmation" />
                 </li>
             </ul>
         </Popover>
+
+        <DeleteConfirmation 
+            :active="dialogConfirmation"
+            :item="itemID"
+            :loading="dialogLoading"
+            @close="dialogConfirmation = false" 
+            @confirm="deleteItem"
+        />
     </div>
 </template>
 
