@@ -12,6 +12,7 @@
         "copyText": "Copiar texto",
         "rename": "Rename",
         "exclude": "Exclude",
+        "leave": "Leave",
         "signature": {
             "unlockProPlan": "Unlock Pro plan",
             "onlyRemaining": "Only remaining",

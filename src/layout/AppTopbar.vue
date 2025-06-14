@@ -3,15 +3,28 @@ import { ref } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
 import { authStore } from '@/stores/authStore'
-
-const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
+import { useRouter } from 'vue-router';
 
 const auth = authStore();
-
-const op = ref(null)
+const router = useRouter();
+const overlayPanel = ref(null)
+const loading = ref(false);
 
 const toggleMenu = (event) => {
-  op.value.toggle(event)
+    overlayPanel.value.toggle(event)
+}
+
+const logout = async () => {
+    loading.value = true;
+
+    try {
+        await auth.logout();
+    } catch (error) {
+        console.error('Logout failed:', error);
+    } finally {
+        loading.value = false;
+        router.push({ name: 'login' });
+    }
 }
 </script>
 
@@ -21,7 +34,7 @@ const toggleMenu = (event) => {
             <router-link to="/" class="layout-topbar-logo !gap-0">
                 <img src="/logo-vitalfy.png" alt="VITALFY" class="w-14 h-14" />
 
-                <span >VITALFY</span>
+                <span>VITALFY</span>
             </router-link>
             <button class="layout-menu-button layout-topbar-action ml-[6.6rem]" @click="onMenuToggle">
                 <i class="pi pi-bars"></i>
@@ -67,15 +80,19 @@ const toggleMenu = (event) => {
                         <span>Profile</span>
                     </button>
 
-                    <OverlayPanel ref="op">
+                    <OverlayPanel ref="overlayPanel">
                         <div class="flex flex-col gap-2 min-w-[150px]">
                             <NuxtLink to="/usuario" class="px-3 py-2 hover:bg-gray-100 rounded cursor-pointer">
                                 <i class="pi pi-user-edit mr-2"></i> Meu Perfil
                             </NuxtLink>
 
-                            <button @click="auth.logout()" class="px-3 py-2 hover:bg-gray-100 text-left w-full rounded cursor-pointer">
-                                <i class="pi pi-sign-out mr-2"></i> Sair
-                            </button>
+                            <Button 
+                                @click="logout" 
+                                :loading="loading" 
+                                icon="pi pi-sign-out" 
+                                :label='$t("button.leave")'
+                                severity="danger" outlined
+                            ></Button>
                         </div>
                     </OverlayPanel>
                 </div>

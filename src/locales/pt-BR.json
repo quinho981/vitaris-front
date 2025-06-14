@@ -12,6 +12,7 @@
         "copyText": "Copiar texto",
         "rename": "Renomear",
         "exclude": "Excluir",
+        "leave": "Sair",
         "signature": {
             "unlockProPlan": "Desbloquear plano Pro",
             "onlyRemaining": "Restam apenas",
