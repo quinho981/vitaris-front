@@ -143,7 +143,7 @@ const deleteItem = async (item) => {
                 :to="item.to"
             >
                 <span :class="{'layout-menuitem-text': item.label.length > 29}" class="text-[13.5px]">
-                    {{ item.label.slice(0, 29) }}
+                    {{ item.label.slice(0, 28) }}
                 </span>
                 <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
                 <span 

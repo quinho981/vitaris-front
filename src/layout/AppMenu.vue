@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
 import Signature from '@/components/Modal/Signature.vue';
@@ -207,7 +207,12 @@ const truncatedEmail = computed(() => truncate(userStore.userEmail, 35));
 
 onMounted(() => {
     index();
+    emitter.on('refresh-sidebar', index)
 });
+
+onBeforeUnmount(() => {
+    emitter.off('refresh-sidebar', index)
+})
 </script>
 
 <template>

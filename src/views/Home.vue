@@ -244,6 +244,9 @@ const finishConversation = () => {
                 chat.value = []
                 status.value = 'finished'
                 loadingFinish.value = false
+
+                emitter.emit('refresh-sidebar')
+
                 showSuccess(t('notifications.titles.success'), t('notifications.messages.anamnesisGeneratedSuccessfully'), 3000)
                 chat.value.push(response);
             })
