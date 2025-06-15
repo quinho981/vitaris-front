@@ -7,7 +7,7 @@
             :loading="loading"
             scrollable scrollHeight="480px"
         >
-            <Column field="code" header="Título" class="w-[88%]">
+            <Column field="code" :header='$t("transcription.listPage.table.title")' class="w-[75%]">
                 <template #body="{ data }">
                     <p 
                         @click="redirectTo(data)"
@@ -24,7 +24,12 @@
                     />
                 </template>
             </Column>
-            <Column header="Ações" >
+            <Column field="created_at" :header='$t("transcription.listPage.table.createdAt")' class="w-[12%]">
+                <template #body="{ data }">
+                    {{ new Date(data.created_at).toLocaleDateString() }}
+                </template>
+            </Column>
+            <Column :header='$t("transcription.listPage.table.actions")' >
                 <template #body="{ data }">
                     <div v-if="editingId !== data.id">
                         <Button 

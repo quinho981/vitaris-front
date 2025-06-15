@@ -110,7 +110,12 @@
             "finishRecord": "Finalizar gravação"
         },
         "listPage": {
-            "allTranscripts":"Todas as transcrições"
+            "allTranscripts":"Todas as transcrições",
+            "table": {
+                "title": "Título",
+                "createdAt": "Criado em",
+                "actions": "Ações"
+            }
         },
         "tab": {
             "conversation": "Conversa",

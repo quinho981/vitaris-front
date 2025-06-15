@@ -110,7 +110,12 @@
             "finishRecord": "Finish record"
         },
         "listPage": {
-            "allTranscripts":"All transcripts"
+            "allTranscripts":"All transcripts",
+            "table": {
+                "title": "Título",
+                "createdAt": "Criado em",
+                "actions": "Ações"
+            }
         },
         "tab": {
             "conversation": "Conversation",

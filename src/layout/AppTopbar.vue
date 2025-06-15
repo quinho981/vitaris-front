@@ -5,6 +5,8 @@ import AppConfigurator from './AppConfigurator.vue';
 import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router';
 
+const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
+
 const auth = authStore();
 const router = useRouter();
 const overlayPanel = ref(null)
