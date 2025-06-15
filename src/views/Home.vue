@@ -151,6 +151,7 @@ import { AnamneseService } from '@/service/AnamneseService';
 import { setupMicrophoneAnalyser } from '@/utils/MicrophoneAnalyser'
 import { useShowToast } from '@/utils/useShowToast';
 import { useI18n } from 'vue-i18n';
+import { emitter } from '@/eventBus';
 
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
@@ -323,17 +324,26 @@ watch(() => chat.value, async (newChat) => {
 // =============================================
 // =============================================
 
+const resetAnamnese = () => {
+    transcribedText.value = '';
+    chat.value = [];
+    status.value = 'not-started';
+    title.value = '';
 
+    setupMicrophoneAnalyser();
+}
 
 onMounted(() => {
     setupMicrophoneAnalyser();    
     setupSpeechRecognition();
+    emitter.on('clear-anamnese', resetAnamnese);
 });
 
 onBeforeUnmount(() => {
     if (recognition) {
         recognition.stop();
     }
+    emitter.off('clear-anamnese', resetAnamnese);
 });
 </script>
 

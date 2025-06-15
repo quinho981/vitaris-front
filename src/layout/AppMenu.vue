@@ -5,8 +5,11 @@ import AppMenuItem from './AppMenuItem.vue';
 import Signature from '@/components/Modal/Signature.vue';
 import { useUserStore } from '@/stores/userStore'
 import { TranscriptsService } from '@/service/TranscriptsService';
+import { emitter } from '@/eventBus';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
+const router = useRouter();
 
 const FREE_PLAN = 'free';
 const modalHelpAndSupport = ref(false);
@@ -161,6 +164,11 @@ const loading = ref(false);
 //     }
 // ]);
 
+const newTranscription = () => {
+    emitter.emit('clear-anamnese'); // resetar variáveis da home e deixar disponível para uma nova transcrição 
+    router.push('/home');
+};
+
 const index = async () => {
     loading.value = true;
 
@@ -205,12 +213,11 @@ onMounted(() => {
 <template>
     <div class="layout-sidebar">
         <div class="px-[1rem]">
-            <Button 
-                class="w-full mt-1 mb-2" 
-                :label='$t("button.newTranscription")' 
-                icon="pi pi-fw pi-plus" 
-                as="router-link"
-                to="/home"
+            <Button
+                class="w-full mt-1 mb-2"
+                :label='$t("button.newTranscription")'
+                icon="pi pi-fw pi-plus"
+                @click="newTranscription"
             />
         </div>
         <div class="layout-menu">
