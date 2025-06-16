@@ -27,12 +27,15 @@
                                 :style="{ 'background-color': '#2196F3', color: '#ffffff' }" 
                                 shape="circle"
                             ></Avatar> 
-                            <span
-                                id="anamnese-result"
-                                ref="typingElements"
-                                class="bg-slate-200 dark:bg-[#18181b] p-2 rounded-xl" 
-                                v-html="itemContent"
-                            ></span>
+                            <div class="flex flex-col">
+                                <span
+                                    id="anamnese-result"
+                                    ref="typingElements"
+                                    class="bg-slate-200 dark:bg-[#18181b] p-2 rounded-xl" 
+                                    v-html="itemContent"
+                                ></span>
+                                <span class="pt-1 text-gray-500 text-xs flex justify-end">{{ formatDate(createdAt) }}</span>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -57,8 +60,23 @@ const props = defineProps({
     item: {
         type: Array,
         default: () => []
+    },
+    createdAt: {
+        type: String,
+        default: ''
     }
 });
+
+const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
 </script>
 
 <style scoped>

@@ -26,6 +26,7 @@
         <ChatResponse
             :active="true"
             :item="tabStatus === 'conversation' ? chat : documentContent"
+            :createdAt="createdAt"
         />
     </div>
 </template>
@@ -45,6 +46,7 @@ const documentContent = ref([]);
 const tabStatus = ref('document')
 const chat = ref([]);
 const status = ref('finished');
+const createdAt = ref('');
 
 const stepStatus = (step) => {
     return step === status.value
@@ -61,15 +63,15 @@ const handleClickTab = (tab) => {
 }
 
 const showTranscript = async (id) => {
-    chat.value = []
-    documentContent.value = []
-    
     try {
         const response = await TranscriptsService.show(id);
+        chat.value = []
+        documentContent.value = []
 
         status.value = response.status
         chat.value.push(response.conversation);
         documentContent.value.push(response.document.result);
+        createdAt.value = response.created_at;
     } catch (error) {
         showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000)  
     } 
