@@ -2,11 +2,11 @@
     <div>
         <div class="flex items-center justify-between mr-6 ">
             <div class="flex items-center cursor-pointer" v-if="!isEditTitle" @click="isEditTitle = true">
-                {{ title ? title : $t("newConsultation") }} <i class="pi pi-pencil ml-1" v-if="!title"></i>
+                {{ title ? title : $t("newConsultation") }} <i class="pi pi-pencil ml-1"></i>
             </div>
             <div 
                 v-else
-                class="flex gap-2"
+                class="flex gap-2 mb-2"
             >
                 <InputText id="name1" type="text" size="small" class="!w-[30rem]" v-model="title"/>
                 <Button @click="title = ''; isEditTitle = false" icon="pi pi-times" severity="secondary" outlined />
@@ -239,7 +239,7 @@ const finishConversation = () => {
         recognition.stop();
 
         loadingFinish.value = true
-        AnamneseService.generator(transcribedText.value, 'finished')
+        AnamneseService.generator(transcribedText.value, title.value, 'finished')
             .then((response) => {
                 chat.value = []
                 status.value = 'finished'
