@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="flex items-center justify-between mr-6 ">
+        <div class="flex items-center justify-between mr-6">
             <div class="flex items-center cursor-pointer" v-if="!isEditTitle" @click="isEditTitle = true">
-                {{ title ? title : $t("newConsultation") }} <i class="pi pi-pencil ml-1"></i>
+                <span v-if="!stepStatus('finished')">{{ title ? title : $t("newConsultation") }} <i class="pi pi-pencil ml-1"></i></span>
             </div>
             <div 
                 v-else
@@ -53,6 +53,10 @@
                                 <div class="dot mt-1 w-1.5 h-1.5 rounded-full bg-[#333] dark:bg-slate-400"></div>
                             </div>
                         </div>
+
+                        <LoadingFinish 
+                            v-if="loadingFinish"
+                        />
                     </ul>
 
                     <div
@@ -116,6 +120,7 @@
                         :label='$t("transcription.button.cancelRecord")' 
                         severity="danger"
                         @click="cancelConversation"
+                        :disabled="loadingFinish"
                     />
                     <Button
                         v-if="stepStatus('in-progress')"
@@ -123,6 +128,7 @@
                         :label='$t("transcription.button.pauseRecord")' 
                         severity="warn"
                         @click="stopConversation"
+                        :disabled="loadingFinish"
                     />
                     <Button
                         v-if="stepStatus('paused')"
