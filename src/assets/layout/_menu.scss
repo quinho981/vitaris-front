@@ -11,6 +11,7 @@
         left var(--layout-section-transition-duration);
     background-color: var(--surface-overlay);
     padding: 0.5rem 0rem 0rem 0rem;
+    border-right: 1px solid var(--surface-border);
 }
 
 .layout-menu {
@@ -19,8 +20,7 @@
     list-style-type: none;
     flex: 1;
     overflow-y: auto;
-    padding-bottom: 1rem;
-    padding-left: 1rem;
+    padding: 0rem 1rem 1rem 1rem;
 
     .layout-root-menuitem {
         > .layout-menuitem-root-text {
@@ -84,7 +84,7 @@
 
             &.active-route {
                 font-weight: 700;
-                color: var(--primary-color);
+                color: var(--primary-color) !important;
             }
 
             &:hover {

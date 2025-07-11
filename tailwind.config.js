@@ -10,6 +10,9 @@ module.exports = {
             lg: '992px',
             xl: '1200px',
             '2xl': '1920px'
-        }
+        },
+        fontFamily: {
+            poppins: ['Poppins', 'sans-serif'],
+        },
     }
 };

@@ -78,73 +78,74 @@ function checkActiveRoute(item) {
     return route.path === item.to;
 }
 
-const toggle = (event, item) => {
-    event.preventDefault();
-    event.stopPropagation();
-    isPopoverVisible.value = !isPopoverVisible.value;
-    op.value.toggle(event);
-}
+// const toggle = (event, item) => {
+//     event.preventDefault();
+//     event.stopPropagation();
+//     isPopoverVisible.value = !isPopoverVisible.value;
+//     op.value.toggle(event);
+// }
 
-const onPopoverHide = () => {
-    isPopoverVisible.value = false;
-}
+// const onPopoverHide = () => {
+//     isPopoverVisible.value = false;
+// }
 
-const extractIdFromPath = (path) => {
-    return path ? path.split('/').pop() : null;
-}
+// const extractIdFromPath = (path) => {
+//     return path ? path.split('/').pop() : null;
+// }
 
-const onEdit = () => {
-    const id = extractIdFromPath(props.item.to);
+// const onEdit = () => {
+//     const id = extractIdFromPath(props.item.to);
 
-    console.log(`EDITTT ID: ${id}`);
-}
+//     console.log(`EDITTT ID: ${id}`);
+// }
 
-const deleteConfirmation = () => {
-    itemID.value = extractIdFromPath(props.item.to);
-    dialogConfirmation.value = !dialogConfirmation.value;
-};
+// const deleteConfirmation = () => {
+//     itemID.value = extractIdFromPath(props.item.to);
+//     dialogConfirmation.value = !dialogConfirmation.value;
+// };
 
-// TODO: REMOVER TRY/CATCH
-const deleteItem = async (item) => {
-    dialogLoading.value = true;
+// // TODO: REMOVER TRY/CATCH
+// const deleteItem = async (item) => {
+//     dialogLoading.value = true;
 
-    try {
-        const response = await TranscriptsService.delete(item);
+//     try {
+//         const response = await TranscriptsService.delete(item);
 
-        if (response.status === 200) {
-            dialogConfirmation.value = false;
-            emit('refresh-sidebar');
-            showSuccess(t('notifications.titles.success'), t('notifications.messages.itemExcludedSuccessfully'), 3000);
-        }
+//         if (response.status === 200) {
+//             dialogConfirmation.value = false;
+//             emit('refresh-sidebar');
+//             showSuccess(t('notifications.titles.success'), t('notifications.messages.itemExcludedSuccessfully'), 3000);
+//         }
 
-        return response;
-    } catch (error) {
-        showError(t('notifications.titles.error'), t('notifications.messages.itemExcludingError'), 3000);
-    } finally {
-        dialogLoading.value = false;
-    }
-};
+//         return response;
+//     } catch (error) {
+//         showError(t('notifications.titles.error'), t('notifications.messages.itemExcludingError'), 3000);
+//     } finally {
+//         dialogLoading.value = false;
+//     }
+// };
 </script>
 
 <template>
     <div>
         <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
-            <div v-if="root && item.visible !== false" class="layout-menuitem-root-text !text-gray-400">{{ item.label }}</div>
-            <a v-if="(!item.to || item.items) && item.visible !== false" :href="item.url" @click="itemClick($event, item, index)" :class="item.class" :target="item.target" tabindex="0">
-                <i :class="item.icon" class="layout-menuitem-icon"></i>
-                <span class="layout-menuitem-text">{{ item.label }}</span>
+            <div v-if="root && item.visible !== false" class="layout-menuitem-root-text !text-gray-400 !text-[13.5px]">{{ item.label }}</div>
+            <a v-if="(!item.to || item.items) && item.visible !== false" :href="item.url" @click="itemClick($event, item, index)" :class="item.class" :target="item.target" tabindex="0" class="!font-semibold ">
+                <i :class="item.icon" class="layout-menuitem-icon !font-semibold"></i>
+                <span class="text-[14px] ">{{ item.label }}</span>
                 <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
             </a>
             <router-link 
                 v-if="item.to && !item.items && item.visible !== false" 
                 @click="itemClick($event, item, index)" 
                 :class="[item.class, { 'active-route': checkActiveRoute(item) }]" 
+                class="!font-semibold "
                 tabindex="0" 
                 :to="item.to"
             >
-                <i :class="item.icon" class="layout-menuitem-icon"></i>
-                <span :class="{'layout-menuitem-text': item.label.length > 29}" class="text-[13.5px]">
-                    {{ item.label.slice(0, 28) }}
+                <i :class="item.icon" class="layout-menuitem-icon !font-semibold"></i>
+                <span class="text-[14px] ">
+                    {{ item.label}}
                 </span>
                 <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
                 <!-- <span 
@@ -173,7 +174,7 @@ const deleteItem = async (item) => {
             </Transition>
         </li>
 
-        <Popover ref="op" @hide="onPopoverHide">
+        <!-- <Popover ref="op" @hide="onPopoverHide">
             <ul>
                 <li >
                     <Button class="w-full !justify-start" :label='$t("button.rename")' plain text icon="pi pi-fw pi-pencil" @click="onEdit" />
@@ -182,15 +183,15 @@ const deleteItem = async (item) => {
                     <Button class="w-full !justify-start" :label='$t("button.exclude")' plain text icon="pi pi-fw pi-trash" @click="deleteConfirmation" />
                 </li>
             </ul>
-        </Popover>
+        </Popover> -->
 
-        <DeleteConfirmation 
+        <!-- <DeleteConfirmation 
             :active="dialogConfirmation"
             :item="itemID"
             :loading="dialogLoading"
             @close="dialogConfirmation = false" 
             @confirm="deleteItem"
-        />
+        /> -->
     </div>
 </template>
 
@@ -210,16 +211,15 @@ router-link:hover .layout-submenu-actions {
 .actions-visible {
     opacity: 1;
 }
-.layout-menu ul a {
-    border-radius: 7px !important;
-    margin-right: 7px;
-}
-.layout-menuitem-text {
-    position: relative;
-    display: inline-block;
-    max-width: 100%;
-    overflow: hidden;
-    mask-image: linear-gradient(to right, black 93%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black 93%, transparent 100%);
-}
+// .layout-menu ul a {
+//     border-radius: 7px !important;
+// }
+// .layout-menuitem-text {
+//     position: relative;
+//     display: inline-block;
+//     max-width: 100%;
+//     overflow: hidden;
+//     mask-image: linear-gradient(to right, black 93%, transparent 100%);
+//     -webkit-mask-image: linear-gradient(to right, black 93%, transparent 100%);
+// }
 </style>
