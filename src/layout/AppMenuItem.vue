@@ -129,7 +129,7 @@ const deleteItem = async (item) => {
 <template>
     <div>
         <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
-            <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
+            <div v-if="root && item.visible !== false" class="layout-menuitem-root-text !text-gray-400">{{ item.label }}</div>
             <a v-if="(!item.to || item.items) && item.visible !== false" :href="item.url" @click="itemClick($event, item, index)" :class="item.class" :target="item.target" tabindex="0">
                 <i :class="item.icon" class="layout-menuitem-icon"></i>
                 <span class="layout-menuitem-text">{{ item.label }}</span>
@@ -142,11 +142,12 @@ const deleteItem = async (item) => {
                 tabindex="0" 
                 :to="item.to"
             >
+                <i :class="item.icon" class="layout-menuitem-icon"></i>
                 <span :class="{'layout-menuitem-text': item.label.length > 29}" class="text-[13.5px]">
                     {{ item.label.slice(0, 28) }}
                 </span>
                 <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
-                <span 
+                <!-- <span 
                     :class="[
                         'layout-submenu-actions text-gray-900 hover:text-gray-500 dark:text-gray-300',
                         { 'actions-visible': isPopoverVisible || checkActiveRoute(item) }
@@ -155,7 +156,7 @@ const deleteItem = async (item) => {
                     @click.stop.prevent="toggle($event, item)"
                 >
                     ...
-                </span>
+                </span> -->
             </router-link>
             <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
                 <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
