@@ -10,9 +10,9 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
-                    path: '/home',
-                    name: 'home',
-                    component: () => import('@/views/Home.vue'),
+                    path: '/transcription',
+                    name: 'transcription',
+                    component: () => import('@/views/transcription/index.vue'),
                     meta: { requiresAuth: true }
                 },
                 {
