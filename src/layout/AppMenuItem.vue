@@ -138,8 +138,8 @@ function checkActiveRoute(item) {
             <router-link 
                 v-if="item.to && !item.items && item.visible !== false" 
                 @click="itemClick($event, item, index)" 
-                :class="[item.class, { 'active-route': checkActiveRoute(item) }]" 
-                class="!font-semibold "
+                :class="[item.class, { 'active-route ': checkActiveRoute(item) }]" 
+                class="!font-semibold"
                 tabindex="0" 
                 :to="item.to"
             >

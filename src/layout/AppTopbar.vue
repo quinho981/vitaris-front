@@ -41,7 +41,7 @@ const logout = async () => {
 
                 <span class="font-poppins text-slate-800 dark:text-slate-300">VITALFY</span>
             </router-link>
-            <button class="layout-menu-button layout-topbar-action ml-[6.6rem]" @click="onMenuToggle">
+            <button class="layout-menu-button layout-topbar-action ml-[5.7rem]" @click="onMenuToggle">
                 <PanelLeft :size="18" />
             </button>
         </div>
