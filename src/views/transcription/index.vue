@@ -54,15 +54,17 @@
                     </div>
                 </div>
             </div>
+
+
+
+            <!-- TODO: TRANSFORMAR EM COMPONENTE -->
             <div class="card w-1/2 flex flex-col">
                 <div class="flex items-center gap-2">
                     <FileText />
                     <p class="font-semibold text-2xl mb-4">Transcrição</p>
                 </div>
                 <p class="mt-1 text-slate-500 dark:text-slate-300">Texto transcrito automaticamente pela IA</p>
-
-
-                <!-- TODO: TRANSFORMAR EM COMPONENTE -->
+                
                 <div class="p-2 my-6 h-full w-full rounded-lg border-[1px] border-surface dark:border-surface flex flex-col gap-y-2">
                     <!-- <p class="text-slate-400">A transcrição aparecerá aqui conforme você grava...</p> -->
                     <div class="user-1 flex">
@@ -88,15 +90,13 @@
                                     <span class="text-xs text-gray-500">14:30</span>
                                     <p class="font-semibold text-sm text-gray-800 ml-1">Médico</p>
                                 </div>
-                                <p class="text-sm text-gray-800 mt-1">Boa tarde! Como está se sentindo sentindo sentindo hoje?</p>
+                                <p class="text-sm text-right text-gray-800 mt-1">Boa tarde! Como está se sentindo sentindo sentindo hoje?</p>
                             </div>
                             <div class="flex-shrink-0 w-10 h-10 rounded-full !bg-gradient-to-br !from-green-500 !to-green-700 text-white flex items-center justify-center font-semibold text-sm ml-3">
                                 Dr
                             </div>
                         </div>
                     </div>
-
-
                 </div>
                 <div class="flex justify-end">
                     <Button class="!bg-gradient-to-br !from-blue-500 !to-blue-700 dark:!text-slate-200 !border-none">
@@ -105,6 +105,8 @@
                     </Button>
                 </div>
             </div>
+
+
         </div>
         <div class="card flex flex-col mt-3">
             <div class="flex items-center gap-2">
