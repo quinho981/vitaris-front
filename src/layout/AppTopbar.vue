@@ -4,6 +4,7 @@ import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
 import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router';
+import { Stethoscope, PanelLeft  } from 'lucide-vue-next';
 
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 
@@ -31,15 +32,17 @@ const logout = async () => {
 </script>
 
 <template>
-    <div class="layout-topbar !border-b-2 dark:border-gray-700">
+    <div class="layout-topbar !border-b-[1px] dark:border-gray-700">
         <div class="layout-topbar-logo-container">
             <router-link to="/" class="layout-topbar-logo !gap-0">
-                <img src="/logo-vitalfy.png" alt="VITALFY" class="w-14 h-14" />
+                <div class="py-[0.6rem] bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg mr-2 text-white dark:text-gray-600">
+                    <Stethoscope :size="20" class="dark:text-slate-300" />
+                </div>
 
-                <span>VITALFY</span>
+                <span class="font-poppins text-slate-800 dark:text-slate-300">VITALFY</span>
             </router-link>
-            <button class="layout-menu-button layout-topbar-action ml-[6.6rem]" @click="onMenuToggle">
-                <i class="pi pi-bars"></i>
+            <button class="layout-menu-button layout-topbar-action ml-[5.7rem]" @click="onMenuToggle">
+                <PanelLeft :size="18" />
             </button>
         </div>
 
