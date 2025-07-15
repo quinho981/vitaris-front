@@ -112,19 +112,19 @@
                 <p class="font-semibold text-2xl mb-4">Análise IA</p>
             </div>
             <p class="mt-1 text-slate-500 dark:text-slate-300">Resumo automático e insights da consulta</p>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-5">
                 <!-- 1) Resumo geral -->
                 <div class="col-span-1 bg-indigo-50 p-4 rounded-lg">
-                    <h3 class="text-sm font-medium text-indigo-700 mb-2">Resumo da conversa</h3>
-                    <p class="text-sm text-gray-700 leading-relaxed">
+                    <h3 class="font-medium text-indigo-700 mb-2">Resumo da conversa</h3>
+                    <p class="text-gray-700 leading-relaxed">
                         Paciente apresenta queixa de dores de cabeça frequentes e estresse elevado. Sugerir rotina de relaxamento e hidratação.
                     </p>
                 </div>
 
                 <!-- 2) Insights-chave -->
                 <div class="col-span-1 bg-green-50 p-4 rounded-lg">
-                    <h3 class="text-sm font-medium text-green-700 mb-2">Insights-chave</h3>
-                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                    <h3 class="font-medium text-green-700 mb-2">Insights-chave</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
                         <li>Ocorrência de dor 3x/semana</li>
                         <li>Nível de estresse: alto</li>
                         <li>Boa adesão ao tratamento anterior</li>
@@ -133,19 +133,19 @@
 
                 <!-- 3) Ações recomendadas -->
                 <div class="col-span-1 bg-yellow-50 p-4 rounded-lg">
-                    <h3 class="text-sm font-medium text-yellow-800 mb-2">Próximos passos</h3>
+                    <h3 class="font-medium text-yellow-800 mb-2">Próximos passos</h3>
                     <ul class="space-y-2">
                         <li class="flex items-center">
                             <i class="lucide-check-circle text-yellow-600 mr-2"></i>
-                            <span class="text-sm text-gray-800">Iniciar protocolo de relaxamento diário</span>
+                            <span class="text-gray-800">Iniciar protocolo de relaxamento diário</span>
                         </li>
                         <li class="flex items-center">
                             <i class="lucide-droplet text-yellow-600 mr-2"></i>
-                            <span class="text-sm text-gray-800">Aumentar ingestão hídrica para 2L/dia</span>
+                            <span class="text-gray-800">Aumentar ingestão hídrica para 2L/dia</span>
                         </li>
                         <li class="flex items-center">
                             <i class="lucide-calendar text-yellow-600 mr-2"></i>
-                            <span class="text-sm text-gray-800">Retorno em 15 dias</span>
+                            <span class="text-gray-800">Retorno em 15 dias</span>
                         </li>
                     </ul>
                 </div>

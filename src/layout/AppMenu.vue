@@ -24,7 +24,7 @@ const model = ref([
         items: [
             { label: 'Transcrição', icon: 'pi pi-fw pi-microphone', to: '/transcription', visible: true },
             { label: 'Histórico', icon: 'pi pi-fw pi-history', to: '/transcripts/list', visible: true },
-            { label: 'Templates', icon: 'pi pi-fw pi-file', to: '/uikit/overlay', visible: true },
+            { label: 'Templates', icon: 'pi pi-fw pi-file', to: '/templates', visible: true },
             { label: 'Pacientes', icon: 'pi pi-fw pi-users', to: '/uikit/panel', visible: true }
         ]
     },
