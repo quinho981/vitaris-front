@@ -7,7 +7,10 @@
         <div class="flex flex-col gap-y-4">
 
             <div class="card">
-                <InputText v-model="searchQuery" placeholder="Pesquisar transcrições..." class="w-full" />
+                <IconField>
+                    <InputIcon class="pi pi-search" />
+                    <InputText v-model="searchQuery" placeholder="Pesquisar templates..." class="w-full" />
+                </IconField>
             </div>
             <div class="flex flex-col gap-y-4">
                 <div class="flex gap-x-4">

@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores/userStore'
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { emitter } from '@/eventBus';
 import { useRouter } from 'vue-router';
+import { CircleQuestionMark } from 'lucide-vue-next';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -262,13 +263,14 @@ onBeforeUnmount(() => {
         <div class="layout-sidebar-footer border-t dark:border-gray-700">
             <div class="flex flex-col">
                 <a 
-                    href="#" class="flex items-center py-2 my-1 hover:bg-[#f1f5f9] dark:hover:bg-[#27272a] rounded-lg transition-all duration-300 !w-full" 
+                    href="#" class="flex items-center gap-x-2 p-[8.4px] mt-2 hover:bg-surface-100 dark:hover:bg-[#27272a] rounded-lg transition-all duration-300 !w-full text-[14px] font-semibold" 
                     @click.prevent="modalHelpAndSupport = !modalHelpAndSupport"
                 >
-                    <i class="pi pi-fw pi-phone !text-sm mr-1 ml-2"></i>
+                    <CircleQuestionMark :size="18" />
                     <p>{{ $t("sidebar.helpAndSupport") }}</p>
                 </a>
-                <div 
+
+                <!-- <div 
                     class="bg-gradient-to-r from-teal-500 to-green-400 rounded-[5px] p-[0.150rem] my-1"
                     @click="modalSignatureActive = !modalSignatureActive"
                 >
@@ -283,7 +285,8 @@ onBeforeUnmount(() => {
                             </ul>
                         </div>
                     </div>
-                </div>
+                </div> -->
+
                 <!-- <div class="flex border-2 border-solid border-[#99f6e4] bg-[#dff7f5] p-2 rounded-lg mt-1">
                     <div class="flex my-1">
                         <Avatar label="V" class="mr-2 font-black" size="medium" :style="{ 'background-color': '#14b8a6', color: '#ffffff' }">
@@ -301,9 +304,9 @@ onBeforeUnmount(() => {
                         <Avatar 
                             :label="userStore.username.charAt(0)"
                             :class="{'mr-[8px]': userStore.plan !== 'free'}"
-                            class="mr-3 flex-shrink-0 uppercase" 
+                            class="mr-3 flex-shrink-0 uppercase !bg-gradient-to-br !from-blue-500 !to-blue-700" 
                             size="small" 
-                            :style="{ 'background-color': '#14b8a6', color: '#ffffff', border: `3px solid ${planColorHexdecimal}`, height: '2.4rem', width: '2.4rem' }" 
+                            :style="{ color: '#ffffff', border: `3px solid ${planColorHexdecimal}`, height: '2.4rem', width: '2.4rem' }" 
                             shape="circle">
                         </Avatar> 
                         <span 
