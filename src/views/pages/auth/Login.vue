@@ -95,7 +95,7 @@ const submit = async () => {
     try {
         await auth.login(form.value);
         await userStore.getUserInfo();
-        router.push({ name: 'transcription' });
+        router.push({ name: 'dashboard' });
     } catch (error) {
         errorMessage.value = true;
     } finally {

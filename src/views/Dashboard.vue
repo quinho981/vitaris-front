@@ -2,7 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import { ProductService } from '@/service/ProductService';
 import { onMounted, ref, watch } from 'vue';
-import { Mic, FileText, Clock } from 'lucide-vue-next';
+import { Mic, FileText, Clock, Eye, Download, OctagonAlert, Timer } from 'lucide-vue-next';
 
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
 
@@ -99,6 +99,120 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
 });
+
+
+
+
+
+
+
+
+
+
+const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,       // permite ao chart respeitar o tamanho do container
+};
+
+const pieData = ref(null);
+const pieOptions = ref(null);
+const lineData = ref(null);
+const lineOptions = ref(null);
+
+onMounted(() => {
+    setColorOptions();
+});
+
+function setColorOptions() {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--text-color');
+    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+    const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+
+    pieData.value = {
+        labels: ['Retorno', 'Urgência', 'Consulta inicial'],
+        datasets: [
+            {
+                data: [540, 325, 702],
+                backgroundColor: [documentStyle.getPropertyValue('--p-indigo-500'), documentStyle.getPropertyValue('--p-purple-500'), documentStyle.getPropertyValue('--p-teal-500')],
+                hoverBackgroundColor: [documentStyle.getPropertyValue('--p-indigo-400'), documentStyle.getPropertyValue('--p-purple-400'), documentStyle.getPropertyValue('--p-teal-400')]
+            }
+        ]
+    };
+
+    pieOptions.value = {
+        ...commonOptions,
+        plugins: {
+            legend: {
+                labels: {
+                    usePointStyle: true,
+                    color: textColor
+                }
+            }
+        }
+    };
+
+    lineData.value = {
+        labels: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+        datasets: [
+            {
+                label: 'Transcrições',
+                data: [65, 59, 80, 81, 56, 55, 40],
+                fill: false,
+                backgroundColor: documentStyle.getPropertyValue('--p-primary-500'),
+                borderColor: documentStyle.getPropertyValue('--p-primary-500'),
+                tension: 0.4
+            },
+            // {
+            //     label: 'Second Dataset',
+            //     data: [28, 48, 40, 19, 86, 27, 90],
+            //     fill: false,
+            //     backgroundColor: documentStyle.getPropertyValue('--p-primary-200'),
+            //     borderColor: documentStyle.getPropertyValue('--p-primary-200'),
+            //     tension: 0.4
+            // }
+        ]
+    };
+
+    lineOptions.value = {
+        ...commonOptions,
+        plugins: {
+            legend: {
+                labels: {
+                    fontColor: textColor
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: textColorSecondary
+                },
+                grid: {
+                    color: surfaceBorder,
+                    drawBorder: false
+                }
+            },
+            y: {
+                ticks: {
+                    color: textColorSecondary
+                },
+                grid: {
+                    color: surfaceBorder,
+                    drawBorder: false
+                }
+            }
+        }
+    };
+}
+
+watch(
+    [getPrimary, getSurface, isDarkTheme],
+    () => {
+        setColorOptions();
+    },
+    { immediate: true }
+);
 </script>
 
 <template>
@@ -109,14 +223,18 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                 <p class="my-1 text-lg">Bem-vindo de volta, Dr. Silva</p>
             </div>
             <div>
-                <Button class="!bg-gradient-to-br !from-blue-500 !to-blue-700 !text-white !text-[14px] !font-semibold !p-3">
+                <router-link
+                    :to="{ name: 'transcription' }"
+                    class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[14px] !font-semibold !p-3 flex items-center gap-2 hover:!from-blue-600 hover:!to-blue-800 duration-300"
+                >
                     <Mic :size="18" />
                     Nova Transcrição
-                </Button>
+                </router-link>
+
             </div>
         </div>
         <div class="grid grid-cols-12 gap-8">
-            <div class="col-span-12 lg:col-span-6 xl:col-span-3 hover:shadow-md transition-shadow duration-300 rounded-lg">
+            <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
                 <div class="card mb-0">
                     <div class="flex justify-between items-end mb-4">
                         <div>
@@ -132,7 +250,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                     <!-- <span class="text-muted-color">since last visit</span> -->
                 </div>
             </div>
-            <div class="col-span-12 lg:col-span-6 xl:col-span-3 hover:shadow-md transition-shadow duration-300 rounded-lg">
+            <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
                 <div class="card mb-0">
                     <div class="flex justify-between items-end mb-4">
                         <div>
@@ -148,38 +266,191 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                     <!-- <span class="text-muted-color">since last visit</span> -->
                 </div>
             </div>
-            <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+            <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
                 <div class="card mb-0">
-                    <div class="flex justify-between mb-4">
+                    <div class="flex justify-between items-end mb-4">
                         <div>
-                            <span class="block text-muted-color font-medium mb-4">Customers</span>
-                            <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">28441</div>
+                            <span class="block font-semibold mb-4">Transcrições urgentes</span>
+                            <div class="text-surface-900 dark:text-surface-0 font-black text-3xl">2h 15m</div>
                         </div>
-                        <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                            <i class="pi pi-users text-cyan-500 !text-xl"></i>
+                        <div class="flex items-center justify-center bg-red-100 dark:bg-red-400/10 rounded-full" style="width: 3rem; height: 3rem">
+                            <!-- <i class="pi pi-shopping-cart text-red-500 !text-xl"></i> -->
+                            <OctagonAlert :size="22" class="text-red-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">520 </span>
-                    <span class="text-muted-color">newly registered</span>
+                    <span class="text-primary font-medium">+45m vs ontem</span>
+                    <!-- <span class="text-muted-color">since last visit</span> -->
                 </div>
             </div>
-            <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+            <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
                 <div class="card mb-0">
-                    <div class="flex justify-between mb-4">
+                    <div class="flex justify-between items-end mb-4">
                         <div>
-                            <span class="block text-muted-color font-medium mb-4">Comments</span>
-                            <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">152 Unread</div>
+                            <span class="block font-semibold mb-4">Média de duração</span>
+                            <div class="text-surface-900 dark:text-surface-0 font-black text-3xl">3min</div>
                         </div>
-                        <div class="flex items-center justify-center bg-purple-100 dark:bg-purple-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                            <i class="pi pi-comment text-purple-500 !text-xl"></i>
+                        <div class="flex items-center justify-center bg-purple-100 dark:bg-purple-400/10 rounded-full" style="width: 3rem; height: 3rem">
+                            <!-- <i class="pi pi-shopping-cart text-purple-500 !text-xl"></i> -->
+                            <Timer :size="22" class="text-purple-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">85 </span>
-                    <span class="text-muted-color">responded</span>
+                    <span class="text-primary font-medium">+1 vs ontem</span>
+                    <!-- <span class="text-muted-color">since last visit</span> -->
+                </div>
+            </div>
+            
+            
+            <div class="card col-span-12">
+                <div class="flex items-center justify-between">
+                    <p class="font-semibold text-2xl">Transcrições recentes</p>
+                    <router-link
+  :to="{ name: 'transcriptsList' }"
+  class="p-button p-button-secondary flex items-center justify-center gap-2"
+>
+  Ver todas
+</router-link>
+                </div>
+                <div class="border-[1px] border-surface p-3 rounded-lg mt-4 hover:border-blue-400 duration-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-x-3">
+                            <div class="p-3 rounded-full !bg-gradient-to-br !from-blue-500 !to-blue-700">
+                                <FileText class="text-white dark:text-surface-200" />
+                            </div>
+                            <div class="flex flex-col">
+                                <h4 class="text-lg font-bold">Maria Santos</h4>
+                                <p>Consulta Geral • 18m</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-x-2">
+                            <p>
+                                <Tag severity="secondary" value="Oftalmologia" rounded></Tag>
+                            </p>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Eye :size="22" />
+                            </Button>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Download :size="22" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-[1px] border-surface p-3 rounded-lg mt-4 hover:border-blue-300 duration-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-x-3">
+                            <div class="p-3 rounded-full !bg-gradient-to-br !from-blue-500 !to-blue-700">
+                                <FileText class="text-white dark:text-surface-200" />
+                            </div>
+                            <div class="flex flex-col">
+                                <h4 class="text-lg font-bold">Maria Santos</h4>
+                                <p>Consulta Geral • 18m</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-x-2">
+                            <p>
+                                <Tag severity="secondary" value="Oftalmologia" rounded></Tag>
+                            </p>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Eye :size="22" />
+                            </Button>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Download :size="22" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-[1px] border-surface p-3 rounded-lg mt-4 hover:border-blue-300 duration-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-x-3">
+                            <div class="p-3 rounded-full !bg-gradient-to-br !from-blue-500 !to-blue-700">
+                                <FileText class="text-white dark:text-surface-200" />
+                            </div>
+                            <div class="flex flex-col">
+                                <h4 class="text-lg font-bold">Maria Santos</h4>
+                                <p>Consulta Geral • 18m</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-x-2">
+                            <p>
+                                <Tag severity="secondary" value="Oftalmologia" rounded></Tag>
+                            </p>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Eye :size="22" />
+                            </Button>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Download :size="22" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-[1px] border-surface p-3 rounded-lg mt-4 hover:border-blue-300 duration-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-x-3">
+                            <div class="p-3 rounded-full !bg-gradient-to-br !from-blue-500 !to-blue-700">
+                                <FileText class="text-white dark:text-surface-200" />
+                            </div>
+                            <div class="flex flex-col">
+                                <h4 class="text-lg font-bold">Maria Santos</h4>
+                                <p>Consulta Geral • 18m</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-x-2">
+                            <p>
+                                <Tag severity="secondary" value="Oftalmologia" rounded></Tag>
+                            </p>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Eye :size="22" />
+                            </Button>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Download :size="22" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-[1px] border-surface p-3 rounded-lg mt-4 hover:border-blue-300 duration-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-x-3">
+                            <div class="p-3 rounded-full !bg-gradient-to-br !from-blue-500 !to-blue-700">
+                                <FileText class="text-white dark:text-surface-200" />
+                            </div>
+                            <div class="flex flex-col">
+                                <h4 class="text-lg font-bold">Maria Santos</h4>
+                                <p>Consulta Geral • 18m</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-x-2">
+                            <p>
+                                <Tag severity="secondary" value="Oftalmologia" rounded></Tag>
+                            </p>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Eye :size="22" />
+                            </Button>
+                            <Button label="Secondary" severity="secondary" text>
+                                <Download :size="22" />
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-span-12 xl:col-span-6">
+            <div class="col-span-12 lg:col-span-6">
+                <div class="card">
+                    <p class="font-semibold text-2xl mb-4">Transcrições na última semana</p>
+                    <Chart type="line" :data="lineData" :options="lineOptions" class="w-full !h-80"></Chart>
+                </div>
+            </div>
+
+            <div class="col-span-12 lg:col-span-6">
+                <div class="card">
+                    <p class="font-semibold text-2xl mb-4">Transcrições por tipo de consulta</p>
+                    <Chart type="pie" :data="pieData" :options="pieOptions" class="w-full !h-80"></Chart>
+                </div>
+            </div>
+
+            <!-- <div class="col-span-12 xl:col-span-6">
                 <div class="card">
                     <div class="font-semibold text-xl mb-4">Recent Sales</div>
                     <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
@@ -355,7 +626,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
                         </li>
                     </ul>
                 </div>
-            </div>
+            </div> -->
         </div>
     </section>
 </template>
