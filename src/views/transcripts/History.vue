@@ -2,24 +2,31 @@
   <div>
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="font-bold text-3xl mb-1">Transcrições</h1>
-        <p class="text-gray-500 text-base">Gerencie e organize suas transcrições médicas</p>
+        <h1 class="text-3xl font-bold text-gray-900">Transcrições</h1>
+        <p class="text-gray-600 mt-1">Gerencie e organize suas transcrições médicas</p>
       </div>
       <div class="flex gap-2">
-        <Button icon="pi pi-filter" label="Filtros" outlined class="!h-10" />
-        <Button icon="pi pi-plus" label="Nova Transcrição" class="!h-10" @click="goToNewTranscription" />
+        <Button icon="pi pi-filter" label="Filtros" outlined class="!h-10 !text-slate-950 !bg-white !border-zinc-200" />
+        <Button icon="pi pi-plus" label="Nova Transcrição" class="!h-10 !bg-slate-950 !border-none " @click="goToNewTranscription" />
       </div>
     </div>
     <div class="bg-white dark:bg-[#18181b] rounded-lg shadow p-4 mb-6">
         <div class="flex gap-4 mb-4 items-center">
-          <Button :class="tab === 'documents' ? 'bg-slate-200 dark:bg-[#27272a]' : ''" class="flex-1" @click="tab = 'documents'">Documentos</Button>
-          <Button :class="tab === 'templates' ? 'bg-slate-200 dark:bg-[#27272a]' : ''" class="flex-1" @click="tab = 'templates'">Templates</Button>
-          <Button :class="tab === 'archived' ? 'bg-slate-200 dark:bg-[#27272a]' : ''" class="flex-1" @click="tab = 'archived'">Arquivados</Button>
+                         <SelectButton 
+             v-model="value" 
+             :options="options" 
+             size="large"
+             :pt="{
+                root: {
+                    button: {style: 'color: black, fontWeight: bold'}
+                }
+             }"
+             />
         </div>
         <div class="flex gap-4 mb-4">
         <InputText v-model="search" placeholder="Buscar transcrições..." class="flex-1" />
-        <Button label="Por Data" outlined />
-        <Button label="Por Categoria" outlined />
+        <Button label="Por Data" outlined class="!text-slate-950 !border-zinc-200"/>
+        <Button label="Por Categoria" outlined class="!text-slate-950 !border-zinc-200"/>
       </div>
     </div>
     <div class="bg-white dark:bg-[#18181b] rounded-lg shadow p-4 mb-6">
@@ -67,6 +74,9 @@ const { showSuccess, showError } = useShowToast();
 const transcripts = ref([]);
 const search = ref('');
 const tab = ref('documents');
+
+const value = ref('Documentos');
+const options = ref(['Documentos','Templates','Arquivados']);
 
 const fetchTranscripts = async () => {
   try {
@@ -133,4 +143,16 @@ const deleteTranscript = async (item) => {
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
   padding: 2rem;
 }
+
+:deep(.p-selectbutton, ) {
+  width: 100% !important;
+}
+
+:deep(.p-togglebutton) {
+  font-weight: bold !important;
+  width: 100% !important;
+  font-size: 15px;
+  height: 3.5rem;
+}
+
 </style> 
