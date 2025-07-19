@@ -142,6 +142,12 @@ const router = createRouter({
                     meta: { requiresAuth: true }
                 },
                 {
+                    path: '/transcripts/history',
+                    name: 'transcriptsHistory',
+                    component: () => import('@/views/transcripts/History.vue'),
+                    meta: { requiresAuth: true }
+                },
+                {
                     path: '/transcripts/:id',
                     name: 'transcriptsShow',
                     component: () => import('@/views/transcripts/[id].vue'),
