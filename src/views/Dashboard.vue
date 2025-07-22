@@ -230,7 +230,6 @@ watch(
                     <Mic :size="18" />
                     Nova Transcrição
                 </router-link>
-
             </div>
         </div>
         <div class="grid grid-cols-12 gap-8">
@@ -304,11 +303,11 @@ watch(
                 <div class="flex items-center justify-between">
                     <p class="font-semibold text-2xl">Transcrições recentes</p>
                     <router-link
-  :to="{ name: 'transcriptsList' }"
-  class="p-button p-button-secondary flex items-center justify-center gap-2"
->
-  Ver todas
-</router-link>
+                        :to="{ name: 'transcriptsList' }"
+                        class="p-button p-button-secondary flex items-center justify-center gap-2"
+                    >
+                        Ver todas
+                    </router-link>
                 </div>
                 <div class="border-[1px] border-surface p-3 rounded-lg mt-4 hover:border-blue-400 duration-200">
                     <div class="flex items-center justify-between">
