@@ -1,65 +1,90 @@
 <template>
-  <div>
-    <div class="flex items-center justify-between mb-6">
+  <section>
+    <div class="flex items-center justify-between mb-3 py-3">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900">Transcrições</h1>
-        <p class="text-gray-600 mt-1">Gerencie e organize suas transcrições médicas</p>
+        <h1 class="text-3xl font-bold">Histórico de transcrições</h1>
+        <p class="my-1 text-lg">Gerencie e organize suas transcrições médicas</p>
       </div>
       <div class="flex gap-2">
-        <Button icon="pi pi-filter" label="Filtros" outlined class="!h-10 !text-slate-950 !bg-white !border-zinc-200" />
-        <Button icon="pi pi-plus" label="Nova Transcrição" class="!h-10 !bg-slate-950 !border-none " @click="goToNewTranscription" />
+        <Button icon="pi pi-filter" label="Filtros" outlined class="!text-slate-950 !bg-white !border-zinc-200" />
+        <router-link
+          :to="{ name: 'transcription' }"
+          class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[14px] !font-semibold !p-3 flex items-center gap-2 hover:!from-blue-600 hover:!to-blue-800 duration-300"
+        >
+          <Mic :size="18" />
+          Nova Transcrição
+        </router-link>
       </div>
     </div>
-    <div class="bg-white dark:bg-[#18181b] rounded-lg shadow p-4 mb-6">
-        <div class="flex gap-4 mb-4 items-center">
-                         <SelectButton 
-             v-model="value" 
-             :options="options" 
-             size="large"
-             :pt="{
-                root: {
-                    button: {style: 'color: black, fontWeight: bold'}
-                }
-             }"
-             />
-        </div>
-        <div class="flex gap-4 mb-4">
-        <InputText v-model="search" placeholder="Buscar transcrições..." class="flex-1" />
+    <div class="card mb-5">
+      <div class="flex gap-4 mb-4 items-center">
+        <SelectButton 
+          v-model="value" 
+          :options="options" 
+          size="large"
+          :pt="{
+            root: {
+              button: {style: 'color: black, fontWeight: bold'}
+            }
+          }"
+        />
+      </div>
+      <div class="flex gap-4 !mt-5">
+        <IconField class="flex-1">
+          <InputIcon class="pi pi-search" />
+          <InputText v-model="search" placeholder="Buscar transcrições..." class="w-full" />
+        </IconField>
         <Button label="Por Data" outlined class="!text-slate-950 !border-zinc-200"/>
         <Button label="Por Categoria" outlined class="!text-slate-950 !border-zinc-200"/>
       </div>
     </div>
-    <div class="bg-white dark:bg-[#18181b] rounded-lg shadow p-4 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="item in filteredTranscripts" :key="item.id" class="bg-white dark:bg-[#18181b] border rounded-lg p-4 shadow hover:shadow-lg transition relative">
-          <div class="flex items-center justify-between mb-1">
+    <div class="rounded-lg mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div v-for="item in filteredTranscripts" :key="item.id" class="card p-4 hover:shadow-lg transition-shadow duration-300">
+          <div class="flex justify-between mb-2">
             <div class="flex items-center gap-2">
-              <i class="pi pi-file text-xl text-teal-600" />
+              <div>
+                <FileText :size="18" class="text-blue-500 mr-1" />
+              </div>
               <span class="font-bold text-base">Consulta - {{ item.patient_name }}</span>
             </div>
-            <Button icon="pi pi-star" class="p-0" text :class="{'text-yellow-400': item.favorite}" @click="toggleFavorite(item)" />
+            <div class="ml-2">
+              <Button class="p-0" text @click="toggleFavorite(item)" :class="item.favorite ? 'hover:!bg-yellow-50' : 'hover:!bg-gray-50'">
+                <Star :size="17" :class="item.favorite ? 'text-yellow-400 fill-yellow-400' : 'text-gray-500'" />
+              </Button>
+            </div>
           </div>
-          <div class="text-gray-500 text-sm mb-1">{{ item.patient_name }}</div>
-          <div class="text-gray-700 dark:text-gray-300 text-sm mb-2 truncate">{{ item.summary }}</div>
-          <div class="flex items-center justify-between text-xs text-gray-400 mb-2">
+          <p class="text-[13.5px]">{{ item.patient_name }}</p>
+          <div class="flex items-center justify-between text-xs text-gray-500 mb-2 mt-2">
             <span>{{ formatDate(item.created_at) }}</span>
-            <span>{{ formatSize(item.size) }}</span>
+            <span class="mr-2">{{ formatSize(item.size) }}</span>
           </div>
-          <div class="flex gap-2 mb-2">
-            <span class="bg-slate-200 dark:bg-[#27272a] text-xs rounded px-2 py-1 font-semibold">{{ item.category }}</span>
-          </div>
-          <div class="flex gap-3 items-center">
-            <Button icon="pi pi-eye" text @click="goToDetail(item)" v-tooltip.top="'Visualizar'" />
-            <Button icon="pi pi-download" text v-tooltip.top="'Baixar'" />
-            <Button icon="pi pi-trash" text severity="danger" @click="deleteTranscript(item)" v-tooltip.top="'Excluir'" />
+          <div class="flex items-center justify-between mt-4">
+            <div>
+              <Tag severity="secondary" :value="item.category" rounded />
+            </div>
+            <div class="flex gap-x-3 items-end">
+              <Button text @click="goToDetail(item)" v-tooltip.top="'Visualizar'">
+                <Eye :size="18" class="text-slate-500" /> 
+              </Button>
+              <Button text @click="goToDetail(item)" v-tooltip.top="'Renomear'">
+                <Pencil :size="18" class="text-slate-500" /> 
+              </Button>
+              <Button text v-tooltip.top="'Baixar'">
+                <Download :size="18" class="text-slate-500" />
+              </Button>
+              <Button text severity="danger" @click="deleteTranscript(item)" v-tooltip.top="'Excluir'">
+                <Trash :size="18" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-      <div v-if="!filteredTranscripts.length" class="text-center text-gray-400 py-10">
-        Nenhuma transcrição encontrada.
+      <div v-if="!filteredTranscripts.length" class="card text-center text-gray-400 py-10">
+        Nenhuma transcrição encontrada
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -67,6 +92,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useShowToast } from '@/utils/useShowToast';
+import { FileText, Eye, Download, Trash, Star, Mic, Pencil } from 'lucide-vue-next';
 
 const router = useRouter();
 const { showSuccess, showError } = useShowToast();
@@ -85,7 +111,7 @@ const fetchTranscripts = async () => {
       ...t,
       patient_name: t.patient_name || t.title || 'Paciente',
       summary: t.summary || t.title || '',
-      size: t.size || 0,
+      size: t.size || 10,
       category: t.category || 'Geral',
       favorite: t.favorite || false,
     }));
@@ -137,12 +163,12 @@ const deleteTranscript = async (item) => {
 </script>
 
 <style scoped>
-.card {
+/* .card {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
   padding: 2rem;
-}
+} */
 
 :deep(.p-selectbutton, ) {
   width: 100% !important;

@@ -32,7 +32,7 @@ const model = ref([
     {
         label: 'Análises',
         items: [
-            { label: 'Relatórios', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/formlayout', visible: true },
+            { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/', visible: true },
             { label: 'Configurações', icon: 'pi pi-fw pi-cog', to: '/uikit/input', visible: true },
         ]
     },
