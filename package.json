@@ -9,6 +9,11 @@
     },
     "dependencies": {
         "@primevue/themes": "^4.0.0",
+        "@tiptap/extension-document": "^3.0.9",
+        "@tiptap/extension-heading": "^3.0.9",
+        "@tiptap/extension-placeholder": "^3.0.9",
+        "@tiptap/starter-kit": "^3.0.9",
+        "@tiptap/vue-3": "^3.0.9",
         "axios": "^1.7.9",
         "chart.js": "3.3.2",
         "js-cookie": "^3.0.5",
