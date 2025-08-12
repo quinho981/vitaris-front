@@ -81,7 +81,7 @@ import { Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, Undo, Re
 const editor = useEditor({
     editorProps: {
         attributes: {
-            class: 'border border-slate-200 rounded-b-lg p-4 min-h-[21rem] max-h-[30rem] overflow-y-auto outline-none',
+            class: 'border border-slate-200 rounded-b-lg p-4 min-h-[21rem] max-h-[37rem] overflow-y-auto outline-none',
         },
     },
     content: "<p>I'm running Tiptap with <b>Vue.js</b>. 🎉</p>",
@@ -129,15 +129,13 @@ const editor = useEditor({
 .tiptap h1,
 .tiptap h2,
 .tiptap h3 {
-    line-height: 1.1;
-    margin-top: 2.5rem;
     text-wrap: pretty;
 }
 
 .tiptap h1,
 .tiptap h2 {
-    margin-top: 3.5rem !important;
-    margin-bottom: 1.5rem !important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .tiptap h1 {

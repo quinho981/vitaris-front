@@ -161,7 +161,7 @@ const router = createRouter({
                 },
                 {
                     path: '/specific',
-                    name: 'transcriptsShow',
+                    name: 'specificTranscription',
                     component: () => import('@/views/transcription/specific.vue'),
                     meta: { requiresAuth: true }
                 },
