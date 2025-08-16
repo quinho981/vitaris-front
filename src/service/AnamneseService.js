@@ -3,21 +3,21 @@ import Cookies from 'js-cookie';
 
 export const AnamneseService = {
 
-    async generator(payload, title, status) {
+    async generator(payload, patient, status) {
         const token = Cookies.get('token');
         try {
             const response = await api.post('/generate-document',
                 {
                     conversation: payload,
                     status: status,
-                    title: title
+                    patient: patient
                 },
                 {   
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
             
-            return response.data.content;
+            return response.data;
         } catch (error) {
             console.error(error);
         }

@@ -1,38 +1,140 @@
 <template>
-    <div>
-        <div class="flex items-center justify-between mr-6 font-semibold text-xl mb-2">
+    <section>
+        <div class="flex items-center flex-wrap justify-between mb-3 py-3">
             <div>
-                <ul class="flex text-[1rem]">
-                    <li 
-                        :class="tabStatus === 'conversation' ? 'border-[#14B8A6]' : 'dark:border-[#18181b]'"
-                        class="p-2 border-b-2 dark:text-gray-300 duration-300 cursor-pointer"
-                        @click="handleClickTab('conversation')"
-                    >
-                        {{ $t('transcription.tab.conversation') }}
-                    </li>
-                    <li 
-                        :class="tabStatus === 'document' ? 'border-[#14B8A6]' : 'dark:border-[#18181b]'"
-                        class="p-2 border-b-2 dark:text-gray-300 duration-300 cursor-pointer"
-                        @click="handleClickTab('document')"
-                    >
-                        {{ $t('transcription.tab.transcription') }}
-                    </li>
-                </ul>
+                <h1 class="text-3xl font-bold">Detalhes da transcrição</h1>
+                <p class="my-1 text-lg ">Consulta com Marina Silva</p>
             </div>
-            <div v-if="stepStatus('finished')">
-                <Button :label='$t("button.copyText")' icon="pi pi-copy" class="p-button-link !m-0 !p-0" @click="copyText" />
+            <div class="flex items-center gap-2">
+                <router-link
+                    :to="{ name: 'transcription' }"
+                    class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
+                >
+                    <Share2 :size="17" />
+                    Compartilhar
+                </router-link>
+                <router-link
+                    :to="{ name: 'transcription' }"
+                    class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
+                >
+                    <Download :size="17" />
+                    Exportar 
+                </router-link>
             </div>
         </div>
-        <ChatResponse
-            :active="true"
-            :item="tabStatus === 'conversation' ? chat : documentContent"
-            :createdAt="createdAt"
-        />
-    </div>
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-md transition-shadow duration-300 rounded-lg">
+                <div class="card flex items-center gap-3 !p-6">
+                    <div>
+                        <User class="text-blue-500" />
+                    </div>
+                    <div>
+                        <p>Paciente</p>
+                        <p class="font-bold text-lg">{{ patient }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-md transition-shadow duration-300 rounded-lg">
+                <div class="card flex items-center gap-3 !p-6">
+                    <div>
+                        <Calendar class="text-yellow-500" />
+                    </div>
+                    <div>
+                        <p>Data</p>
+                        <p class="font-bold text-lg">{{ createdAt }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-md transition-shadow duration-300 rounded-lg">
+                <div class="card flex items-center gap-3 !p-6">
+                    <div>
+                        <Clock class="text-green-500" />
+                    </div>
+                    <div>
+                        <p>Duração</p>
+                        <p class="font-bold text-lg">{{ duration }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-md transition-shadow duration-300 rounded-lg">
+                <div class="card flex items-center gap-3 !p-6">
+                    <div>
+                        <Dot class="text-orange-500" />
+                    </div>
+                    <div>
+                        <p>Tipo</p>
+                        <p class="font-bold text-lg">
+                            Oftalmologia
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SEÇÃO DE TRANSCRIÇÃO -->
+        <div class="grid grid-cols-12 gap-4 mt-5">
+            <div class="col-span-12 xl:col-span-8 rounded-lg">
+                <div class="card flex gap-2">
+                    <div class="flex flex-col w-full">
+                        <div class="flex items-center gap-2">
+                            <FileText />
+                            <p class="font-semibold text-xl">Transcrição Completa</p> <Chip :label="duration" class="text-xs"></Chip>
+                        </div>
+                        <div class="mt-5">
+                            <Tiptap 
+                                :content="documentContent" 
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 xl:col-span-4 rounded-lg">
+                <div class="card flex flex-col gap-5">
+                    <div class="flex items-center gap-2">
+                        <BrainCircuit />
+                        <p class="font-semibold text-xl mb-1">Insights da IA</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <h4 class="text-lg font-semibold mb-2">Tópicos principais</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl">Dores de cabeça matinais</span>
+                            <span class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl">Distúrbios do sono</span>
+                            <span class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl">Estresse ocupacional</span>
+                            <span class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl">Ansiedade</span>
+                        </div>
+                        <hr class="my-4" />
+                        <h4 class="text-lg font-semibold mb-2">Tópicos principais</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <ul class="custom-marker-topic list-disc list-inside">
+                                <li v-for="symptom in symptoms" :key="symptom">
+                                    {{ symptom }}
+                                </li>
+                            </ul>
+                        </div>
+                        <hr class="my-4" />
+                        <h4 class="text-lg font-semibold mb-2">Possíveis Diagnósticos</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <ul class="custom-marker-diagnosis list-disc list-inside">
+                                <li v-for="symptom in symptoms2" :key="symptom">
+                                    {{ symptom }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
+import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit } from 'lucide-vue-next';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute } from "vue-router";
 import { useShowToast } from '@/utils/useShowToast';
@@ -42,40 +144,66 @@ const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
 
 const route = useRoute();
-const documentContent = ref([]);
-const tabStatus = ref('document')
-const chat = ref([]);
-const status = ref('finished');
+const value = ref('');
+const patient = ref('');
 const createdAt = ref('');
-
-const stepStatus = (step) => {
-    return step === status.value
-}
-
-const copyText = () => {
-    let textToCopy = document.getElementById("anamnese-result").innerText;
-    navigator.clipboard.writeText(textToCopy);
-    showSuccess(t('notifications.titles.success'), t('notifications.messages.textCopiedSuccessfully'), 3000)
-};
-
-const handleClickTab = (tab) => {
-    tabStatus.value = tab
-}
+const documentContent = ref('');
+const duration = ref('');
+const symptoms = [
+    'Cefaleia matinal',
+    'Insônia',
+    'Ansiedade',
+];
+const symptoms2 = [
+    'Cefaleia tensional',
+    'Transtorno de ansiedade',
+    'Distúrbio do sono relacionado ao estresse'
+]
 
 const showTranscript = async (id) => {
     try {
         const response = await TranscriptsService.show(id);
-        chat.value = []
-        documentContent.value = []
+        console.log('response: ', response)
+        // chat.value = []
+        documentContent.value = ''
+        patient.value = response.patient;
+        createdAt.value = formatPtBrCurto(response.created_at);
+        const endDuration = response.conversation.at(-1)
+        duration.value = convertSecondsToMinutes(endDuration.end)
 
-        status.value = response.status
-        chat.value.push(response.conversation);
-        documentContent.value.push(response.document.result);
-        createdAt.value = response.created_at;
+        // status.value = response.status
+        // chat.value.push(response.conversation);
+        // documentContent.value.push(response.document.result);
+        documentContent.value = response.document.result;
+        // createdAt.value = response.created_at;
     } catch (error) {
         showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000)  
     } 
 }
+
+// TRANSFORMAR EM HELPER
+function formatPtBrCurto(iso) {
+    const d = new Date(iso); // ISO com "Z" = UTC
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    let month = new Intl.DateTimeFormat('pt-BR', { month: 'short', timeZone: 'UTC' }).format(d);
+    month = month.replace('.', '');                       // tira "ago." -> "ago"
+    month = month.charAt(0).toUpperCase() + month.slice(1); // "ago" -> "Ago"
+    const year = d.getUTCFullYear();
+    return `${day} de ${month}, ${year}`;
+}
+
+const convertSecondsToMinutes = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+
+    if (mins === 0) {
+        return `${secs}s`;
+    }
+    if (secs === 0) {
+        return `${mins}min`;
+    }
+    return `${mins}min ${secs}s`;
+};
 
 watch(
     () => route.params.id,
@@ -91,4 +219,10 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.custom-marker-topic li::marker {
+  @apply text-primary;
+}
+.custom-marker-diagnosis li::marker {
+  color: rgb(45, 187, 45);
+}
 </style>

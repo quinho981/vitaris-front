@@ -165,6 +165,12 @@ const router = createRouter({
                     component: () => import('@/views/transcription/specific.vue'),
                     meta: { requiresAuth: true }
                 },
+                {
+                    path: '/testehome',
+                    name: 'testehome',
+                    component: () => import('@/views/Home.vue'),
+                    meta: { requiresAuth: true }
+                },
             ]
         },
         {

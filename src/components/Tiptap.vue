@@ -74,9 +74,17 @@
 </template>
 
 <script setup>
+import { watch } from 'vue';
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import { Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, Undo, Redo } from 'lucide-vue-next';
+
+const props = defineProps({
+    content: {
+        type: String,
+        required: true
+    }
+}); 
 
 const editor = useEditor({
     editorProps: {
@@ -84,9 +92,18 @@ const editor = useEditor({
             class: 'border border-slate-200 rounded-b-lg p-4 min-h-[21rem] max-h-[37rem] overflow-y-auto outline-none',
         },
     },
-    content: "<p>I'm running Tiptap with <b>Vue.js</b>. 🎉</p>",
+    content: props.content,
     extensions: [StarterKit],
 })
+
+watch(
+    () => props.content,
+    (newContent) => {
+        if (editor && editor.value && newContent !== editor.value.getHTML()) {
+            editor.value.commands.setContent(newContent, false)
+        }
+    }
+)
 </script>
 
 <style >

@@ -4,8 +4,8 @@
             <h1 class="text-3xl font-bold">Upload de áudio</h1>
             <p class="my-1 text-lg ">Grave uma consulta e obtenha a transcrição automaticamente</p>
         </div>
-        <div class="flex gap-x-4">
-            <div class="card w-1/2 flex flex-col">
+        <div class="flex gap-x-4 flex-wrap md:flex-nowrap">
+            <div class="card w-full md:w-1/2 flex flex-col mb-5 md:mb-0">
                 <div class="flex items-center gap-2">
                     <Upload />
                     <p class="font-semibold text-2xl mb-4">Enviar arquivo</p>
@@ -34,7 +34,7 @@
                                             <Badge :value="file.type" severity="warning" />
                                         </div>
                                         <div>
-                                            <Button icon="pi pi-times" @click="removeFile(file)" outlined severity="danger" class="ml-3" />
+                                            <Button icon="pi pi-times" @click="removeFile" outlined severity="danger" class="ml-3" />
                                         </div>
                                     </div>
                                 </div>
@@ -59,9 +59,15 @@
                         <label class="mb-1" for="name1">Nome do Paciente</label>
                         <InputText id="name1" v-model="patientName" type="text" class="w-full" placeholder="Digite o nome do paciente... (opcional)" />
                     </div>
-                    <div class="mt-2">
-                        <label class=" mb-1" for="name2">Tipo de consulta</label>
-                        <Select id="state" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Selecione (opcional)" class="w-full"></Select>
+                    <div class="flex gap-4 flex-wrap xl:flex-nowrap mt-2">
+                        <div class="w-full">
+                            <label class=" mb-1" for="name2">Template</label>
+                            <Select id="state" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Selecione (opcional)" class="w-full"></Select>
+                        </div>
+                        <div class="w-full">
+                            <label class=" mb-1" for="name2">Tipo de consulta</label>
+                            <Select id="state" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Selecione (opcional)" class="w-full"></Select>
+                        </div>
                     </div>
                     <div class="flex justify-end mt-3">
                         <Button
@@ -76,13 +82,13 @@
                     </div>
                 </div>
             </div>
-            <div class="card w-1/2 flex flex-col">
+            <div class="card w-full md:w-1/2 flex flex-col">
                 <div class="flex items-center gap-2">
                     <FileAudio2 />
                     <p class="font-semibold text-2xl mb-4">Transcrições</p>
                 </div>
                 <p class="mt-1 text-slate-500 dark:text-slate-300 mb-3">Texto transcrito automaticamente pela IA</p>
-                <div class="p-2 h-full w-full rounded-lg border-[1px] border-surface dark:border-surface flex flex-col gap-y-2 min-h-[350px] max-h-[351px] overflow-y-auto">
+                <div class="p-2 h-full w-full rounded-lg border-[1px] border-surface dark:border-surface flex flex-col gap-y-2 xl:min-h-[350px] xl:max-h-[351px] overflow-y-auto transcript-box">
                     <div v-if="transcriptions.length === 0 && !isTranscribing" class="flex items-center justify-center h-full">
                         <p class="text-slate-400 text-center">A transcrição aparecerá aqui após o envio do áudio...</p>
                     </div>
@@ -119,18 +125,33 @@
                     </div>
                 </div>
                 <div v-if="transcriptions.length != 0 && !isTranscribing" class="flex justify-end mt-4">
-                    <Button icon="pi pi-trash" label="Limpar" outlined severity="danger" class="mr-3" />
+                    <Button 
+                        icon="pi pi-trash" 
+                        label="Limpar" 
+                        outlined 
+                        severity="danger" 
+                        class="mr-3" 
+                        @click="dialogClear = true" 
+                        :disabled="loadingFinish"
+                    />
                     <Button
-                        @click="transcribeAudio"
+                        @click="finishConversation"
+                        :disabled="loadingFinish"
                         class="!bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !rounded-lg font-semibold hover:!from-blue-600 hover:!to-blue-800 duration-300"
                     >
-                        <!-- <Loader2 v-if="isTranscribing" :size="17" class="animate-spin mr-2" /> -->
-                        <FileChartColumn  :size="17" />
+                        <Loader2 v-if="loadingFinish" :size="17" class="animate-spin mr-2" />
+                        <FileChartColumn v-else :size="17" />
                         Finalizar e gerar insights
                     </Button>
                 </div>
             </div>
         </div>
+        <ClearTranscription 
+            :active="dialogClear"
+            :loading="dialogLoading"
+            @close="dialogClear = false" 
+            @confirm="clearTranscription"
+        />
     </section>
 </template>
 
@@ -138,6 +159,38 @@
 import { ref } from 'vue'
 import { usePrimeVue } from 'primevue/config';
 import { Upload, FileAudio2, FileVolume, SendHorizontal, Loader2, FileChartColumn } from 'lucide-vue-next';
+import { AnamneseService } from '@/service/AnamneseService';
+import { useShowToast } from '@/utils/useShowToast';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const { t } = useI18n();
+const { showSuccess, showError } = useShowToast();
+
+const chatTranscription = ref();
+
+const finishConversation = () => {
+    loadingFinish.value = true
+    AnamneseService.generator(chatTranscription.value, patientName.value, 'finished')
+        .then((response) => {
+            loadingFinish.value = false
+
+            redirectTo(response.transcript_id);
+        })
+        .catch(e => {
+            showError(t('notifications.titles.error'), t('notifications.messages.anamnesisGeneratingError'), 3000)
+            loadingFinish.value = false
+        })
+};
+
+const redirectTo = (id) => {
+    router.push({
+        name: 'transcriptsShow',
+        params: { id: id }
+    });
+}
 
 const $primevue = usePrimeVue();
 
@@ -149,6 +202,9 @@ const selectedFile = ref(null)
 const patientName = ref('')
 const dropdownItem = ref(null);
 const isTranscribing = ref(false)
+const loadingFinish = ref(false)
+const dialogClear = ref(false)
+const dialogLoading = ref(false)
 const transcriptions = ref([])
 
 const dropdownItems = ref([
@@ -158,18 +214,28 @@ const dropdownItems = ref([
 ]);
 
 function openFileDialog() {
+    if (transcriptions.value.length > 0) {
+        alert('Por favor, limpe a transcrição antes de enviar um novo arquivo.');
+        return;
+    }
     uploader.value?.choose();
 }
 
+// COLOCAR RESTRIÇÃO DE LIMPEZA DA TRANSCRIÇÃO PARA PODER GERAR UMA NOVA
 const onFileSelect = (event) => {
     selectedFile.value = event.files[0];
 };
 
-const removeFile = (file) => {
-    if (selectedFile.value === file) {
-        selectedFile.value = null;
-    }
+const removeFile = () => {
+    selectedFile.value = null;
     uploader.value.clear();
+};
+
+const clearTranscription = () => {
+    removeFile();
+    transcriptions.value = [];
+    chatTranscription.value = null;
+    dialogClear.value = false
 };
 
 const validateAudioFile = (file) => {
@@ -267,7 +333,6 @@ const transcribeAudio = async () => {
         });
 
         const responseText = await response.text();
-        console.log('Resposta bruta:', responseText);
 
         if (!response.ok) {
             let errorMessage = `Erro ${response.status}: ${response.statusText}`;
@@ -283,7 +348,6 @@ const transcribeAudio = async () => {
         }
 
         const result = JSON.parse(responseText);
-        console.log('Resultado da transcrição:', result);
         
         // Verificar se há resultados
         if (!result.results || !result.results.channels || result.results.channels.length === 0) {
@@ -297,15 +361,13 @@ const transcribeAudio = async () => {
             throw new Error('Não foi possível extrair texto do áudio. Verifique se o arquivo contém fala audível.');
         }
 
+        chatTranscription.value = processedTranscription.utterances;
         // Adicionar à lista de transcrições
         transcriptions.value.unshift(processedTranscription);
 
         // Limpar arquivo selecionado
         selectedFile.value = null;
         uploader.value.clear();
-
-        console.log('Transcrição concluída com sucesso!');
-
     } catch (error) {
         console.error('Erro detalhado:', error);
         let userMessage = 'Erro ao transcrever o áudio.';
@@ -332,9 +394,6 @@ const processDeepgramResult = (result, fileName) => {
     const utterances = [];
     
     if (result.results?.utterances) {
-        console.log('-----------')
-        console.log('Usou UTTERANCES')
-        console.log('-----------')
         // Se a diarização estiver disponível, usar utterances
         result.results.utterances.forEach((utterance) => {
             utterances.push({
@@ -344,9 +403,6 @@ const processDeepgramResult = (result, fileName) => {
             });
         });
     } else if (result.results?.channels?.[0]?.alternatives?.[0]) {
-        console.log('-----------')
-        console.log('Usou CHANNELS')
-        console.log('-----------')
         // Fallback: usar transcrição simples se diarização não estiver disponível
         const transcript = result.results.channels[0].alternatives[0].transcript;
         
@@ -448,6 +504,13 @@ const formatSize = (bytes) => {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@media (max-width: 640px) {
+    .transcript-box {
+        min-height: 350px !important;
+        max-height: 351px !important;
     }
 }
 </style>
