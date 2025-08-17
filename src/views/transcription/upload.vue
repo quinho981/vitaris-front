@@ -56,17 +56,34 @@
                         </template>
                     </FileUpload>
                     <div class="mt-3">
-                        <label class="mb-1" for="name1">Nome do Paciente</label>
-                        <InputText id="name1" v-model="patientName" type="text" class="w-full" placeholder="Digite o nome do paciente... (opcional)" />
+                        <label class="mb-1" for="name">Nome do Paciente</label>
+                        <InputText id="name" v-model="form.patient" type="text" class="w-full" placeholder="Digite o nome do paciente... (opcional)" />
                     </div>
                     <div class="flex gap-4 flex-wrap xl:flex-nowrap mt-2">
                         <div class="w-full">
-                            <label class=" mb-1" for="name2">Template</label>
-                            <Select id="state" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Selecione (opcional)" class="w-full"></Select>
+                            <label class=" mb-1" for="template">Template*</label>
+                            <Select 
+                                id="template" 
+                                v-model="form.template_id" 
+                                :options="dropdownTemplates" 
+                                filter 
+                                optionValue="id" 
+                                optionLabel="label" 
+                                placeholder="Selecione" 
+                                class="w-full" 
+                            />
                         </div>
                         <div class="w-full">
-                            <label class=" mb-1" for="name2">Tipo de consulta</label>
-                            <Select id="state" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Selecione (opcional)" class="w-full"></Select>
+                            <label class=" mb-1" for="type">Tipo de consulta</label>
+                            <Select 
+                                id="type" 
+                                v-model="form.type_id" 
+                                :options="dropdownItems" 
+                                optionValue="id" 
+                                optionLabel="label" 
+                                placeholder="Selecione (opcional)" 
+                                class="w-full" 
+                            />
                         </div>
                     </div>
                     <div class="flex justify-end mt-3">
@@ -173,7 +190,18 @@ const chatTranscription = ref();
 
 const finishConversation = () => {
     loadingFinish.value = true
-    AnamneseService.generator(chatTranscription.value, patientName.value, 'finished')
+
+    const { patient, template_id: template, type_id: type } = form.value;
+
+    const payload = {
+        conversation: chatTranscription.value,
+        patient,
+        template,
+        type,
+        endConversationTime: endConversationTime.value
+    };
+
+    AnamneseService.generator(payload)
         .then((response) => {
             loadingFinish.value = false
 
@@ -199,7 +227,6 @@ const DEEPGRAM_API_KEY = '7bfd2857b37455faf82a84bf1f0e7406afdb1372'; // Substitu
 
 const uploader = ref(null)
 const selectedFile = ref(null)
-const patientName = ref('')
 const dropdownItem = ref(null);
 const isTranscribing = ref(false)
 const loadingFinish = ref(false)
@@ -207,10 +234,25 @@ const dialogClear = ref(false)
 const dialogLoading = ref(false)
 const transcriptions = ref([])
 
+const form = ref({
+    patient: '',
+    template_id: '',
+    type_id: ''
+})
+
+const dropdownTemplates = ref([
+    { id: 1, label: 'Cardiologia' },
+    { id: 2, label: 'Ortopedia' },
+    { id: 3, label: 'Neurologia' },
+    { id: 4, label: 'Oftalmologia' },
+    { id: 5, label: 'Clínica médica' },
+    { id: 6, label: 'Pediatria' },
+]);
+
 const dropdownItems = ref([
-    { name: 'Consulta Geral', code: 'geral' },
-    { name: 'Consulta Especializada', code: 'especializada' },
-    { name: 'Retorno', code: 'retorno' }
+    { id: 1, label: 'Consulta Geral' },
+    { id: 2, label: 'Consulta Especializada' },
+    { id: 3, label: 'Retorno' }
 ]);
 
 function openFileDialog() {
@@ -236,6 +278,7 @@ const clearTranscription = () => {
     transcriptions.value = [];
     chatTranscription.value = null;
     dialogClear.value = false
+    endConversation = ''
 };
 
 const validateAudioFile = (file) => {
@@ -245,6 +288,7 @@ const validateAudioFile = (file) => {
         return { valid: false, error: 'Arquivo muito grande. Máximo permitido: 100MB' };
     }
 
+    // CRIAR UM CONST GLOBAL
     // Verificar tipo MIME
     const supportedTypes = [
         'audio/mpeg',      // MP3
@@ -389,11 +433,18 @@ const transcribeAudio = async () => {
         isTranscribing.value = false;
     }
 };
+const endConversationTime = ref('')
+const getLastTimeUtterances = (utterances) => {
+    const lastUtterance = utterances.length > 0 ? utterances[utterances.length - 1] : null;
+    endConversationTime.value = lastUtterance.end
+}
 
 const processDeepgramResult = (result, fileName) => {
     const utterances = [];
     
     if (result.results?.utterances) {
+        getLastTimeUtterances(result.results?.utterances)
+
         // Se a diarização estiver disponível, usar utterances
         result.results.utterances.forEach((utterance) => {
             utterances.push({
@@ -423,8 +474,6 @@ const processDeepgramResult = (result, fileName) => {
             hour: '2-digit', 
             minute: '2-digit' 
         }),
-        patientName: patientName.value || 'Paciente',
-        consultationType: dropdownItem.value?.name || 'Não especificado',
         utterances: utterances
     };
 };
@@ -511,6 +560,13 @@ const formatSize = (bytes) => {
     .transcript-box {
         min-height: 350px !important;
         max-height: 351px !important;
+    }
+}
+
+@media (min-width: 640px) and (max-width: 1024px) {
+    .transcript-box {
+        min-height: 461px;
+        max-height: 462px;
     }
 }
 </style>

@@ -109,7 +109,7 @@ const fetchTranscripts = async () => {
     const response = await TranscriptsService.index(1);
     transcripts.value = response.transcripts.map(t => ({
       ...t,
-      patient_name: t.patient_name || t.title || 'Paciente',
+      patient_name: t.patient || t.title || 'Paciente',
       summary: t.summary || t.title || '',
       size: t.size || 10,
       category: t.category || 'Geral',
