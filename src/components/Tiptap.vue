@@ -119,7 +119,6 @@ watch(
     margin-top: 0;
 }
 
-/* List styles */
 .tiptap ul,
 .tiptap ol {
     padding: 0 1rem;
@@ -133,26 +132,19 @@ watch(
 }
 
 .tiptap ul {
-    list-style-type: disc;   /* bolinha padrão */
-    list-style-position: initial; /* para alinhar com o texto */
-}
-
-.tiptap ol {
-    list-style-type: decimal; /* numérica padrão */
+    list-style-type: disc;
     list-style-position: initial;
 }
 
-/* Heading styles */
+.tiptap ol {
+    list-style-type: decimal;
+    list-style-position: initial;
+}
+
 .tiptap h1,
 .tiptap h2,
 .tiptap h3 {
     text-wrap: pretty;
-}
-
-.tiptap h1,
-.tiptap h2 {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
 }
 
 .tiptap h1 {
@@ -165,6 +157,10 @@ watch(
 
 .tiptap h3 {
     font-size: 1.2rem;
+    margin-bottom: 0.1rem;
 }
 
+.tiptap p {
+    margin-bottom: 0.1rem;
+}
 </style>
