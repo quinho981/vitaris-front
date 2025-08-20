@@ -66,9 +66,11 @@
                                 id="template" 
                                 v-model="form.template_id" 
                                 :options="dropdownTemplates" 
-                                filter 
+                                filter
+                                :loading="loadingTemplates"
+                                :class="{ 'p-invalid': errorMessage }"
                                 optionValue="id" 
-                                optionLabel="label" 
+                                optionLabel="type" 
                                 placeholder="Selecione" 
                                 class="w-full" 
                             />
@@ -122,16 +124,11 @@
                             <span class="text-xs text-gray-500">{{ transcription.timestamp }}</span>
                         </div>
                         
-                        <!-- Múltiplos balões sem distinção de speaker -->
                         <div v-for="(utterance, uttIndex) in transcription.utterances" :key="uttIndex" class="mb-2">
                             <div class="rounded-lg p-2">
                                 <div class="flex items-start mb-2">
-                                    <!-- <div class="flex-shrink-0 w-8 h-8 rounded-full text-blue-500 flex items-end justify-center font-semibold text-xs mr-3">
-                                        <BrainCog  :size="18" />
-                                    </div> -->
                                     <div>
                                         <div class="flex items-center gap-2 ">
-                                            <!-- <p class="font-semibold text-xs text-gray-700">Transcrição</p> -->
                                             <span class="text-xs text-gray-500">{{ utterance.start }}s</span>
                                         </div>
                                         <p class="text-gray-800 p-2 rounded-lg bg-surface-100">{{ utterance.text }}</p>
@@ -173,58 +170,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { usePrimeVue } from 'primevue/config';
 import { Upload, FileAudio2, FileVolume, SendHorizontal, Loader2, FileChartColumn } from 'lucide-vue-next';
 import { AnamneseService } from '@/service/AnamneseService';
 import { useShowToast } from '@/utils/useShowToast';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from "vue-router";
-
-const router = useRouter();
-
-const { t } = useI18n();
-const { showSuccess, showError } = useShowToast();
-
-const chatTranscription = ref();
-
-const finishConversation = () => {
-    loadingFinish.value = true
-
-    const { patient, template_id: template, type_id: type } = form.value;
-
-    const payload = {
-        conversation: chatTranscription.value,
-        patient,
-        template,
-        type,
-        endConversationTime: endConversationTime.value
-    };
-
-    AnamneseService.generator(payload)
-        .then((response) => {
-            loadingFinish.value = false
-
-            redirectTo(response.transcript_id);
-        })
-        .catch(e => {
-            showError(t('notifications.titles.error'), t('notifications.messages.anamnesisGeneratingError'), 3000)
-            loadingFinish.value = false
-        })
-};
-
-const redirectTo = (id) => {
-    router.push({
-        name: 'transcriptsShow',
-        params: { id: id }
-    });
-}
+import api from '@/services/axios';
+import Cookies from 'js-cookie';
 
 const $primevue = usePrimeVue();
+const router = useRouter();
+const { t } = useI18n();
+const { showSuccess, showError } = useShowToast();
 
 // Configuração do Deepgram
 const DEEPGRAM_API_KEY = '7bfd2857b37455faf82a84bf1f0e7406afdb1372'; // Substitua pela sua API key do Deepgram
 
+const chatTranscription = ref();
 const uploader = ref(null)
 const selectedFile = ref(null)
 const dropdownItem = ref(null);
@@ -233,21 +197,15 @@ const loadingFinish = ref(false)
 const dialogClear = ref(false)
 const dialogLoading = ref(false)
 const transcriptions = ref([])
-
+const loadingTemplates = ref(false)
+const endConversationTime = ref('')
+const dropdownTemplates = ref([]);
+const errorMessage = ref(false);
 const form = ref({
     patient: '',
-    template_id: '',
-    type_id: ''
+    template_id: null,
+    type_id: null
 })
-
-const dropdownTemplates = ref([
-    { id: 1, label: 'Cardiologia' },
-    { id: 2, label: 'Ortopedia' },
-    { id: 3, label: 'Neurologia' },
-    { id: 4, label: 'Oftalmologia' },
-    { id: 5, label: 'Clínica médica' },
-    { id: 6, label: 'Pediatria' },
-]);
 
 const dropdownItems = ref([
     { id: 1, label: 'Consulta Geral' },
@@ -278,7 +236,7 @@ const clearTranscription = () => {
     transcriptions.value = [];
     chatTranscription.value = null;
     dialogClear.value = false
-    endConversation = ''
+    endConversationTime.value = ''
 };
 
 const validateAudioFile = (file) => {
@@ -316,6 +274,12 @@ const validateAudioFile = (file) => {
 };
 
 const transcribeAudio = async () => {
+    if (!validateForm()) {
+        return;
+    }
+
+    errorMessage.value = false;
+
     if (!selectedFile.value) {
         alert('Por favor, selecione um arquivo de áudio primeiro.');
         return;
@@ -350,12 +314,6 @@ const transcribeAudio = async () => {
             else if (fileName.endsWith('.ogg')) mimeType = 'audio/ogg';
             else if (fileName.endsWith('.flac')) mimeType = 'audio/flac';
         }
-
-        console.log('Enviando arquivo:', {
-            nome: selectedFile.value.name,
-            tamanho: selectedFile.value.size,
-            tipo: mimeType
-        });
 
         // Configurações da API do Deepgram com parâmetros mais conservadores
         const url = new URL('https://api.deepgram.com/v1/listen');
@@ -433,7 +391,7 @@ const transcribeAudio = async () => {
         isTranscribing.value = false;
     }
 };
-const endConversationTime = ref('')
+
 const getLastTimeUtterances = (utterances) => {
     const lastUtterance = utterances.length > 0 ? utterances[utterances.length - 1] : null;
     endConversationTime.value = lastUtterance.end
@@ -478,6 +436,45 @@ const processDeepgramResult = (result, fileName) => {
     };
 };
 
+const finishConversation = () => {
+    loadingFinish.value = true
+
+    const { patient, template_id: template, type_id: type } = form.value;
+    const payload = {
+        conversation: chatTranscription.value,
+        patient,
+        template,
+        type,
+        endConversationTime: endConversationTime.value
+    };
+
+    AnamneseService.generator(payload)
+        .then((response) => {
+            redirectTo(response.transcript_id);
+        })
+        .catch(e => {
+            showError(t('notifications.titles.error'), t('notifications.messages.anamnesisGeneratingError'), 3000)
+        })
+        .finally(() => {
+            loadingFinish.value = false
+        });
+};
+
+const validateForm = () => {
+    if (!form.value.template_id) {
+        errorMessage.value = true;
+        return false;
+    }
+    return true;
+};
+
+const redirectTo = (id) => {
+    router.push({
+        name: 'transcriptsShow',
+        params: { id: id }
+    });
+}
+
 // TRANSFORMAR EM HELPER
 const formatSize = (bytes) => {
     const k = 1024;
@@ -493,6 +490,25 @@ const formatSize = (bytes) => {
 
     return `${formattedSize} ${sizes[i]}`;
 };
+
+const getTemplates = async () => {
+    const token = Cookies.get('token');
+    loadingTemplates.value = true;
+    try {
+        const response = await api.get(`/templates`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        dropdownTemplates.value = response.data
+    } catch (error) {
+        console.error(error);
+    } finally {
+        loadingTemplates.value = false;
+    }
+}
+
+onMounted(() => {
+    getTemplates()
+});
 </script>
 
 <style scoped>

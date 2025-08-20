@@ -122,7 +122,7 @@ watch(
 .tiptap ul,
 .tiptap ol {
     padding: 0 1rem;
-    margin: 1.25rem 1rem 1.25rem 0.4rem;
+    margin: 0.6rem 1rem 0.5rem 0.6rem;
 }
 
 .tiptap ul li p,

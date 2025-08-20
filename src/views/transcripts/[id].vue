@@ -187,18 +187,12 @@ const symptoms2 = [
 const showTranscript = async (id) => {
     try {
         const response = await TranscriptsService.show(id);
-        console.log('response: ', response)
-        // chat.value = []
+
         documentContent.value = ''
         patient.value = response.patient;
         createdAt.value = formatPtBrCurto(response.created_at);
         duration.value = convertSecondsToMinutes(response.end_conversation_time)
-
-        // status.value = response.status
-        // chat.value.push(response.conversation);
-        // documentContent.value.push(response.document.result);
         documentContent.value = response.document.result;
-        // createdAt.value = response.created_at;
     } catch (error) {
         showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000)  
     } 
