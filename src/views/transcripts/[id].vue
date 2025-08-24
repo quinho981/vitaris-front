@@ -30,7 +30,8 @@
                     </div>
                     <div>
                         <p>Paciente</p>
-                        <p class="font-bold text-lg">{{ patient }}</p>
+                        <p v-if="!loadingTranscript" class="font-bold text-lg">{{ patient }}</p>
+                        <Skeleton v-else width="11rem" height="1.4rem" class="mt-2"></Skeleton>
                     </div>
                 </div>
             </div>
@@ -42,7 +43,8 @@
                     </div>
                     <div>
                         <p>Data</p>
-                        <p class="font-bold text-lg">{{ createdAt }}</p>
+                        <p v-if="!loadingTranscript" class="font-bold text-lg"> {{ createdAt }} </p>
+                        <Skeleton v-else width="11rem" height="1.4rem" class="mt-2"></Skeleton>
                     </div>
                 </div>
             </div>
@@ -54,7 +56,8 @@
                     </div>
                     <div>
                         <p>Duração</p>
-                        <p class="font-bold text-lg">{{ duration }}</p>
+                        <p v-if="!loadingTranscript" class="font-bold text-lg">{{ duration }}</p>
+                        <Skeleton v-else width="11rem" height="1.4rem" class="mt-2"></Skeleton>
                     </div>
                 </div>
             </div>
@@ -62,56 +65,62 @@
             <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-md transition-shadow duration-300 rounded-lg">
                 <div class="card flex items-center gap-3 !p-6">
                     <div>
-                        <Dot class="text-orange-500" />
+                        <LayoutTemplate class="text-orange-500" />
                     </div>
                     <div>
-                        <p>Tipo</p>
-                        <p class="font-bold text-lg">
-                            Oftalmologia
+                        <p>Template</p>
+                        <p v-if="!loadingTranscript" class="font-bold text-lg">
+                            {{ documentTemplate }}
                         </p>
+                        <Skeleton v-else width="11rem" height="1.4rem" class="mt-2"></Skeleton>
                     </div>
                 </div>
             </div>
         </div>
 
-
-        <!-- SEÇÃO DE TRANSCRIÇÃO -->
         <div class="grid grid-cols-12 gap-4 mt-5">
             <div class="col-span-12 xl:col-span-8 rounded-lg">
                 <div class="card flex ">
                     <div class="flex flex-col w-full">
-                            <div class="flex gap-4 items-center w-full">
-                                <Tabs value="0" class="w-full ml-2 mr-2">
-                                    <TabList>
-                                        <Tab value="0">Contexto da consulta</Tab>
-                                        <Tab value="1">Anamnese padrão</Tab>
-                                    </TabList>
-                                    <!-- <TabPanels>
-                                        <TabPanel value="0">
-                                            <p class="m-0">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                            </p>
-                                        </TabPanel>
-                                        <TabPanel value="1">
-                                            <p class="m-0">
-                                                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                                                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-                                            </p>
-                                        </TabPanel>
-                                        <TabPanel value="2">
-                                            <p class="m-0">
-                                                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
-                                                qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
-                                            </p>
-                                        </TabPanel>
-                                    </TabPanels> -->
-                                </Tabs>
+                        <div class="flex gap-4 items-center w-full">
+                            <Tabs v-model:value="activeTab" class="w-full ml-2 mr-2">
+                                <TabList>
+                                    <Tab value="0" @click="getConversations">Contexto da consulta</Tab>
+                                    <Tab value="1">Anamnese padrão</Tab>
+                                </TabList>
+                            </Tabs>
+                        </div>
+                        <div v-if="!loadingConversations">
+                            <div v-show="activeTab === '0'" class="border border-slate-200 rounded-lg p-4 min-h-[21rem] max-h-[24rem] overflow-y-auto">
+                                <div v-for="(conversation, uttIndex) in conversations" :key="uttIndex" class="mb-2">
+                                    <div class="rounded-lg p-2">
+                                        <div class="flex items-start mb-2">
+                                            <div>
+                                                <div class="flex items-center gap-2 ">
+                                                    <span class="text-xs text-gray-500">{{ conversation.start }}s</span>
+                                                </div>
+                                                <p class="text-gray-800 p-2 rounded-lg bg-surface-100">{{ conversation.text }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        <div>
-                            <Tiptap 
-                                :content="documentContent" 
-                            />
+                        </div>
+                        <div 
+                            v-else 
+                            v-show="activeTab === '0'" 
+                            class="border border-slate-200 rounded-lg p-4 min-h-[21rem] max-h-[24rem] overflow-y-auto"
+                        >
+                            <SkeletonLoadingConversations />
+                        </div>
+                        <div v-show="activeTab === '1'">
+                            <div v-if="loadingTranscript" class="flex items-center justify-center h-64">
+                                <span class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-slate-200"></span>
+                                <span class="ml-2">Carregando editor...</span>
+                            </div>
+                            <div v-else>
+                                <Tiptap :content="documentContent" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -158,7 +167,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit } from 'lucide-vue-next';
+import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit, LayoutTemplate } from 'lucide-vue-next';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute } from "vue-router";
 import { useShowToast } from '@/utils/useShowToast';
@@ -173,6 +182,11 @@ const patient = ref('');
 const createdAt = ref('');
 const documentContent = ref('');
 const duration = ref('');
+const documentTemplate = ref('');
+const activeTab = ref('1');
+const conversations = ref('');
+const loadingTranscript = ref(false);
+const loadingConversations = ref(false);
 const symptoms = [
     'Cefaleia matinal',
     'Insônia',
@@ -185,17 +199,35 @@ const symptoms2 = [
 ]
 
 const showTranscript = async (id) => {
+    loadingTranscript.value = true;
     try {
         const response = await TranscriptsService.show(id);
 
         documentContent.value = ''
         patient.value = response.patient;
+        documentTemplate.value = response.document.document_template.name;
         createdAt.value = formatPtBrCurto(response.created_at);
         duration.value = convertSecondsToMinutes(response.end_conversation_time)
         documentContent.value = response.document.result;
     } catch (error) {
         showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000)  
-    } 
+    } finally {
+        loadingTranscript.value = false;
+    }
+}
+
+const getConversations = async () => {
+    if (conversations.value !== '') return;
+
+    loadingConversations.value = true;
+    try {
+        const response = await TranscriptsService.getConversations(route.params.id);
+        conversations.value = response.conversation;
+    } catch (error) {
+        showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000)  
+    } finally {
+        loadingConversations.value = false;
+    }
 }
 
 // TRANSFORMAR EM HELPER
@@ -209,6 +241,7 @@ function formatPtBrCurto(iso) {
     return `${day} de ${month}, ${year}`;
 }
 
+// TRANSFORMAR EM HELPER
 const convertSecondsToMinutes = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);

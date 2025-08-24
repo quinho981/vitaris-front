@@ -39,9 +39,42 @@
       </div>
     </div>
     <div class="rounded-lg mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        <div v-for="item in filteredTranscripts" :key="item.id" class="card p-4 hover:shadow-lg transition-shadow duration-300">
-          <div class="flex justify-between mb-2">
+      <div class="grid grid-cols-1 gap-4">
+        <div v-for="item in filteredTranscripts" :key="item.id" class="flex flex-col card p-4 hover:shadow-lg transition-shadow duration-300">
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <div class="flex gap-2 items-center">
+                <p class="text-xl font-semibold">{{ item.patient_name }}</p>
+                <Tag severity="success" value="Consulta Geral" rounded></Tag>
+              </div>
+            </div>
+            <div class="flex justify-between mb-1">
+              <div class="flex gap-8">
+                <div class="flex items-center gap-1"><Calendar :size="15" />{{ formatDate(item.created_at) }}</div>
+                <div class="flex items-center gap-1"><Clock :size="15" />14:30</div>
+                <div class="flex items-center gap-1"><Play :size="15" />00:12:34</div>
+                <div class="flex items-center gap-1"><FileAudio :size="15" />{{ formatSize(item.size) }}</div>
+              </div>
+              <div class="flex items-center">
+                <div class="flex gap-x-3">
+                  <Button text @click="goToDetail(item)" v-tooltip.top="'Visualizar'">
+                    <Eye :size="18" class="text-slate-500" /> 
+                  </Button>
+                  <Button text @click="goToDetail(item)" v-tooltip.top="'Renomear'">
+                    <Pencil :size="18" class="text-slate-500" /> 
+                  </Button>
+                  <Button text v-tooltip.top="'Baixar'">
+                    <Download :size="18" class="text-slate-500" />
+                  </Button>
+                  <Button text severity="danger" @click="deleteTranscript(item)" v-tooltip.top="'Excluir'">
+                    <Trash :size="18" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <p>Paciente relata dor torácica há 3 dias, associada a dispneia aos esforços...</p>
+          </div>
+          <!-- <div class="flex justify-between mb-2">
             <div class="flex items-center gap-2">
               <div>
                 <FileText :size="18" class="text-blue-500 mr-1" />
@@ -77,7 +110,7 @@
                 <Trash :size="18" />
               </Button>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div v-if="!filteredTranscripts.length" class="card text-center text-gray-400 py-10">
@@ -92,7 +125,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useShowToast } from '@/utils/useShowToast';
-import { FileText, Eye, Download, Trash, Star, Mic, Pencil } from 'lucide-vue-next';
+import { FileText, Eye, Download, Trash, Star, Mic, Pencil, Calendar, Clock, Play, FileAudio } from 'lucide-vue-next';
 
 const router = useRouter();
 const { showSuccess, showError } = useShowToast();

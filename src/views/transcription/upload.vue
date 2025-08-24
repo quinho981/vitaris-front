@@ -70,7 +70,7 @@
                                 :loading="loadingTemplates"
                                 :class="{ 'p-invalid': errorMessage }"
                                 optionValue="id" 
-                                optionLabel="type" 
+                                optionLabel="name" 
                                 placeholder="Selecione" 
                                 class="w-full" 
                             />

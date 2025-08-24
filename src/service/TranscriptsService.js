@@ -79,5 +79,19 @@ export const TranscriptsService = {
         } catch (error) {
             console.error(error);
         }
+    },
+    async getConversations(id) {
+        const token = Cookies.get('token');
+        try {
+            const response = await api.get(`/transcripts/${id}/conversations`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
     }
 }
