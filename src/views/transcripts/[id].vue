@@ -115,7 +115,7 @@
                         </div>
                         <div v-show="activeTab === '1'">
                             <div v-if="loadingTranscript" class="flex items-center justify-center h-64">
-                                <span class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-slate-200"></span>
+                                <Loader2 :size="24" class="animate-spin mr-1" />
                                 <span class="ml-2">Carregando editor...</span>
                             </div>
                             <div v-else>
@@ -167,7 +167,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit, LayoutTemplate } from 'lucide-vue-next';
+import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit, LayoutTemplate, Loader2 } from 'lucide-vue-next';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute } from "vue-router";
 import { useShowToast } from '@/utils/useShowToast';

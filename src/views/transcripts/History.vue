@@ -7,29 +7,10 @@
       </div>
       <div class="flex gap-2">
         <Button icon="pi pi-filter" label="Filtros" outlined class="!text-slate-950 !bg-white !border-zinc-200" />
-        <router-link
-          :to="{ name: 'transcription' }"
-          class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[14px] !font-semibold !p-3 flex items-center gap-2 hover:!from-blue-600 hover:!to-blue-800 duration-300"
-        >
-          <Mic :size="18" />
-          Nova Transcrição
-        </router-link>
       </div>
     </div>
     <div class="card mb-5">
-      <div class="flex gap-4 mb-4 items-center">
-        <SelectButton 
-          v-model="value" 
-          :options="options" 
-          size="large"
-          :pt="{
-            root: {
-              button: {style: 'color: black, fontWeight: bold'}
-            }
-          }"
-        />
-      </div>
-      <div class="flex gap-4 !mt-5">
+      <div class="flex gap-4 ">
         <IconField class="flex-1">
           <InputIcon class="pi pi-search" />
           <InputText v-model="search" placeholder="Buscar transcrições..." class="w-full" />
@@ -40,77 +21,42 @@
     </div>
     <div class="rounded-lg mb-6">
       <div class="grid grid-cols-1 gap-4">
-        <div v-for="item in filteredTranscripts" :key="item.id" class="flex flex-col card p-4 hover:shadow-lg transition-shadow duration-300">
+        <div v-for="item in filteredTranscripts" :key="item.id" class="flex justify-between flex-wrap card p-4 hover:shadow-lg transition-shadow duration-300">
           <div>
             <div class="flex justify-between items-center mb-1">
               <div class="flex gap-2 items-center">
                 <p class="text-xl font-semibold">{{ item.patient_name }}</p>
-                <Tag severity="success" value="Consulta Geral" rounded></Tag>
               </div>
             </div>
-            <div class="flex justify-between mb-1">
+            <div class="flex justify-between mb-1 text-slate-600 dark:text-slate-200">
               <div class="flex gap-8">
                 <div class="flex items-center gap-1"><Calendar :size="15" />{{ formatDate(item.created_at) }}</div>
-                <div class="flex items-center gap-1"><Clock :size="15" />14:30</div>
                 <div class="flex items-center gap-1"><Play :size="15" />00:12:34</div>
                 <div class="flex items-center gap-1"><FileAudio :size="15" />{{ formatSize(item.size) }}</div>
               </div>
-              <div class="flex items-center">
-                <div class="flex gap-x-3">
-                  <Button text @click="goToDetail(item)" v-tooltip.top="'Visualizar'">
-                    <Eye :size="18" class="text-slate-500" /> 
-                  </Button>
-                  <Button text @click="goToDetail(item)" v-tooltip.top="'Renomear'">
-                    <Pencil :size="18" class="text-slate-500" /> 
-                  </Button>
-                  <Button text v-tooltip.top="'Baixar'">
-                    <Download :size="18" class="text-slate-500" />
-                  </Button>
-                  <Button text severity="danger" @click="deleteTranscript(item)" v-tooltip.top="'Excluir'">
-                    <Trash :size="18" />
-                  </Button>
-                </div>
-              </div>
             </div>
-            <p>Paciente relata dor torácica há 3 dias, associada a dispneia aos esforços...</p>
+            <p class="text-slate-600 dark:text-slate-200">Paciente relata dor torácica há 3 dias, associada a dispneia aos esforços...</p>
           </div>
-          <!-- <div class="flex justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <div>
-                <FileText :size="18" class="text-blue-500 mr-1" />
-              </div>
-              <span class="font-bold text-base">Consulta - {{ item.patient_name }}</span>
+          <div class="flex flex-col justify-between mt-3 sm:mt-0 sm:items-center">
+            <div class="flex gap-2">
+              <Tag severity="primary" :value="item.template" rounded></Tag>
+              <Tag severity="secondary" value="Consulta Geral" rounded></Tag>
             </div>
-            <div class="ml-2">
-              <Button class="p-0" text @click="toggleFavorite(item)" :class="item.favorite ? 'hover:!bg-yellow-50' : 'hover:!bg-gray-50'">
-                <Star :size="17" :class="item.favorite ? 'text-yellow-400 fill-yellow-400' : 'text-gray-500'" />
-              </Button>
-            </div>
-          </div>
-          <p class="text-[13.5px]">{{ item.patient_name }}</p>
-          <div class="flex items-center justify-between text-xs text-gray-500 mb-2 mt-2">
-            <span>{{ formatDate(item.created_at) }}</span>
-            <span class="mr-2">{{ formatSize(item.size) }}</span>
-          </div>
-          <div class="flex items-center justify-between mt-4">
-            <div>
-              <Tag severity="secondary" :value="item.category" rounded />
-            </div>
-            <div class="flex gap-x-3 items-end">
+            <div class="flex gap-x-2">
               <Button text @click="goToDetail(item)" v-tooltip.top="'Visualizar'">
-                <Eye :size="18" class="text-slate-500" /> 
+                <Eye :size="18" class="text-slate-700 dark:text-slate-200" /> 
               </Button>
               <Button text @click="goToDetail(item)" v-tooltip.top="'Renomear'">
-                <Pencil :size="18" class="text-slate-500" /> 
+                <Pencil :size="18" class="text-slate-700 dark:text-slate-200" /> 
               </Button>
               <Button text v-tooltip.top="'Baixar'">
-                <Download :size="18" class="text-slate-500" />
+                <Download :size="18" class="text-slate-700 dark:text-slate-200" />
               </Button>
               <Button text severity="danger" @click="deleteTranscript(item)" v-tooltip.top="'Excluir'">
                 <Trash :size="18" />
               </Button>
             </div>
-          </div> -->
+          </div>
         </div>
       </div>
       <div v-if="!filteredTranscripts.length" class="card text-center text-gray-400 py-10">
@@ -132,10 +78,9 @@ const { showSuccess, showError } = useShowToast();
 
 const transcripts = ref([]);
 const search = ref('');
-const tab = ref('documents');
-
-const value = ref('Documentos');
-const options = ref(['Documentos','Templates','Arquivados']);
+// const tab = ref('documents');
+// const value = ref('Documentos');
+// const options = ref(['Documentos','Templates','Arquivados']);
 
 const fetchTranscripts = async () => {
   try {
@@ -147,6 +92,7 @@ const fetchTranscripts = async () => {
       size: t.size || 10,
       category: t.category || 'Geral',
       favorite: t.favorite || false,
+      template: t.document?.document_template?.name || 'Padrão'
     }));
   } catch (e) {
     showError('Erro', 'Erro ao carregar transcrições', 3000);
@@ -157,12 +103,14 @@ onMounted(fetchTranscripts);
 
 const filteredTranscripts = computed(() => {
   if (!search.value) return transcripts.value;
+  
   return transcripts.value.filter(t =>
     t.patient_name.toLowerCase().includes(search.value.toLowerCase()) ||
     t.summary.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 
+// TRANSFORMAR EM HELPER
 const formatDate = (date) => {
   if (!date) return '';
   return new Date(date).toLocaleDateString('pt-BR');
@@ -177,13 +125,13 @@ const formatSize = (size) => {
 const goToDetail = (item) => {
   router.push({ name: 'transcriptsShow', params: { id: item.id } });
 };
-const goToNewTranscription = () => {
-  router.push('/home');
-};
-const toggleFavorite = (item) => {
-  item.favorite = !item.favorite;
-  // Aqui você pode chamar um serviço
-};
+// const goToNewTranscription = () => {
+//   router.push('/home');
+// };
+// const toggleFavorite = (item) => {
+//   item.favorite = !item.favorite;
+//   // Aqui você pode chamar um serviço
+// };
 const deleteTranscript = async (item) => {
   try {
     await TranscriptsService.delete(item.id);
