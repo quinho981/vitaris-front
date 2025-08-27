@@ -141,7 +141,7 @@
                             <span class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl">Ansiedade</span>
                         </div>
                         <hr class="my-4" />
-                        <h4 class="text-lg font-semibold mb-2">Tópicos principais</h4>
+                        <h4 class="text-lg font-semibold mb-2">Sintomas identificados</h4>
                         <div class="flex flex-wrap gap-2">
                             <ul class="custom-marker-topic list-disc list-inside">
                                 <li v-for="symptom in symptoms" :key="symptom">
