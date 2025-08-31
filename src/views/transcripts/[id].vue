@@ -135,28 +135,17 @@
                     <div class="flex flex-col">
                         <h4 class="text-lg font-semibold mb-2">Tópicos principais</h4>
                         <div class="flex flex-wrap gap-2">
-                            <span class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl">Dores de cabeça matinais</span>
-                            <span class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl">Distúrbios do sono</span>
-                            <span class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl">Estresse ocupacional</span>
-                            <span class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl">Ansiedade</span>
+                            <InsightsMainTopics :mainTopics="mainTopics" />
                         </div>
                         <hr class="my-4" />
                         <h4 class="text-lg font-semibold mb-2">Sintomas identificados</h4>
                         <div class="flex flex-wrap gap-2">
-                            <ul class="custom-marker-topic list-disc list-inside">
-                                <li v-for="symptom in symptoms" :key="symptom">
-                                    {{ symptom }}
-                                </li>
-                            </ul>
+                            <InsightsSymptons :symptoms="symptoms" />
                         </div>
                         <hr class="my-4" />
                         <h4 class="text-lg font-semibold mb-2">Possíveis Diagnósticos</h4>
                         <div class="flex flex-wrap gap-2">
-                            <ul class="custom-marker-diagnosis list-disc list-inside">
-                                <li v-for="symptom in symptoms2" :key="symptom">
-                                    {{ symptom }}
-                                </li>
-                            </ul>
+                            <InsightsDiagnoses :diagnoses="diagnoses" />
                         </div>
                     </div>
                 </div>
@@ -166,7 +155,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit, LayoutTemplate, Loader2 } from 'lucide-vue-next';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute } from "vue-router";
@@ -177,6 +166,7 @@ const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
 
 const route = useRoute();
+const type = route.query.type;
 const value = ref('');
 const patient = ref('');
 const createdAt = ref('');
@@ -187,16 +177,12 @@ const activeTab = ref('1');
 const conversations = ref('');
 const loadingTranscript = ref(false);
 const loadingConversations = ref(false);
-const symptoms = [
-    'Cefaleia matinal',
-    'Insônia',
-    'Ansiedade',
-];
-const symptoms2 = [
-    'Cefaleia tensional',
-    'Transtorno de ansiedade',
-    'Distúrbio do sono relacionado ao estresse'
-]
+const documentId = ref();
+const symptoms = ref([]);
+const diagnoses = ref([]);
+const insights = ref(null);
+const mainTopics = ref([])
+let eventSource = null;
 
 const showTranscript = async (id) => {
     loadingTranscript.value = true;
@@ -209,6 +195,12 @@ const showTranscript = async (id) => {
         createdAt.value = formatPtBrCurto(response.created_at);
         duration.value = convertSecondsToMinutes(response.end_conversation_time)
         documentContent.value = response.document.result;
+        documentId.value = response.document.id;
+        if(response.document?.ai_insights) {
+            symptoms.value = response.document.ai_insights?.identified_symptoms || [];
+            diagnoses.value = response.document.ai_insights?.possible_diagnoses || [];
+            mainTopics.value = response.document.ai_insights?.main_topics || [];
+        }
     } catch (error) {
         showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000)  
     } finally {
@@ -255,6 +247,30 @@ const convertSecondsToMinutes = (seconds) => {
     return `${mins}min ${secs}s`;
 };
 
+const startSSE = () => {
+    eventSource = new EventSource(`${import.meta.env.VITE_BASE_URL}/stream/insights-ai/${documentId.value}`);
+
+    eventSource.onmessage = handleInsightMessage;
+    eventSource.onerror = handleSSEError;
+}
+
+const handleInsightMessage = (event) => {
+    insights.value = JSON.parse(event.data);
+
+    const {identified_symptoms, main_topics, possible_diagnoses} = insights.value
+
+    symptoms.value = identified_symptoms;
+    diagnoses.value = possible_diagnoses;
+    mainTopics.value = main_topics;
+
+    eventSource.close();
+}
+
+const handleSSEError = (error) => {
+    console.error("Erro SSE:", error);
+    eventSource.close();
+}
+
 watch(
     () => route.params.id,
     (newId) => {
@@ -265,6 +281,14 @@ watch(
 onMounted(async () => {
     const id = route.params.id;
     await showTranscript(id);
+
+    if(type === 'new' && documentId.value) {
+        startSSE();
+    }
+});
+
+onBeforeUnmount(() => {
+    if (eventSource) eventSource.close();
 });
 </script>
 

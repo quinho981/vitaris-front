@@ -471,7 +471,8 @@ const validateForm = () => {
 const redirectTo = (id) => {
     router.push({
         name: 'transcriptsShow',
-        params: { id: id }
+        params: { id: id },
+        query: { type: 'new' }
     });
 }
 
