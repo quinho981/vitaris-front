@@ -158,7 +158,7 @@
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit, LayoutTemplate, Loader2 } from 'lucide-vue-next';
 import { TranscriptsService } from '@/service/TranscriptsService';
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useShowToast } from '@/utils/useShowToast';
 import { useI18n } from 'vue-i18n';
 
@@ -166,6 +166,7 @@ const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
 
 const route = useRoute();
+const router = useRouter();
 const type = route.query.type;
 const value = ref('');
 const patient = ref('');
@@ -252,6 +253,8 @@ const startSSE = () => {
 
     eventSource.onmessage = handleInsightMessage;
     eventSource.onerror = handleSSEError;
+
+    router.replace({ path: route.path });
 }
 
 const handleInsightMessage = (event) => {
