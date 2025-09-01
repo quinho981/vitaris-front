@@ -6,6 +6,13 @@
                 <p class="my-1 text-lg ">Consulta com Marina Silva</p>
             </div>
             <div class="flex items-center gap-2">
+                <button
+                    @click="copyText"
+                    class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
+                >
+                    <Copy :size="17" />
+                    Copiar
+                </button>
                 <router-link
                     :to="{ name: 'transcription' }"
                     class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
@@ -13,13 +20,13 @@
                     <Share2 :size="17" />
                     Compartilhar
                 </router-link>
-                <router-link
-                    :to="{ name: 'transcription' }"
+                <button
+                    @click="exportDocument"
                     class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
                 >
                     <Download :size="17" />
-                    Exportar 
-                </router-link>
+                    Exportar
+                </button>
             </div>
         </div>
         <div class="grid grid-cols-12 gap-6">
@@ -156,14 +163,16 @@
 
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
-import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit, LayoutTemplate, Loader2 } from 'lucide-vue-next';
+import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit, LayoutTemplate, Loader2, Copy } from 'lucide-vue-next';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute, useRouter } from "vue-router";
 import { useShowToast } from '@/utils/useShowToast';
+import { useHelpers } from '@/utils/helper';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
+const { formatPtBrCurto, convertSecondsToMinutes, exportPDF } = useHelpers();
 
 const route = useRoute();
 const router = useRouter();
@@ -223,30 +232,19 @@ const getConversations = async () => {
     }
 }
 
-// TRANSFORMAR EM HELPER
-function formatPtBrCurto(iso) {
-    const d = new Date(iso); // ISO com "Z" = UTC
-    const day = String(d.getUTCDate()).padStart(2, '0');
-    let month = new Intl.DateTimeFormat('pt-BR', { month: 'short', timeZone: 'UTC' }).format(d);
-    month = month.replace('.', '');                       // tira "ago." -> "ago"
-    month = month.charAt(0).toUpperCase() + month.slice(1); // "ago" -> "Ago"
-    const year = d.getUTCFullYear();
-    return `${day} de ${month}, ${year}`;
-}
+const copyText = () => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(documentContent.value, "text/html");
 
-// TRANSFORMAR EM HELPER
-const convertSecondsToMinutes = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
+    const plainText = doc.body.innerText;
 
-    if (mins === 0) {
-        return `${secs}s`;
-    }
-    if (secs === 0) {
-        return `${mins}min`;
-    }
-    return `${mins}min ${secs}s`;
+    navigator.clipboard.writeText(plainText);
+    showSuccess(t('notifications.titles.success'), t('notifications.messages.textCopiedSuccessfully'), 3000)
 };
+
+const exportDocument = () => {
+    exportPDF(documentContent.value);
+}
 
 const startSSE = () => {
     eventSource = new EventSource(`${import.meta.env.VITE_BASE_URL}/stream/insights-ai/${documentId.value}`);
