@@ -93,7 +93,7 @@
                             <Tabs v-model:value="activeTab" class="w-full ml-2 mr-2">
                                 <TabList>
                                     <Tab value="0" @click="getConversations">Contexto da consulta</Tab>
-                                    <Tab value="1">Anamnese padrão</Tab>
+                                    <Tab value="1">{{ documentTemplate }}</Tab>
                                 </TabList>
                             </Tabs>
                         </div>
