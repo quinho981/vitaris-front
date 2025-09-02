@@ -3,7 +3,7 @@
         <div class="flex items-center flex-wrap justify-between mb-3 py-3">
             <div>
                 <h1 class="text-3xl font-bold">Detalhes da transcrição</h1>
-                <p class="my-1 text-lg ">Consulta com Marina Silva</p>
+                <p class="my-1 text-lg ">Consulta com {{ patient }}</p>
             </div>
             <div class="flex items-center gap-2">
                 <button
@@ -13,13 +13,13 @@
                     <Copy :size="17" />
                     Copiar
                 </button>
-                <router-link
-                    :to="{ name: 'transcription' }"
+                <button
+                    @click="shareDocument"
                     class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
                 >
                     <Share2 :size="17" />
                     Compartilhar
-                </router-link>
+                </button>
                 <button
                     @click="exportDocument"
                     class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
@@ -172,7 +172,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
-const { formatPtBrCurto, convertSecondsToMinutes, exportPDF } = useHelpers();
+const { formatPtBrCurto, convertSecondsToMinutes, exportPDF, capitalizeArray } = useHelpers();
 
 const route = useRoute();
 const router = useRouter();
@@ -207,9 +207,9 @@ const showTranscript = async (id) => {
         documentContent.value = response.document.result;
         documentId.value = response.document.id;
         if(response.document?.ai_insights) {
-            symptoms.value = response.document.ai_insights?.identified_symptoms || [];
-            diagnoses.value = response.document.ai_insights?.possible_diagnoses || [];
-            mainTopics.value = response.document.ai_insights?.main_topics || [];
+            symptoms.value = capitalizeArray(response.document.ai_insights?.identified_symptoms) || [];
+            diagnoses.value = capitalizeArray(response.document.ai_insights?.possible_diagnoses) || [];
+            mainTopics.value = capitalizeArray(response.document.ai_insights?.main_topics) || [];
         }
     } catch (error) {
         showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000)  
@@ -242,9 +242,31 @@ const copyText = () => {
     showSuccess(t('notifications.titles.success'), t('notifications.messages.textCopiedSuccessfully'), 3000)
 };
 
-const exportDocument = () => {
-    exportPDF(documentContent.value);
+const exportDocument = async () => {
+    await exportPDF(documentContent.value);
+    showSuccess(t('notifications.titles.success'), 'Documento exportado com sucesso!', 3000);
 }
+
+const shareDocument = async () => {
+    const shareData = {
+        title: `Transcrição de ${patient.value}`,
+        text: `Confira os detalhes desta transcrição: ${documentTemplate.value}`,
+    };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+            return;
+        }
+
+        const clipboardContent = `${shareData.title}\n${shareData.text}`;
+        await navigator.clipboard.writeText(clipboardContent);
+    } catch (error) {
+        console.error('Erro ao compartilhar:', error);
+        showError(t('notifications.titles.error'), 'Não foi possível compartilhar a transcrição', 3000);
+    }
+};
+
 
 const startSSE = () => {
     eventSource = new EventSource(`${import.meta.env.VITE_BASE_URL}/stream/insights-ai/${documentId.value}`);
@@ -260,9 +282,9 @@ const handleInsightMessage = (event) => {
 
     const {identified_symptoms, main_topics, possible_diagnoses} = insights.value
 
-    symptoms.value = identified_symptoms;
-    diagnoses.value = possible_diagnoses;
-    mainTopics.value = main_topics;
+    symptoms.value = capitalizeArray(identified_symptoms);
+    diagnoses.value = capitalizeArray(possible_diagnoses);
+    mainTopics.value = capitalizeArray(main_topics);
 
     eventSource.close();
 }

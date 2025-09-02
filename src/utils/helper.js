@@ -68,9 +68,16 @@ export const useHelpers = () => {
         return `${mins}min ${secs}s`;
     };
 
+    const capitalizeFirstLetter = (text) => {
+        if (!text) return '';
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+    const capitalizeArray = (arr) => arr.map(item => capitalizeFirstLetter(item));
+
     return {
         exportPDF,
         formatPtBrCurto,
-        convertSecondsToMinutes
+        convertSecondsToMinutes,
+        capitalizeArray,
     };
 }
