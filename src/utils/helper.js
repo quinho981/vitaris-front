@@ -74,10 +74,24 @@ export const useHelpers = () => {
     };
     const capitalizeArray = (arr) => arr.map(item => capitalizeFirstLetter(item));
 
+    const formatDate = (date) => {
+        if (!date) return '';
+        return new Date(date).toLocaleDateString('pt-BR');
+    };
+
+    const formatSize = (size) => {
+        if (!size) return '';
+        if (size < 1024) return `${size} B`;
+        if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+        return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+    };
+
     return {
         exportPDF,
         formatPtBrCurto,
         convertSecondsToMinutes,
         capitalizeArray,
+        formatDate,
+        formatSize,
     };
 }

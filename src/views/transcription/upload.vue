@@ -171,7 +171,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { usePrimeVue } from 'primevue/config';
 import { Upload, FileAudio2, FileVolume, SendHorizontal, Loader2, FileChartColumn } from 'lucide-vue-next';
 import { AnamneseService } from '@/service/AnamneseService';
 import { useShowToast } from '@/utils/useShowToast';
@@ -179,11 +178,12 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from "vue-router";
 import api from '@/services/axios';
 import Cookies from 'js-cookie';
+import { useHelpers } from '@/utils/helper';
 
-const $primevue = usePrimeVue();
 const router = useRouter();
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
+const { formatSize } = useHelpers();
 
 // Configuração do Deepgram
 const DEEPGRAM_API_KEY = '7bfd2857b37455faf82a84bf1f0e7406afdb1372'; // Substitua pela sua API key do Deepgram
@@ -476,22 +476,6 @@ const redirectTo = (id) => {
     });
 }
 
-// TRANSFORMAR EM HELPER
-const formatSize = (bytes) => {
-    const k = 1024;
-    const dm = 3;
-    const sizes = $primevue.config.locale.fileSizeTypes || ['Bytes', 'KB', 'MB', 'GB'];
-
-    if (bytes === 0) {
-        return `0 ${sizes[0]}`;
-    }
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
-
-    return `${formattedSize} ${sizes[i]}`;
-};
-
 const getTemplates = async () => {
     const token = Cookies.get('token');
     loadingTemplates.value = true;
@@ -537,15 +521,12 @@ onMounted(() => {
   line-height: 1.4;
   font-size: 0.9rem;
 }
-
 .transcription-item {
   border-bottom: 1px solid #e5e7eb;
 }
-
 .transcription-item:last-child {
   border-bottom: none;
 }
-
 ::v-deep(.p-fileupload-header) {
     padding: 0 !important;
     margin: 0 !important;
@@ -556,12 +537,9 @@ onMounted(() => {
     padding: 0 !important;
     border: none !important;
 }
-
-/* Animação para novos itens */
 .transcription-item {
     animation: fadeIn 0.5s ease-in-out;
 }
-
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -572,14 +550,12 @@ onMounted(() => {
         transform: translateY(0);
     }
 }
-
 @media (max-width: 640px) {
     .transcript-box {
         min-height: 350px !important;
         max-height: 351px !important;
     }
 }
-
 @media (min-width: 640px) and (max-width: 1024px) {
     .transcript-box {
         min-height: 461px;

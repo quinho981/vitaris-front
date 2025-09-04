@@ -90,7 +90,9 @@
             "anamnesisGeneratedSuccessfully": "Anamnese gerada com sucesso",
             "anamnesisGeneratingError": "Erro ao gerar a anamnese",
             "userCreatedSuccessfully": "Usuário criado com sucesso",
-            "userCreatingError": "Erro ao criar o usuário"
+            "userCreatingError": "Erro ao criar o usuário",
+            "editSuccessfully": "Edição realizada com sucesso",
+            "editError": "Erro ao realizar a edição"
         }
     },
     "transcription": {
