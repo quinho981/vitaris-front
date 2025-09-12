@@ -45,7 +45,7 @@
           <div class="flex flex-col justify-between mt-3 sm:mt-0 sm:items-center">
             <div class="flex gap-2">
               <Tag severity="primary" :value="item.template" rounded></Tag>
-              <Tag severity="secondary" value="Consulta Geral" rounded></Tag>
+              <Tag severity="secondary" :value="item.type" rounded></Tag>
             </div>
             <div class="flex gap-x-2">
               <Button text @click="goToDetail(item)" v-tooltip.top="'Visualizar'">
@@ -140,7 +140,8 @@ const fetchTranscripts = async (page = 1, reset = false) => {
       size: t.size || 10,
       category: t.category || 'Geral',
       template: t.document?.document_template?.name || 'Padrão',
-      time: convertSecondsToMinutes(t.end_conversation_time)
+      time: convertSecondsToMinutes(t.end_conversation_time),
+      type: t.transcript_type.type
     }));
 
     if (reset) {

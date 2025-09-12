@@ -57,7 +57,7 @@
                     </FileUpload>
                     <div class="mt-3">
                         <label class="mb-1" for="name">Nome do Paciente</label>
-                        <InputText id="name" v-model="form.patient" type="text" class="w-full" placeholder="Digite o nome do paciente... (opcional)" />
+                        <InputText id="name" v-model="form.patient" type="text" class="w-full" placeholder="Digite o nome do paciente..." />
                     </div>
                     <div class="flex gap-4 flex-wrap xl:flex-nowrap mt-2">
                         <div class="w-full">
@@ -80,10 +80,11 @@
                             <Select 
                                 id="type" 
                                 v-model="form.type_id" 
-                                :options="dropdownItems" 
+                                :options="dropdownTypes"
+                                :loading="loadingTypes"
                                 optionValue="id" 
-                                optionLabel="label" 
-                                placeholder="Selecione (opcional)" 
+                                optionLabel="type" 
+                                placeholder="Selecione" 
                                 class="w-full" 
                             />
                         </div>
@@ -191,27 +192,22 @@ const DEEPGRAM_API_KEY = '7bfd2857b37455faf82a84bf1f0e7406afdb1372'; // Substitu
 const chatTranscription = ref();
 const uploader = ref(null)
 const selectedFile = ref(null)
-const dropdownItem = ref(null);
 const isTranscribing = ref(false)
 const loadingFinish = ref(false)
 const dialogClear = ref(false)
 const dialogLoading = ref(false)
 const transcriptions = ref([])
 const loadingTemplates = ref(false)
+const loadingTypes = ref(false)
 const endConversationTime = ref('')
 const dropdownTemplates = ref([]);
+const dropdownTypes = ref([]);
 const errorMessage = ref(false);
 const form = ref({
     patient: '',
     template_id: null,
     type_id: null
 })
-
-const dropdownItems = ref([
-    { id: 1, label: 'Consulta Geral' },
-    { id: 2, label: 'Consulta Especializada' },
-    { id: 3, label: 'Retorno' }
-]);
 
 function openFileDialog() {
     if (transcriptions.value.length > 0) {
@@ -491,8 +487,24 @@ const getTemplates = async () => {
     }
 }
 
+const getTypes = async () => {
+    const token = Cookies.get('token');
+    loadingTypes.value = true;
+    try {
+        const response = await api.get(`/types`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        dropdownTypes.value = response.data
+    } catch (error) {
+        console.error(error);
+    } finally {
+        loadingTypes.value = false;
+    }
+}
+
 onMounted(() => {
-    getTemplates()
+    getTemplates();
+    getTypes();
 });
 </script>
 
