@@ -203,6 +203,7 @@ const endConversationTime = ref('')
 const dropdownTemplates = ref([]);
 const dropdownTypes = ref([]);
 const errorMessage = ref(false);
+const fileSize = ref('')
 const form = ref({
     patient: '',
     template_id: null,
@@ -232,6 +233,7 @@ const clearTranscription = () => {
     transcriptions.value = [];
     chatTranscription.value = null;
     dialogClear.value = false
+    fileSize.value = ''
     endConversationTime.value = ''
 };
 
@@ -266,6 +268,7 @@ const validateAudioFile = (file) => {
         };
     }
 
+    fileSize.value = file.size
     return { valid: true };
 };
 
@@ -441,7 +444,8 @@ const finishConversation = () => {
         patient,
         template,
         type,
-        endConversationTime: endConversationTime.value
+        endConversationTime: endConversationTime.value,
+        fileSize: fileSize.value
     };
 
     AnamneseService.generator(payload)

@@ -5,18 +5,18 @@
       <p class="my-1 text-lg">Gerencie e organize suas transcrições médicas</p>
     </div>
     <div class="card mb-5">
-      <div class="flex gap-4 ">
+      <div class="flex flex-wrap gap-4 ">
         <IconField class="flex-1">
           <InputIcon class="pi pi-search" />
-          <InputText v-model="search" placeholder="Buscar transcrições..." class="w-full" />
+          <InputText v-model="username" placeholder="Buscar transcrições..." class="w-full" />
         </IconField>
-        <Button label="Por data" outlined class="!text-slate-950 !border-zinc-200"/>
-        <Button label="Por template" outlined class="!text-slate-950 !border-zinc-200"/>
+        <DatePicker v-model="date" :maxDate="today" showIcon fluid iconDisplay="input" :manualInput="false" placeholder="Data da transcrição" class="w-full md:w-auto" />
+        <Select v-model="selectedType" :options="dropdownTypes" :loading="loadingTypes" optionValue="id" optionLabel="type" placeholder="Tipo de transcrição" class="w-full md:w-auto" />
       </div>
     </div>
     <div class="rounded-lg mb-6">
       <div class="grid grid-cols-1 gap-4">
-        <div v-for="item in filteredTranscripts" :key="item.id" class="flex justify-between flex-wrap card p-4 hover:shadow-lg transition-shadow duration-300">
+        <div v-for="item in transcripts" :key="item.id" class="flex justify-between flex-wrap card p-4 hover:shadow-lg transition-shadow duration-300">
           <div>
             <div class="flex justify-between items-center mb-1">
               <div class="flex gap-2 items-center w-full">
@@ -37,10 +37,10 @@
               <div class="flex gap-8">
                 <div class="flex items-center gap-1"><Calendar :size="15" />{{ formatDate(item.created_at) }}</div>
                 <div class="flex items-center gap-1"><Play :size="15" />{{ item.time }}</div>
-                <div class="flex items-center gap-1"><FileAudio :size="15" />{{ formatSize(item.size) }}</div>
+                <div v-if="item.size != null" class="flex items-center gap-1"><FileAudio :size="15" />{{ formatSize(item.size) }}</div>
               </div>
             </div>
-            <p class="text-slate-600 dark:text-slate-200">Paciente relata dor torácica há 3 dias, associada a dispneia aos esforços...</p>
+            <p class="text-slate-600 dark:text-slate-200">{{ item.description }}</p>
           </div>
           <div class="flex flex-col justify-between mt-3 sm:mt-0 sm:items-center">
             <div class="flex gap-2">
@@ -76,14 +76,14 @@
 
       <div ref="loadMoreTrigger" class="h-4"></div>
       
-      <div v-if="!filteredTranscripts.length && !loading" class="card text-center text-gray-400 py-10">
+      <!-- <div v-if="!filteredTranscripts.length && !loading" class="card text-center text-gray-400 py-10">
         <div v-if="search">
           Nenhuma transcrição encontrada para "{{ search }}"
-        </div>
+        </div> 
         <div v-else>
           Nenhuma transcrição encontrada
         </div>
-      </div>
+      </div> -->
 
       <div v-if="hasReachedEnd && transcripts.length > 0" class="text-center py-4 text-slate-500">
         <p>Todas as transcrições foram carregadas</p>
@@ -101,21 +101,23 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useShowToast } from '@/utils/useShowToast';
 import { FileText, Eye, Download, Trash, Star, Mic, Pencil, Calendar, Clock, Play, FileAudio, Loader2, Save } from 'lucide-vue-next';
 import { useHelpers } from '@/utils/helper';
 import { useI18n } from 'vue-i18n';
+import Cookies from 'js-cookie';
+import api from '@/services/axios';
 
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
 const { formatDate, formatSize, convertSecondsToMinutes } = useHelpers();
 const router = useRouter();
+const today = new Date();
 
 const transcripts = ref([]);
-const search = ref('');
 const loading = ref(false);
 const currentPage = ref(1);
 const hasReachedEnd = ref(false);
@@ -126,6 +128,28 @@ const dialogConfirmation = ref(false);
 const dialogLoading = ref(false);
 const editingId = ref(null);
 const loadingRename = ref(false);
+const username = ref(null)
+const date = ref(null);
+const loadingTypes = ref(false)
+const selectedType = ref(null);
+const dropdownTypes = ref([])
+
+const mapperTranscript = (transcripts) => {
+  return transcripts.map(t => ({
+    ...t,
+    size: t.file_size,
+    category: t.category || 'Geral',
+    template: t.document?.document_template?.name || 'Padrão',
+    time: convertSecondsToMinutes(t.end_conversation_time),
+    type: t.transcript_type.type,
+    description: truncateText(t.description) || 'Descrição não encontrada'
+  }));
+}
+
+function truncateText(text, maxLength = 85) {
+  if (!text) return '';
+  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+}
 
 const fetchTranscripts = async (page = 1, reset = false) => {
   if (loading.value || (hasReachedEnd.value && !reset)) return;
@@ -134,15 +158,7 @@ const fetchTranscripts = async (page = 1, reset = false) => {
   
   try {
     const response = await TranscriptsService.index(page);
-    const newTranscripts = response.transcripts.map(t => ({
-      ...t,
-      summary: t.summary || t.title || '',
-      size: t.size || 10,
-      category: t.category || 'Geral',
-      template: t.document?.document_template?.name || 'Padrão',
-      time: convertSecondsToMinutes(t.end_conversation_time),
-      type: t.transcript_type.type
-    }));
+    const newTranscripts = mapperTranscript(response.transcripts)
 
     if (reset) {
       transcripts.value = newTranscripts;
@@ -180,22 +196,11 @@ const setupIntersectionObserver = () => {
         loadMore();
       }
     },
-    {
-      rootMargin: '100px'
-    }
+    { rootMargin: '100px' }
   );
 
   observer.value.observe(loadMoreTrigger.value);
 };
-
-const filteredTranscripts = computed(() => {
-  if (!search.value) return transcripts.value;
-  
-  return transcripts.value.filter(t =>
-    t.patient.toLowerCase().includes(search.value.toLowerCase()) ||
-    t.summary.toLowerCase().includes(search.value.toLowerCase())
-  );
-});
 
 const goToDetail = (item) => {
   router.push({ name: 'transcriptsShow', params: { id: item.id } });
@@ -212,21 +217,20 @@ const renameItem = async (item) => {
     const response = await TranscriptsService.update(item);
 
     if (response.status === 200) {
-        transcripts.value = transcripts.value.map(transcript => 
-          transcript.id === item.id ? { ...transcript, title: item.title } : transcript
-        );
-        editingId.value = null;
-        showSuccess(t('notifications.titles.success'), t('notifications.messages.editSuccessfully'), 3000);
+      transcripts.value = transcripts.value.map(transcript => 
+        transcript.id === item.id ? { ...transcript, title: item.title } : transcript
+      );
+      editingId.value = null;
+      showSuccess(t('notifications.titles.success'), t('notifications.messages.editSuccessfully'), 3000);
     }
 
-    return response;
+    // return response;
   } catch (error) {
     showError(t('notifications.titles.error'), t('notifications.messages.editError'), 3000);
   } finally {
     loadingRename.value = false;
   }
 };
-
 
 const deleteConfirmation = (item) => {
   selectedItem.value = item;
@@ -254,10 +258,46 @@ const refreshData = async () => {
   setupIntersectionObserver();
 };
 
+const getTypes = async () => {
+  const token = Cookies.get('token');
+  loadingTypes.value = true;
+  try {
+    const response = await api.get(`/types`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    dropdownTypes.value = response.data
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loadingTypes.value = false;
+  }
+}
+
+const filterTranscripts = async (username, date, selectedType) => {
+  transcripts.value = []
+  loading.value = true;
+
+  try {
+    const transcriptFiltered = await TranscriptsService.filterTranscripts(username, date, selectedType);
+    transcripts.value = mapperTranscript(transcriptFiltered)
+  } finally {
+    loading.value = false;
+  }
+};
+
+let debounceTimer = null;
+watch([username, date, selectedType], ([newUsername, newDate, newType]) => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    filterTranscripts(newUsername, newDate, newType);
+  }, 500);
+}, { immediate: false });
+
 onMounted(async () => {
   await fetchTranscripts(1, true);
   await nextTick();
   setupIntersectionObserver();
+  getTypes();
 });
 
 onUnmounted(() => {
