@@ -102,13 +102,6 @@ watch([getPrimary, getSurface, isDarkTheme], () => {
 
 
 
-
-
-
-
-
-
-
 const commonOptions = {
     responsive: true,
     maintainAspectRatio: false,       // permite ao chart respeitar o tamanho do container
@@ -224,7 +217,7 @@ watch(
             </div>
             <div>
                 <router-link
-                    :to="{ name: 'transcription' }"
+                    :to="{ name: 'upload' }"
                     class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[14px] !font-semibold !p-3 flex items-center gap-2 hover:!from-blue-600 hover:!to-blue-800 duration-300"
                 >
                     <Mic :size="18" />

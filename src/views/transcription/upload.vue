@@ -169,8 +169,6 @@ const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
 const { formatSize } = useHelpers();
 
-const DEEPGRAM_API_KEY = '7bfd2857b37455faf82a84bf1f0e7406afdb1372';
-
 const inputMode = ref('record')
 const chatTranscription = ref();
 const uploader = ref(null)
@@ -308,7 +306,7 @@ const transcribeAudio = async () => {
         const response = await fetch(url.toString(), {
             method: 'POST',
             headers: {
-                'Authorization': `Token ${DEEPGRAM_API_KEY}`,
+                'Authorization': `Token ${import.meta.env.VITE_DEEPGRAM_API_KEY}`,
                 'Content-Type': mimeType,
             },
             body: arrayBuffer
