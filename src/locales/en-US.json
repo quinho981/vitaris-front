@@ -90,7 +90,9 @@
             "anamnesisGeneratedSuccessfully": "Anamnesis generated successfully",
             "anamnesisGeneratingError": "Error generating anamnesis",
             "userCreatedSuccessfully": "User created successfully",
-            "userCreatingError": "Error creating user"
+            "userCreatingError": "Error creating user",
+            "editSuccessfully": "Edit made successfully",
+            "editError": "Error making the edit"
         }
     },
     "transcription": {

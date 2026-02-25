@@ -1,184 +1,323 @@
 <template>
   <section>
-    <div class="flex items-center justify-between mb-3 py-3">
-      <div>
-        <h1 class="text-3xl font-bold">Histórico de transcrições</h1>
-        <p class="my-1 text-lg">Gerencie e organize suas transcrições médicas</p>
-      </div>
-      <div class="flex gap-2">
-        <Button icon="pi pi-filter" label="Filtros" outlined class="!text-slate-950 !bg-white !border-zinc-200" />
-        <router-link
-          :to="{ name: 'transcription' }"
-          class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[14px] !font-semibold !p-3 flex items-center gap-2 hover:!from-blue-600 hover:!to-blue-800 duration-300"
-        >
-          <Mic :size="18" />
-          Nova Transcrição
-        </router-link>
-      </div>
+    <div class="flex flex-col mb-3 py-3">
+      <h1 class="text-3xl font-bold">Histórico de transcrições</h1>
+      <p class="my-1 text-lg">Gerencie e organize suas transcrições médicas</p>
     </div>
     <div class="card mb-5">
-      <div class="flex gap-4 mb-4 items-center">
-        <SelectButton 
-          v-model="value" 
-          :options="options" 
-          size="large"
-          :pt="{
-            root: {
-              button: {style: 'color: black, fontWeight: bold'}
-            }
-          }"
-        />
-      </div>
-      <div class="flex gap-4 !mt-5">
+      <div class="flex flex-wrap gap-4 ">
         <IconField class="flex-1">
           <InputIcon class="pi pi-search" />
-          <InputText v-model="search" placeholder="Buscar transcrições..." class="w-full" />
+          <InputText v-model="username" placeholder="Buscar transcrições..." class="w-full" />
         </IconField>
-        <Button label="Por Data" outlined class="!text-slate-950 !border-zinc-200"/>
-        <Button label="Por Categoria" outlined class="!text-slate-950 !border-zinc-200"/>
+        <div class="relative w-full md:w-auto">
+          <DatePicker
+            v-model="date"
+            :maxDate="today"
+            showIcon
+            fluid
+            :manualInput="false"
+            placeholder="Data da transcrição"
+            class="w-full"
+          />
+         <i
+            v-if="date"
+            class="pi pi-times absolute right-12 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-red-500 transition"
+            @click="clearDate"
+          />
+        </div>
+        <Select v-model="selectedType" :options="dropdownTypes" :loading="loadingTypes" optionValue="id" optionLabel="type" placeholder="Tipo de transcrição" class="w-full md:w-auto" showClear />
       </div>
     </div>
     <div class="rounded-lg mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        <div v-for="item in filteredTranscripts" :key="item.id" class="card p-4 hover:shadow-lg transition-shadow duration-300">
-          <div class="flex justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <div>
-                <FileText :size="18" class="text-blue-500 mr-1" />
+      <div class="grid grid-cols-1 gap-4">
+        <div v-for="item in transcripts" :key="item.id" class="flex justify-between flex-wrap card p-4 hover:shadow-lg transition-shadow duration-300">
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <div class="flex gap-2 items-center w-full">
+                <p class="text-xl font-semibold">{{ item.patient }}</p>
               </div>
-              <span class="font-bold text-base">Consulta - {{ item.patient_name }}</span>
             </div>
-            <div class="ml-2">
-              <Button class="p-0" text @click="toggleFavorite(item)" :class="item.favorite ? 'hover:!bg-yellow-50' : 'hover:!bg-gray-50'">
-                <Star :size="17" :class="item.favorite ? 'text-yellow-400 fill-yellow-400' : 'text-gray-500'" />
-              </Button>
+            <div class="flex justify-between mb-1 text-slate-600 dark:text-slate-200">
+              <div class="flex gap-8">
+                <div class="flex items-center gap-1"><Calendar :size="15" />{{ formatDate(item.created_at) }}</div>
+                <div class="flex items-center gap-1"><Play :size="15" />{{ item.time }}</div>
+                <div v-if="item.size != null" class="flex items-center gap-1"><FileAudio :size="15" />{{ formatSize(item.size) }}</div>
+              </div>
             </div>
+            <p class="text-slate-600 dark:text-slate-200">{{ item.description }}</p>
           </div>
-          <p class="text-[13.5px]">{{ item.patient_name }}</p>
-          <div class="flex items-center justify-between text-xs text-gray-500 mb-2 mt-2">
-            <span>{{ formatDate(item.created_at) }}</span>
-            <span class="mr-2">{{ formatSize(item.size) }}</span>
-          </div>
-          <div class="flex items-center justify-between mt-4">
-            <div>
-              <Tag severity="secondary" :value="item.category" rounded />
+          <div class="flex flex-col justify-between mt-3 sm:mt-0 sm:items-center">
+            <div class="flex gap-2">
+              <Tag severity="primary" :value="item.template" rounded></Tag>
+              <Tag severity="secondary" :value="item.type" rounded></Tag>
             </div>
-            <div class="flex gap-x-3 items-end">
+            <div class="flex gap-x-2">
               <Button text @click="goToDetail(item)" v-tooltip.top="'Visualizar'">
-                <Eye :size="18" class="text-slate-500" /> 
+                <Eye :size="18" class="text-slate-700 dark:text-slate-200" /> 
               </Button>
-              <Button text @click="goToDetail(item)" v-tooltip.top="'Renomear'">
-                <Pencil :size="18" class="text-slate-500" /> 
+              <Button text @click="openEditDialog(item)" v-tooltip.top="'Renomear'">
+                <Pencil :size="18" class="text-slate-700 dark:text-slate-200" /> 
               </Button>
-              <Button text v-tooltip.top="'Baixar'">
-                <Download :size="18" class="text-slate-500" />
-              </Button>
-              <Button text severity="danger" @click="deleteTranscript(item)" v-tooltip.top="'Excluir'">
+              <Button text severity="danger" @click="deleteConfirmation(item)" v-tooltip.top="'Excluir'">
                 <Trash :size="18" />
               </Button>
             </div>
           </div>
         </div>
       </div>
-      <div v-if="!filteredTranscripts.length" class="card text-center text-gray-400 py-10">
-        Nenhuma transcrição encontrada
+      
+      <div v-if="loading && transcripts.length > 0" class="flex items-center justify-center py-4">
+        <Loader2 :size="24" class="animate-spin mr-2" />
+        <p class="text-slate-600 mt-2">Carregando mais transcrições...</p>
+      </div>
+
+      <div v-if="loading && transcripts.length <= 0">
+        <SkeletonLoadingHistoric />
+      </div>
+
+      <div ref="loadMoreTrigger" class="h-4"></div>
+
+      <div v-if="hasReachedEnd && transcripts.length > 0" class="text-center py-4 text-slate-500">
+        <p>Todas as transcrições foram carregadas</p>
       </div>
     </div>
+    <EditTranscriptionName
+      :active="dialogEditName"
+      :item="selectedItem"
+      :loading="loadingRename"
+      @close="dialogEditName = false" 
+      @confirm="renameTranscript"
+    />
+    <DeleteConfirmation 
+      :active="dialogConfirmation"
+      :item="selectedItem"
+      :loading="dialogLoading"
+      @close="dialogConfirmation = false" 
+      @confirm="deleteTranscript"
+    />
   </section>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useShowToast } from '@/utils/useShowToast';
-import { FileText, Eye, Download, Trash, Star, Mic, Pencil } from 'lucide-vue-next';
+import { FileText, Eye, Download, Trash, Star, Mic, Pencil, Calendar, Clock, Play, FileAudio, Loader2, Save } from 'lucide-vue-next';
+import { useHelpers } from '@/utils/helper';
+import { useI18n } from 'vue-i18n';
+import Cookies from 'js-cookie';
+import api from '@/services/axios';
 
-const router = useRouter();
+const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
+const { formatDate, formatSize, convertSecondsToMinutes } = useHelpers();
+const router = useRouter();
+const today = new Date();
 
 const transcripts = ref([]);
-const search = ref('');
-const tab = ref('documents');
+const loading = ref(false);
+const currentPage = ref(1);
+const hasReachedEnd = ref(false);
+const loadMoreTrigger = ref(null);
+const observer = ref(null);
+const selectedItem = ref({});
+const dialogConfirmation = ref(false);
+const dialogEditName = ref(false);
+const dialogLoading = ref(false);
+const loadingRename = ref(false);
+const username = ref(null)
+const date = ref(null);
+const loadingTypes = ref(false)
+const selectedType = ref(null);
+const dropdownTypes = ref([])
 
-const value = ref('Documentos');
-const options = ref(['Documentos','Templates','Arquivados']);
+const mapperTranscript = (transcripts) => {
+  return transcripts.map(t => ({
+    ...t,
+    size: t.file_size,
+    category: t.category || 'Geral',
+    template: t.document?.document_template?.name || 'Padrão',
+    time: convertSecondsToMinutes(t.end_conversation_time),
+    type: t.transcript_type.type,
+    description: truncateText(t.description) || 'Descrição não encontrada'
+  }));
+}
 
-const fetchTranscripts = async () => {
+function truncateText(text, maxLength = 85) {
+  if (!text) return '';
+  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+}
+
+const clearDate = () => {
+  date.value = null;
+};
+
+const fetchTranscripts = async (page = 1, reset = false) => {
+  if (loading.value || (hasReachedEnd.value && !reset)) return;
+  
+  loading.value = true;
+  
   try {
-    const response = await TranscriptsService.index(1);
-    transcripts.value = response.transcripts.map(t => ({
-      ...t,
-      patient_name: t.patient_name || t.title || 'Paciente',
-      summary: t.summary || t.title || '',
-      size: t.size || 10,
-      category: t.category || 'Geral',
-      favorite: t.favorite || false,
-    }));
+    const response = await TranscriptsService.index(page);
+    const newTranscripts = mapperTranscript(response.transcripts)
+
+    if (reset) {
+      transcripts.value = newTranscripts;
+      currentPage.value = 1;
+      hasReachedEnd.value = false;
+    } else {
+      transcripts.value = [...transcripts.value, ...newTranscripts];
+    }
+
+    if (newTranscripts.length === 0 || newTranscripts.length < 10) {
+      hasReachedEnd.value = true;
+    }
+
+    currentPage.value = page;
   } catch (e) {
     showError('Erro', 'Erro ao carregar transcrições', 3000);
+  } finally {
+    loading.value = false;
   }
 };
 
-onMounted(fetchTranscripts);
-
-const filteredTranscripts = computed(() => {
-  if (!search.value) return transcripts.value;
-  return transcripts.value.filter(t =>
-    t.patient_name.toLowerCase().includes(search.value.toLowerCase()) ||
-    t.summary.toLowerCase().includes(search.value.toLowerCase())
-  );
-});
-
-const formatDate = (date) => {
-  if (!date) return '';
-  return new Date(date).toLocaleDateString('pt-BR');
+const loadMore = async () => {
+  if (!hasReachedEnd.value && !loading.value) {
+    await fetchTranscripts(currentPage.value + 1);
+  }
 };
-const formatSize = (size) => {
-  if (!size) return '';
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+
+const setupIntersectionObserver = () => {
+  if (!loadMoreTrigger.value) return;
+
+  observer.value = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && !loading.value && !hasReachedEnd.value) {
+        loadMore();
+      }
+    },
+    { rootMargin: '100px' }
+  );
+
+  observer.value.observe(loadMoreTrigger.value);
 };
 
 const goToDetail = (item) => {
   router.push({ name: 'transcriptsShow', params: { id: item.id } });
 };
-const goToNewTranscription = () => {
-  router.push('/home');
+
+const openEditDialog = (item) => {
+  selectedItem.value = item;
+  dialogEditName.value = !dialogEditName.value;
+}
+
+const renameTranscript = async (namePatient) => {
+  loadingRename.value = true;
+
+  try {
+    const response = await TranscriptsService.update({ ...selectedItem.value, patient: namePatient });
+
+    if (response.status === 200) {
+      transcripts.value = transcripts.value.map(transcript => 
+        transcript.id === selectedItem.value.id ? { ...transcript, patient: namePatient } : transcript
+      );
+      showSuccess(t('notifications.titles.success'), t('notifications.messages.editSuccessfully'), 3000);
+    }
+    return response;
+  } catch (error) {
+    showError(t('notifications.titles.error'), t('notifications.messages.editError'), 3000);
+  } finally {
+    loadingRename.value = false;
+    dialogEditName.value = !dialogEditName.value;
+  }
+}
+
+const deleteConfirmation = (item) => {
+  selectedItem.value = item;
+  dialogConfirmation.value = !dialogConfirmation.value;
 };
-const toggleFavorite = (item) => {
-  item.favorite = !item.favorite;
-  // Aqui você pode chamar um serviço
-};
+
 const deleteTranscript = async (item) => {
+  dialogLoading.value = true;
+
   try {
     await TranscriptsService.delete(item.id);
     transcripts.value = transcripts.value.filter(t => t.id !== item.id);
+    dialogConfirmation.value = false;
     showSuccess('Sucesso', 'Transcrição excluída', 3000);
   } catch (e) {
     showError('Erro', 'Erro ao excluir transcrição', 3000);
+  } finally {
+    dialogLoading.value = false;
   }
 };
+
+const refreshData = async () => {
+  await fetchTranscripts(1, true);
+  await nextTick();
+  setupIntersectionObserver();
+};
+
+const getTypes = async () => {
+  const token = Cookies.get('token');
+  loadingTypes.value = true;
+  try {
+    const response = await api.get(`/types`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    dropdownTypes.value = response.data
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loadingTypes.value = false;
+  }
+}
+
+const filterTranscripts = async (username, date, selectedType) => {
+  transcripts.value = []
+  loading.value = true;
+
+  try {
+    const transcriptFiltered = await TranscriptsService.filterTranscripts(username, date, selectedType);
+    transcripts.value = mapperTranscript(transcriptFiltered)
+  } finally {
+    loading.value = false;
+  }
+};
+
+let debounceTimer = null;
+watch([username, date, selectedType], ([newUsername, newDate, newType]) => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    filterTranscripts(newUsername, newDate, newType);
+  }, 500);
+}, { immediate: false });
+
+onMounted(async () => {
+  await fetchTranscripts(1, true);
+  await nextTick();
+  setupIntersectionObserver();
+  getTypes();
+});
+
+onUnmounted(() => {
+  if (observer.value) {
+    observer.value.disconnect();
+  }
+});
 </script>
 
 <style scoped>
-/* .card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
-  padding: 2rem;
-} */
-
 :deep(.p-selectbutton, ) {
   width: 100% !important;
 }
-
 :deep(.p-togglebutton) {
   font-weight: bold !important;
   width: 100% !important;
   font-size: 15px;
   height: 3.5rem;
 }
-
-</style> 
+</style>

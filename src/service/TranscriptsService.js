@@ -21,21 +21,6 @@ export const TranscriptsService = {
             };
         } catch (error) {
             console.error(error);
-            // toast.add({ severity: 'success', summary: 'Error!', detail: 'Tente novamente', life: 4000 });
-        }
-    },
-    async indexPerDate() {
-        const token = Cookies.get('token');
-        try {
-            const response = await api.get(`/user/transcripts/perDate`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            
-            return response.data;
-        } catch (error) {
-            console.error(error);
         }
     },
     async show(id) {
@@ -79,5 +64,35 @@ export const TranscriptsService = {
         } catch (error) {
             console.error(error);
         }
-    }
+    },
+    async getConversations(id) {
+        const token = Cookies.get('token');
+        try {
+            const response = await api.get(`/transcripts/${id}/conversations`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    },
+    async filterTranscripts(user = null, date = null, type = null) {
+        const token = Cookies.get('token');
+        try {
+            const response = await api.get(`/transcripts/user/filter`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                params: { user, date, type }
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
 }

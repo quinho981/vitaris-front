@@ -1,14 +1,14 @@
 <template>
     <Dialog 
-        :header="'Excluir transcrição?'" 
+        :header="'Renomear transcrição'" 
         :visible="isVisible" 
         :style="{ width: '400px' }" 
         :modal="true" 
         @update:visible="close"
     >
-        <div class="flex items-center justify-center">
-            <i class="pi pi-trash mr-4 text-red-500" style="font-size: 2rem" />
-            <span>Ao excluir esta transcrição, todos os dados associados serão removidos permanentemente e não poderão ser recuperados.</span>
+        <div class="flex flex-col">
+            <label class="mb-1 text-lg" for="name">Título da transcrição</label>
+            <InputText v-model="newNamePatient" class="w-full" size="large" />
         </div>
         <template #footer>
             <Button 
@@ -19,10 +19,10 @@
                 severity="secondary" 
             />
             <Button 
-                label="Excluir transcrição" 
+                label="Renomear" 
                 icon="pi pi-check" 
                 @click="confirm" 
-                severity="danger" 
+                severity="primary" 
                 autofocus 
                 :loading="props.loading" 
             />
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const isVisible = computed(() => props.active);
 
@@ -50,14 +50,25 @@ const props = defineProps({
         type: Boolean,
         default: false
     }
-}); 
+});
+
+const newNamePatient = ref('')
+
+watch(
+    () => props.active,
+    (value) => {
+        if (value && props.item) {
+            newNamePatient.value = props.item.patient;
+        }
+    }
+);
 
 const close = () => {
     emit('close', false);
 };
 
 const confirm = () => {
-    emit('confirm', props.item);
+    emit('confirm', newNamePatient.value);
 };
 </script>
 

@@ -1,25 +1,27 @@
 <template>
     <Dialog 
-        :header="'Excluir transcrição?'" 
+        header="Limpar transcrição?" 
         :visible="isVisible" 
-        :style="{ width: '400px' }" 
+        :style="{ width: '350px' }" 
         :modal="true" 
         @update:visible="close"
     >
         <div class="flex items-center justify-center">
-            <i class="pi pi-trash mr-4 text-red-500" style="font-size: 2rem" />
-            <span>Ao excluir esta transcrição, todos os dados associados serão removidos permanentemente e não poderão ser recuperados.</span>
+            <TriangleAlert :size="60" class="mr-3 text-red-500" />
+            <div class="flex flex-col">
+                <p class="mb-2">Todos os dados preenchidos serão removidos e não poderão ser recuperados.</p>
+            </div>
         </div>
         <template #footer>
             <Button 
                 :label="$t('dialog.exclude.button.cancel')" 
                 icon="pi pi-times" 
-                @click="close" 
-                outlined 
+                @click="close"
+                outlined
                 severity="secondary" 
             />
             <Button 
-                label="Excluir transcrição" 
+                label="Limpar dados" 
                 icon="pi pi-check" 
                 @click="confirm" 
                 severity="danger" 
@@ -32,6 +34,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { TriangleAlert } from 'lucide-vue-next';
 
 const isVisible = computed(() => props.active);
 
@@ -40,10 +43,6 @@ const emit = defineEmits(['close', 'confirm']);
 const props = defineProps({
     active: {
         type: Boolean,
-        required: true
-    },
-    item: {
-        type: Object || String,
         required: true
     },
     loading: {
@@ -57,7 +56,7 @@ const close = () => {
 };
 
 const confirm = () => {
-    emit('confirm', props.item);
+    emit('confirm');
 };
 </script>
 

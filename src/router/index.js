@@ -9,6 +9,7 @@ const router = createRouter({
             path: '/',
             component: AppLayout,
             children: [
+                // remover transcript
                 {
                     path: '/transcription',
                     name: 'transcription',
@@ -19,6 +20,12 @@ const router = createRouter({
                     path: '/templates',
                     name: 'templates',
                     component: () => import('@/views/templates/index.vue'),
+                    meta: { requiresAuth: true }
+                },
+                {
+                    path: '/upload',
+                    name: 'upload',
+                    component: () => import('@/views/transcription/upload.vue'),
                     meta: { requiresAuth: true }
                 },
                 {
@@ -151,6 +158,18 @@ const router = createRouter({
                     path: '/transcripts/:id',
                     name: 'transcriptsShow',
                     component: () => import('@/views/transcripts/[id].vue'),
+                    meta: { requiresAuth: true }
+                },
+                {
+                    path: '/specific',
+                    name: 'specificTranscription',
+                    component: () => import('@/views/transcription/specific.vue'),
+                    meta: { requiresAuth: true }
+                },
+                {
+                    path: '/testehome',
+                    name: 'testehome',
+                    component: () => import('@/views/Home.vue'),
                     meta: { requiresAuth: true }
                 },
             ]

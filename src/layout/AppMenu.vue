@@ -23,7 +23,8 @@ const model = ref([
     {
         label: 'Principal',
         items: [
-            { label: 'Transcrição', icon: 'pi pi-fw pi-microphone', to: '/transcription', visible: true },
+            // { label: 'Transcrição', icon: 'pi pi-fw pi-microphone', to: '/transcription', visible: true },
+            { label: 'Transcrição', icon: 'pi pi-fw pi-microphone', to: '/upload', visible: true },
             { label: 'Histórico', icon: 'pi pi-fw pi-history', to: '/transcripts/history', visible: true },
             { label: 'Templates', icon: 'pi pi-fw pi-file', to: '/templates', visible: true },
             { label: 'Pacientes', icon: 'pi pi-fw pi-users', to: '/uikit/panel', visible: true }
@@ -181,22 +182,22 @@ const model = ref([
     // }
 ]);
 
-const newTranscription = () => {
-    emitter.emit('clear-anamnese'); // resetar variáveis da home e deixar disponível para uma nova transcrição 
-    router.push('/home');
-};
+// const newTranscription = () => {
+//     emitter.emit('clear-anamnese'); // resetar variáveis da home e deixar disponível para uma nova transcrição 
+//     router.push('/home');
+// };
 
-const index = async () => {
-    loading.value = true;
+// const index = async () => {
+//     loading.value = true;
 
-    try {
-        const response = await TranscriptsService.indexPerDate();
-        // model.value = response.data;
-        loading.value = false;
-    } catch (error) {
-        loading.value = false;
-    }
-}
+//     try {
+//         const response = await TranscriptsService.indexPerDate();
+//         // model.value = response.data;
+//         loading.value = false;
+//     } catch (error) {
+//         loading.value = false;
+//     }
+// }
 
 const planColor = computed(() => {
     return userStore.plan === FREE_PLAN ? 'bg-blue-500' : 'bg-yellow-500';
@@ -222,14 +223,14 @@ const truncate = (text, maxLength) => {
 const truncatedUsername = computed(() => truncate(userStore.username, 29));
 const truncatedEmail = computed(() => truncate(userStore.userEmail, 35));
 
-onMounted(() => {
-    index();
-    emitter.on('refresh-sidebar', index)
-});
+// onMounted(() => {
+//     // index();
+//     emitter.on('refresh-sidebar', index)
+// });
 
-onBeforeUnmount(() => {
-    emitter.off('refresh-sidebar', index)
-})
+// onBeforeUnmount(() => {
+//     emitter.off('refresh-sidebar', index)
+// })
 </script>
 
 <template>
