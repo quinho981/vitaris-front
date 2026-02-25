@@ -10,8 +10,23 @@
           <InputIcon class="pi pi-search" />
           <InputText v-model="username" placeholder="Buscar transcrições..." class="w-full" />
         </IconField>
-        <DatePicker v-model="date" :maxDate="today" showIcon fluid iconDisplay="input" :manualInput="false" placeholder="Data da transcrição" class="w-full md:w-auto" />
-        <Select v-model="selectedType" :options="dropdownTypes" :loading="loadingTypes" optionValue="id" optionLabel="type" placeholder="Tipo de transcrição" class="w-full md:w-auto" />
+        <div class="relative w-full md:w-auto">
+          <DatePicker
+            v-model="date"
+            :maxDate="today"
+            showIcon
+            fluid
+            :manualInput="false"
+            placeholder="Data da transcrição"
+            class="w-full"
+          />
+         <i
+            v-if="date"
+            class="pi pi-times absolute right-12 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-red-500 transition"
+            @click="clearDate"
+          />
+        </div>
+        <Select v-model="selectedType" :options="dropdownTypes" :loading="loadingTypes" optionValue="id" optionLabel="type" placeholder="Tipo de transcrição" class="w-full md:w-auto" showClear />
       </div>
     </div>
     <div class="rounded-lg mb-6">
@@ -20,17 +35,7 @@
           <div>
             <div class="flex justify-between items-center mb-1">
               <div class="flex gap-2 items-center w-full">
-                <p v-if="editingId !== item.id" class="text-xl font-semibold">{{ item.patient }}</p>
-                <InputText v-else-if="editingId === item.id" id="name" :value="item.patient" v-model="item.patient" type="text" class="w-full" placeholder="Digite o nome do paciente... (opcional)" /> 
-                <Button 
-                  v-if="editingId === item.id"
-                  icon="pi pi-times" 
-                  severity="danger" 
-                  outlined
-                  @click="toggleEdit(item)" 
-                  class=" !text-red-500 !font-bold" 
-                  v-tooltip.top="$t('button.cancel')"
-                />
+                <p class="text-xl font-semibold">{{ item.patient }}</p>
               </div>
             </div>
             <div class="flex justify-between mb-1 text-slate-600 dark:text-slate-200">
@@ -51,11 +56,8 @@
               <Button text @click="goToDetail(item)" v-tooltip.top="'Visualizar'">
                 <Eye :size="18" class="text-slate-700 dark:text-slate-200" /> 
               </Button>
-              <Button text @click="toggleEdit(item)" v-tooltip.top="'Renomear'" v-if="editingId !== item.id">
+              <Button text @click="openEditDialog(item)" v-tooltip.top="'Renomear'">
                 <Pencil :size="18" class="text-slate-700 dark:text-slate-200" /> 
-              </Button>
-              <Button text severity="success" :loading="loadingRename" @click="renameItem(item)" v-tooltip.top="'Salvar'" v-if="editingId === item.id">
-                <Save :size="18" class="text-green-500 dark:text-slate-200" /> 
               </Button>
               <Button text severity="danger" @click="deleteConfirmation(item)" v-tooltip.top="'Excluir'">
                 <Trash :size="18" />
@@ -75,21 +77,18 @@
       </div>
 
       <div ref="loadMoreTrigger" class="h-4"></div>
-      
-      <!-- <div v-if="!filteredTranscripts.length && !loading" class="card text-center text-gray-400 py-10">
-        <div v-if="search">
-          Nenhuma transcrição encontrada para "{{ search }}"
-        </div> 
-        <div v-else>
-          Nenhuma transcrição encontrada
-        </div>
-      </div> -->
 
       <div v-if="hasReachedEnd && transcripts.length > 0" class="text-center py-4 text-slate-500">
         <p>Todas as transcrições foram carregadas</p>
       </div>
     </div>
-
+    <EditTranscriptionName
+      :active="dialogEditName"
+      :item="selectedItem"
+      :loading="loadingRename"
+      @close="dialogEditName = false" 
+      @confirm="renameTranscript"
+    />
     <DeleteConfirmation 
       :active="dialogConfirmation"
       :item="selectedItem"
@@ -125,8 +124,8 @@ const loadMoreTrigger = ref(null);
 const observer = ref(null);
 const selectedItem = ref({});
 const dialogConfirmation = ref(false);
+const dialogEditName = ref(false);
 const dialogLoading = ref(false);
-const editingId = ref(null);
 const loadingRename = ref(false);
 const username = ref(null)
 const date = ref(null);
@@ -150,6 +149,10 @@ function truncateText(text, maxLength = 85) {
   if (!text) return '';
   return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 }
+
+const clearDate = () => {
+  date.value = null;
+};
 
 const fetchTranscripts = async (page = 1, reset = false) => {
   if (loading.value || (hasReachedEnd.value && !reset)) return;
@@ -206,31 +209,31 @@ const goToDetail = (item) => {
   router.push({ name: 'transcriptsShow', params: { id: item.id } });
 };
 
-const toggleEdit = (item) => {
-  editingId.value = editingId.value === item.id ? null : item.id;
-};
+const openEditDialog = (item) => {
+  selectedItem.value = item;
+  dialogEditName.value = !dialogEditName.value;
+}
 
-const renameItem = async (item) => {
+const renameTranscript = async (namePatient) => {
   loadingRename.value = true;
 
   try {
-    const response = await TranscriptsService.update(item);
+    const response = await TranscriptsService.update({ ...selectedItem.value, patient: namePatient });
 
     if (response.status === 200) {
       transcripts.value = transcripts.value.map(transcript => 
-        transcript.id === item.id ? { ...transcript, title: item.title } : transcript
+        transcript.id === selectedItem.value.id ? { ...transcript, patient: namePatient } : transcript
       );
-      editingId.value = null;
       showSuccess(t('notifications.titles.success'), t('notifications.messages.editSuccessfully'), 3000);
     }
-
-    // return response;
+    return response;
   } catch (error) {
     showError(t('notifications.titles.error'), t('notifications.messages.editError'), 3000);
   } finally {
     loadingRename.value = false;
+    dialogEditName.value = !dialogEditName.value;
   }
-};
+}
 
 const deleteConfirmation = (item) => {
   selectedItem.value = item;

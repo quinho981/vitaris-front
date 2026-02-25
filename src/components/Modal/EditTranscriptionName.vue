@@ -1,30 +1,28 @@
 <template>
     <Dialog 
-        header="Limpar transcrição?" 
+        :header="'Renomear transcrição'" 
         :visible="isVisible" 
-        :style="{ width: '350px' }" 
+        :style="{ width: '400px' }" 
         :modal="true" 
         @update:visible="close"
     >
-        <div class="flex items-center justify-center">
-            <TriangleAlert :size="60" class="mr-3 text-red-500" />
-            <div class="flex flex-col">
-                <p class="mb-2">Todos os dados preenchidos serão removidos e não poderão ser recuperados.</p>
-            </div>
+        <div class="flex flex-col">
+            <label class="mb-1 text-lg" for="name">Título da transcrição</label>
+            <InputText v-model="newNamePatient" class="w-full" size="large" />
         </div>
         <template #footer>
             <Button 
                 :label="$t('dialog.exclude.button.cancel')" 
                 icon="pi pi-times" 
-                @click="close"
-                outlined
+                @click="close" 
+                outlined 
                 severity="secondary" 
             />
             <Button 
-                label="Limpar dados" 
+                label="Renomear" 
                 icon="pi pi-check" 
                 @click="confirm" 
-                severity="danger" 
+                severity="primary" 
                 autofocus 
                 :loading="props.loading" 
             />
@@ -33,8 +31,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { TriangleAlert } from 'lucide-vue-next';
+import { ref, computed, watch } from 'vue';
 
 const isVisible = computed(() => props.active);
 
@@ -45,18 +42,33 @@ const props = defineProps({
         type: Boolean,
         required: true
     },
+    item: {
+        type: Object || String,
+        required: true
+    },
     loading: {
         type: Boolean,
         default: false
     }
-}); 
+});
+
+const newNamePatient = ref('')
+
+watch(
+    () => props.active,
+    (value) => {
+        if (value && props.item) {
+            newNamePatient.value = props.item.patient;
+        }
+    }
+);
 
 const close = () => {
     emit('close', false);
 };
 
 const confirm = () => {
-    emit('confirm');
+    emit('confirm', newNamePatient.value);
 };
 </script>
 

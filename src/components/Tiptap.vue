@@ -68,6 +68,7 @@
             >
                 <Redo />
             </button>
+            <button class="ml-auto mr-3 btn flex items-center px-4 py-2 !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !rounded-full font-semibold text-white "><Sparkles :size="18" class="mr-2" />Melhorar com IA</button>
         </section>
         <EditorContent :editor="editor" />
     </div>
@@ -77,7 +78,7 @@
 import { watch } from 'vue';
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
-import { Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, Undo, Redo } from 'lucide-vue-next';
+import { Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, Undo, Redo, Sparkles  } from 'lucide-vue-next';
 
 const props = defineProps({
     content: {

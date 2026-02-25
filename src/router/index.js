@@ -9,6 +9,7 @@ const router = createRouter({
             path: '/',
             component: AppLayout,
             children: [
+                // remover transcript
                 {
                     path: '/transcription',
                     name: 'transcription',

@@ -23,8 +23,8 @@ const model = ref([
     {
         label: 'Principal',
         items: [
-            { label: 'Transcrição', icon: 'pi pi-fw pi-microphone', to: '/transcription', visible: true },
-            { label: 'Upload Áudio', icon: 'pi pi-fw pi-upload', to: '/upload', visible: true },
+            // { label: 'Transcrição', icon: 'pi pi-fw pi-microphone', to: '/transcription', visible: true },
+            { label: 'Transcrição', icon: 'pi pi-fw pi-microphone', to: '/upload', visible: true },
             { label: 'Histórico', icon: 'pi pi-fw pi-history', to: '/transcripts/history', visible: true },
             { label: 'Templates', icon: 'pi pi-fw pi-file', to: '/templates', visible: true },
             { label: 'Pacientes', icon: 'pi pi-fw pi-users', to: '/uikit/panel', visible: true }

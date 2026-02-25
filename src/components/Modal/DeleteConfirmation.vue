@@ -1,29 +1,28 @@
 <template>
     <Dialog 
-        :header="$t('dialog.exclude.title')" 
+        :header="'Excluir transcrição?'" 
         :visible="isVisible" 
-        :style="{ width: '350px' }" 
+        :style="{ width: '400px' }" 
         :modal="true" 
         @update:visible="close"
     >
         <div class="flex items-center justify-center">
-            <i class="pi pi-exclamation-triangle mr-4" style="font-size: 2rem" />
-            <span>{{ $t('dialog.exclude.description') }}</span>
+            <i class="pi pi-trash mr-4 text-red-500" style="font-size: 2rem" />
+            <span>Ao excluir esta transcrição, todos os dados associados serão removidos permanentemente e não poderão ser recuperados.</span>
         </div>
         <template #footer>
             <Button 
                 :label="$t('dialog.exclude.button.cancel')" 
                 icon="pi pi-times" 
                 @click="close" 
-                text 
+                outlined 
                 severity="secondary" 
             />
             <Button 
-                :label="$t('dialog.exclude.button.confirm')" 
+                label="Excluir transcrição" 
                 icon="pi pi-check" 
                 @click="confirm" 
                 severity="danger" 
-                outlined 
                 autofocus 
                 :loading="props.loading" 
             />

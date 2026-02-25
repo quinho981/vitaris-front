@@ -86,6 +86,12 @@ export const useHelpers = () => {
         return `${(size / (1024 * 1024)).toFixed(2)} MB`;
     };
 
+    const formatTime = (seconds) => {
+        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const s = String(seconds % 60).padStart(2, '0');
+        return `${m}:${s}`;
+    };
+
     return {
         exportPDF,
         formatPtBrCurto,
@@ -93,5 +99,6 @@ export const useHelpers = () => {
         capitalizeArray,
         formatDate,
         formatSize,
+        formatTime
     };
 }
