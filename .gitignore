@@ -5,8 +5,7 @@ coverage
 .nitro
 .cache
 .output
-.env.development
-.env.production
+.env
 dist
 .DS_Store
 .idea
