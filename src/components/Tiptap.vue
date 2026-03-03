@@ -68,7 +68,13 @@
             >
                 <Redo />
             </button>
-            <button class="ml-auto mr-3 btn flex items-center px-4 py-2 !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !rounded-full font-semibold text-white "><Sparkles :size="18" class="mr-2" />Melhorar com IA</button>
+            <button
+                @click="$emit('open-refine-modal')"
+                class="ml-auto mr-3 flex items-center px-4 py-2 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full font-semibold text-white hover:opacity-90 transition"
+            >
+                <Sparkles :size="18" class="mr-2" />
+                Refinar anamnese
+            </button>
         </section>
         <EditorContent :editor="editor" />
     </div>
@@ -86,6 +92,8 @@ const props = defineProps({
         required: true
     }
 }); 
+
+defineEmits(['open-refine-modal']);
 
 const editor = useEditor({
     editorProps: {

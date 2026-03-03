@@ -1,34 +1,59 @@
 <template>
-    <Dialog 
-        header="Limpar transcrição?" 
-        :visible="isVisible" 
-        :style="{ width: '350px' }" 
-        :modal="true" 
-        @update:visible="close"
+    <Dialog
+        v-model:visible="isVisible"
+        modal
+        :draggable="false"
+        :closable="false"
+        :style="{ width: '28rem' }"
     >
-        <div class="flex items-center justify-center">
-            <TriangleAlert :size="60" class="mr-3 text-red-500" />
-            <div class="flex flex-col">
-                <p class="mb-2">Todos os dados preenchidos serão removidos e não poderão ser recuperados.</p>
+        <div class="p-3">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50">
+                        <i class="pi pi-eraser text-red-600 text-lg"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        Limpar transcrição
+                    </h2>
+                </div>
+
+                <button
+                    @click="close"
+                    class="text-gray-400 hover:text-gray-600 transition"
+                >
+                    ✕
+                </button>
+            </div>
+
+            <p class="text-sm text-gray-600 leading-relaxed">
+                Todos os dados preenchidos serão removidos e não poderão ser recuperados.
+            </p>
+
+            <p class="text-xs text-gray-400 mt-3">
+                Esta ação é irreversível.
+            </p>
+
+            <div class="flex justify-end gap-3 mt-6">
+
+                <button
+                    @click="close"
+                    class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    @click="confirm"
+                    :disabled="props.loading"
+                    class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 flex items-center gap-2"
+                >
+                    <i v-if="!props.loading" class="pi pi-eraser text-sm"></i>
+                    <i v-else class="pi pi-spin pi-spinner text-sm"></i>
+
+                    {{ props.loading ? 'Limpando...' : 'Limpar dados' }}
+                </button>
             </div>
         </div>
-        <template #footer>
-            <Button 
-                :label="$t('dialog.exclude.button.cancel')" 
-                icon="pi pi-times" 
-                @click="close"
-                outlined
-                severity="secondary" 
-            />
-            <Button 
-                label="Limpar dados" 
-                icon="pi pi-check" 
-                @click="confirm" 
-                severity="danger" 
-                autofocus 
-                :loading="props.loading" 
-            />
-        </template>
     </Dialog>
 </template>
 
