@@ -156,6 +156,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { Upload, FileAudio2, FileVolume, SendHorizontal, Loader2, FileChartColumn } from 'lucide-vue-next';
 import { AnamneseService } from '@/service/AnamneseService';
+import { TranscriptsService } from '@/service/TranscriptsService';
 import { SelectOptionsService } from '@/service/SelectOptionsService';
 import { useShowToast } from '@/utils/useShowToast';
 import { useI18n } from 'vue-i18n';
@@ -242,7 +243,7 @@ const validateAudioFile = (file) => {
         'audio/m4a',       // M4A
         'audio/aac',       // AAC
         'audio/ogg',       // OGG
-        'audio/flac',       // FLAC
+        'audio/flac',      // FLAC
         'audio/webm'       // WebM (gerado por gravação no navegador)
     ];
 
@@ -259,91 +260,32 @@ const validateAudioFile = (file) => {
 
 const transcribeAudio = async () => {
     if (!validateForm()) return;
-    
-    errorMessage.value = false;
-
-    if (!hasSelectedFile()) {
-        alert('Por favor, selecione um arquivo de áudio primeiro.');
-        return;
-    }
-
-    const validation = validateAudioFile(selectedFile.value);
-    if (!validation.valid) {
-        alert(validation.error);
-        return;
-    }
+    if (!hasSelectedFile()) return;
 
     isTranscribing.value = true;
 
-    try {
-        const arrayBuffer = await selectedFile.value.arrayBuffer();
-        console.log('Arquivo convertido para ArrayBuffer, tamanho:', arrayBuffer.byteLength);
-        console.log('Arquivo arraybuffer:', arrayBuffer);
-        console.log('arquivo original:', selectedFile.value);
-        let mimeType = selectedFile.value.type;
+    const formData = new FormData();
+    formData.append('audio', selectedFile.value);
 
-        if (!mimeType) {
-            const fileName = selectedFile.value.name.toLowerCase();
+    TranscriptsService.store(formData)
+        .then(response => {
+            const result = response.data;
 
-            if (fileName.endsWith('.mp3')) mimeType = 'audio/mpeg';
-            else if (fileName.endsWith('.wav')) mimeType = 'audio/wav';
-            else if (fileName.endsWith('.m4a')) mimeType = 'audio/mp4';
-            else if (fileName.endsWith('.aac')) mimeType = 'audio/aac';
-            else if (fileName.endsWith('.ogg')) mimeType = 'audio/ogg';
-            else if (fileName.endsWith('.flac')) mimeType = 'audio/flac';
-            else if (fileName.endsWith('.webm')) mimeType = 'audio/webm';
-        }
+            const processedTranscription =
+                processDeepgramResultAndCreateChatDesign(result, selectedFile.value.name);
 
-        const url = new URL('https://api.deepgram.com/v1/listen');
-        url.searchParams.set('model', 'nova-2');
-        url.searchParams.set('language', 'pt-BR');
-        url.searchParams.set('punctuate', true);
-        url.searchParams.set('diarize', true);
-        url.searchParams.set('utterances', true);
-        url.searchParams.set('smart_format', true);
-        url.searchParams.set('multichannel', false);
+            chatTranscription.value = processedTranscription.utterances;
+            transcriptions.value.unshift(processedTranscription);
 
-        const response = await fetch(url.toString(), {
-            method: 'POST',
-            headers: {
-                'Authorization': `Token ${import.meta.env.VITE_DEEPGRAM_API_KEY}`,
-                'Content-Type': mimeType,
-            },
-            body: arrayBuffer
+            selectedFile.value = null;
+            uploader.value?.clear();
+        })
+        .catch(error => {
+            alert('Erro ao transcrever o áudio.');
+        })
+        .finally(() => {
+            isTranscribing.value = false;
         });
-
-        const responseText = await response.text();
-        console.log('Resposta bruta do Deepgram (texto):', responseText);
-
-        if (!response.ok) {
-            const errorData = JSON.parse(responseText);
-            throw new Error(errorData.err_msg);
-        }
-
-        const result = JSON.parse(responseText);
-        console.log('Resposta bruta do Deepgram:', result);
-        
-        if (!result.results || !result.results.channels || result.results.channels.length === 0) {
-            throw new Error('Nenhum resultado de transcrição foi retornado. Verifique se o arquivo contém áudio válido.');
-        }
-
-        const processedTranscription = processDeepgramResultAndCreateChatDesign(result, selectedFile.value.name);
-        console.log('Transcrição processada:', processedTranscription);
-        
-        if (processedTranscription.utterances.length === 0) {
-            throw new Error('Não foi possível extrair texto do áudio. Verifique se o arquivo contém fala audível.');
-        }
-
-        chatTranscription.value = processedTranscription.utterances;
-        transcriptions.value.unshift(processedTranscription);
-
-        selectedFile.value = null;
-        uploader.value?.clear();
-    } catch (error) {
-        alert('Erro ao transcrever o áudio.');
-    } finally {
-        isTranscribing.value = false;
-    }
 };
 
 const getLastUtteranceEndTime = (utterances) => {

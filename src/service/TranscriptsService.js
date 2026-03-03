@@ -23,6 +23,21 @@ export const TranscriptsService = {
             console.error(error);
         }
     },
+    store(formData) {
+        const token = Cookies.get('token');
+        try {
+            const response = api.post(`/transcripts`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    },
     async show(id) {
         const token = Cookies.get('token');
         try {
