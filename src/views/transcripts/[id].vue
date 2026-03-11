@@ -165,13 +165,18 @@
         </section>
         <RefineAnamnesis 
             :showRefineModal="showRefineModal"
+            :patientName="patient"
+            :content="documentContent"
+            :documentId="documentId"
+            @close="showRefineModal = false"
+            @apply-refined="updateContent"
         />
     </div>
 </template>
 
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
-import { User, Calendar, Clock, Dot, Share2, Download, FileText, BrainCircuit, LayoutTemplate, Loader2, Copy } from 'lucide-vue-next';
+import { User, Calendar, Clock, Share2, Download, BrainCircuit, LayoutTemplate, Loader2, Copy } from 'lucide-vue-next';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute, useRouter } from "vue-router";
 import { useShowToast } from '@/utils/useShowToast';
@@ -208,8 +213,8 @@ const showTranscript = async (id) => {
     loadingTranscript.value = true;
     try {
         const response = await TranscriptsService.show(id);
-
         documentContent.value = ''
+
         patient.value = response.patient;
         documentTemplate.value = response.document.document_template.name;
         createdAt.value = formatPtBrCurto(response.created_at);
@@ -297,6 +302,10 @@ const handleInsightMessage = (event) => {
     mainTopics.value = capitalizeArray(main_topics);
 
     eventSource.close();
+}
+
+const updateContent = (content) => {
+    documentContent.value = content
 }
 
 const handleSSEError = (error) => {

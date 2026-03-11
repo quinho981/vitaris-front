@@ -69,6 +69,7 @@
                 <Redo />
             </button>
             <button
+                v-if="allowRefine"
                 @click="$emit('open-refine-modal')"
                 class="ml-auto mr-3 flex items-center px-4 py-2 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full font-semibold text-white hover:opacity-90 transition"
             >
@@ -90,10 +91,14 @@ const props = defineProps({
     content: {
         type: String,
         required: true
+    },
+    allowRefine: {
+        type:  Boolean,
+        default: true
     }
 }); 
 
-defineEmits(['open-refine-modal']);
+const emit = defineEmits(['open-refine-modal', 'update:content']);
 
 const editor = useEditor({
     editorProps: {
@@ -103,12 +108,19 @@ const editor = useEditor({
     },
     content: props.content,
     extensions: [StarterKit],
+    onUpdate({ editor }) {
+        emit('update:content', editor.getHTML())
+    }
 })
 
 watch(
     () => props.content,
     (newContent) => {
-        if (editor && editor.value && newContent !== editor.value.getHTML()) {
+        if (!editor.value) return
+
+        const current = editor.value.getHTML()
+
+        if (newContent !== current) {
             editor.value.commands.setContent(newContent, false)
         }
     }

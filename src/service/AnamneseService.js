@@ -14,5 +14,17 @@ export const AnamneseService = {
         } catch (error) {
             console.error(error);
         }
+    },
+    async refine(payload) {
+        const token = Cookies.get('token');
+        try {
+            const response = await api.post('/refine', payload,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
     }
 }
