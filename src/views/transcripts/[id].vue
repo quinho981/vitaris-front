@@ -87,7 +87,10 @@
             </div>
 
             <div class="grid grid-cols-12 gap-4 mt-5">
-                <div class="col-span-12 xl:col-span-8 rounded-lg">
+                <div 
+                    class="col-span-12 xl:col-span-8 rounded-lg"
+                    :class="hasMedicalInsights ? 'xl:col-span-8' : 'xl:col-span-12'"
+                >
                     <div class="card flex ">
                         <div class="flex flex-col w-full">
                             <div class="flex gap-4 items-center w-full">
@@ -99,7 +102,7 @@
                                 </Tabs>
                             </div>
                             <div v-if="!loadingConversations">
-                                <div v-show="activeTab === '0'" class="border border-slate-200 rounded-lg p-4 min-h-[21rem] max-h-[24rem] overflow-y-auto">
+                                <div v-show="activeTab === '0'" class="border border-slate-200 rounded-lg p-4 min-h-[21rem] max-h-[39rem] overflow-y-auto">
                                     <div v-for="(conversation, uttIndex) in conversations" :key="uttIndex" class="mb-2">
                                         <div class="rounded-lg p-2">
                                             <div class="flex items-start mb-2">
@@ -137,28 +140,76 @@
                     </div>
                 </div>
 
-                <div class="col-span-12 xl:col-span-4 rounded-lg">
+                <div 
+                    v-if="hasMedicalInsights"
+                    class="col-span-12 xl:col-span-4 rounded-lg"
+                >
                     <div class="card flex flex-col gap-5">
-                        <div class="flex items-center gap-2">
-                            <BrainCircuit />
-                            <p class="font-semibold text-xl mb-1">Insights Vitalfy</p>
+                        <div class="flex flex-col items-top">
+                            <div class="flex gap-2">
+                                <BrainCircuit />
+                                <p class="font-semibold text-xl mb-1">Insights Vitalfy</p>
+                            </div>
+                            <p class="text-sm text-gray-400">Análise clínica assistida por IA</p>
                         </div>
                         <div class="flex flex-col">
-                            <h4 class="text-lg font-semibold mb-2">Tópicos principais</h4>
-                            <div class="flex flex-wrap gap-2">
-                                <InsightsMainTopics :mainTopics="mainTopics" />
+                            <div v-if="medicalAnalysis.red_flags.length">
+                                <h4 class="text-lg font-semibold mb-2">Sinais de alertar</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <RedFlags :red_flags="medicalAnalysis.red_flags" />
+                                </div>
+                                <hr class="my-4" />
                             </div>
-                            <hr class="my-4" />
-                            <h4 class="text-lg font-semibold mb-2">Sintomas identificados</h4>
-                            <div class="flex flex-wrap gap-2">
-                                <InsightsSymptons :symptoms="symptoms" />
+                            <div v-if="medicalAnalysis.case_severity.length">
+                                <h4 class="text-lg font-semibold mb-2">Gravidade estimada</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <CaseSeverity :case_severity="medicalAnalysis.case_severity" />
+                                </div>
+                                <hr class="my-4" />
                             </div>
-                            <hr class="my-4" />
-                            <h4 class="text-lg font-semibold mb-2">Possíveis Diagnósticos</h4>
-                            <div class="flex flex-wrap gap-2">
-                                <InsightsDiagnoses :diagnoses="diagnoses" />
+                            <div v-if="medicalAnalysis.brief_description.length">
+                                <h4 class="text-lg font-semibold mb-2">Resumo clínico</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <BriefDescription :brief_description="medicalAnalysis.brief_description" />
+                                </div>
+                                <hr class="my-4" />
+                            </div>
+                            <div v-if="medicalAnalysis.possible_diagnoses.length">
+                                <h4 class="text-lg font-semibold mb-2">Possíveis diagnósticos</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <PossibleDiagnoses :possible_diagnoses="medicalAnalysis.possible_diagnoses" />
+                                </div>
+                                <hr class="my-4" />
+                            </div>
+                            <div v-if="medicalAnalysis.suggested_cid_codes.length">
+                                <h4 class="text-lg font-semibold mb-2">CIDs sugeridos</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <ListItems :items="medicalAnalysis.suggested_cid_codes" />
+                                </div>
+                                <hr class="my-4" />
+                            </div>
+                            <div v-if="medicalAnalysis.suggested_exams.length">
+                                <h4 class="text-lg font-semibold mb-2">Exames sugeridos</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <SuggestedExams :suggested_exams="medicalAnalysis.suggested_exams" />
+                                </div>
+                                <hr class="my-4" />
+                            </div>
+                            <div v-if="medicalAnalysis.suggested_conducts.length">
+                                <h4 class="text-lg font-semibold mb-2">Conduta sugerida</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <ListItems :items="medicalAnalysis.suggested_conducts" />
+                                </div>
+                                <hr class="my-4" />
+                            </div>
+                            <div v-if="medicalAnalysis.missing_clinical_information.length">
+                                <h4 class="text-lg font-semibold mb-2">Informações possivelmente faltantes</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <ListItems :items="medicalAnalysis.missing_clinical_information" />
+                                </div>
                             </div>
                         </div>
+                        <p class="text-xs text-gray-400 mx-auto mt-2">Esta análise é assistiva e não substitui avaliação médica.</p>
                     </div>
                 </div>
             </div>
@@ -175,7 +226,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue';
 import { User, Calendar, Clock, Share2, Download, BrainCircuit, LayoutTemplate, Loader2, Copy } from 'lucide-vue-next';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute, useRouter } from "vue-router";
@@ -201,13 +252,23 @@ const conversations = ref('');
 const loadingTranscript = ref(false);
 const loadingConversations = ref(false);
 const documentId = ref();
-const symptoms = ref([]);
-const diagnoses = ref([]);
-const insights = ref(null);
-const mainTopics = ref([]);
 const showRefineModal = ref(false);
+const medicalAnalysis = ref({
+    red_flags: [],
+    case_severity: [],
+    brief_description: [],
+    possible_diagnoses: [],
+    suggested_cid_codes: [],
+    suggested_exams: [],
+    suggested_conducts: [],
+    missing_clinical_information: []
+})
 
 let eventSource = null;
+
+const hasMedicalInsights = computed(() => {
+    return Object.values(medicalAnalysis.value).some(arr => arr.length > 0)
+})
 
 const showTranscript = async (id) => {
     loadingTranscript.value = true;
@@ -222,11 +283,21 @@ const showTranscript = async (id) => {
         documentContent.value = response.document.result;
         documentId.value = response.document.id;
         if(response.document?.ai_insights) {
-            symptoms.value = capitalizeArray(response.document.ai_insights?.identified_symptoms) || [];
-            diagnoses.value = capitalizeArray(response.document.ai_insights?.possible_diagnoses) || [];
-            mainTopics.value = capitalizeArray(response.document.ai_insights?.main_topics) || [];
+            const ai = response.document.ai_insights
+
+            medicalAnalysis.value = {
+                red_flags: capitalizeArray(ai.red_flags) || [],
+                case_severity: capitalizeArray(ai.case_severity) || [],
+                brief_description: capitalizeArray(ai.brief_description) || [],
+                possible_diagnoses: capitalizeArray(ai.possible_diagnoses) || [],
+                suggested_cid_codes: capitalizeArray(ai.suggested_cid_codes) || [],
+                suggested_exams: capitalizeArray(ai.suggested_exams) || [],
+                suggested_conducts: capitalizeArray(ai.suggested_conducts) || [],
+                missing_clinical_information: capitalizeArray(ai.missing_clinical_information) || []
+            }
         }
     } catch (error) {
+        console.log(error)
         showError(t('notifications.titles.error'), t('notifications.messages.dataLoadingError'), 3000)  
     } finally {
         loadingTranscript.value = false;
@@ -281,8 +352,6 @@ const shareDocument = async () => {
         showError(t('notifications.titles.error'), 'Não foi possível compartilhar a transcrição', 3000);
     }
 };
-
-
 const startSSE = () => {
     eventSource = new EventSource(`${import.meta.env.VITE_BASE_URL}/stream/insights-ai/${documentId.value}`);
 
@@ -293,13 +362,21 @@ const startSSE = () => {
 }
 
 const handleInsightMessage = (event) => {
-    insights.value = JSON.parse(event.data);
+    let insights = JSON.parse(event.data);
 
-    const {identified_symptoms, main_topics, possible_diagnoses} = insights.value
+    const { red_flags, case_severity, brief_description, possible_diagnoses,
+        suggested_cid_codes, suggested_exams, suggested_conducts, missing_clinical_information} = insights
 
-    symptoms.value = capitalizeArray(identified_symptoms);
-    diagnoses.value = capitalizeArray(possible_diagnoses);
-    mainTopics.value = capitalizeArray(main_topics);
+    medicalAnalysis.value = {
+        red_flags: capitalizeArray(red_flags) || [],
+        case_severity: capitalizeArray(case_severity) || [],
+        brief_description: capitalizeArray(brief_description) || [],
+        possible_diagnoses: capitalizeArray(possible_diagnoses) || [],
+        suggested_cid_codes: capitalizeArray(suggested_cid_codes) || [],
+        suggested_exams: capitalizeArray(suggested_exams) || [],
+        suggested_conducts: capitalizeArray(suggested_conducts) || [],
+        missing_clinical_information: capitalizeArray(missing_clinical_information) || []
+    }
 
     eventSource.close();
 }

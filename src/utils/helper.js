@@ -72,7 +72,10 @@ export const useHelpers = () => {
         if (!text) return '';
         return text.charAt(0).toUpperCase() + text.slice(1);
     };
-    const capitalizeArray = (arr) => arr.map(item => capitalizeFirstLetter(item));
+    const capitalizeArray = (arr) => {
+        if (!arr) return;
+        return arr.map(item => capitalizeFirstLetter(item));
+    }
 
     const formatDate = (date) => {
         if (!date) return '';

@@ -1,11 +1,11 @@
 <template>
     <div>
-        <template v-if="diagnoses.length">
-            <ul class="custom-marker-diagnosis list-disc list-inside">
-                <li v-for="diagnose in diagnoses" :key="diagnose">
+        <template v-if="possible_diagnoses.length">
+            <ol class="custom-marker-diagnosis list-decimal list-inside">
+                <li v-for="diagnose in possible_diagnoses" :key="diagnose">
                     {{ diagnose }}
                 </li>
-            </ul>
+            </ol>
         </template>
 
         <template v-else>
@@ -26,7 +26,7 @@ import { ref, onMounted } from 'vue'
 const skeletons = ref([])
 
 const props = defineProps({
-    diagnoses: {
+    possible_diagnoses: {
         type: Array,
         default: []
     },

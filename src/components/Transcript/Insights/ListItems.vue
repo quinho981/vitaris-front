@@ -1,9 +1,9 @@
 <template>
     <div>
-        <template v-if="symptoms.length">
-            <ul class="custom-marker-topic list-disc list-inside">
-                <li v-for="symptom in symptoms" :key="symptom">
-                    {{ symptom }}
+        <template v-if="items.length">
+            <ul class="custom-marker-diagnosis list-disc list-inside">
+                <li v-for="item in items" :key="item">
+                    {{ item }}
                 </li>
             </ul>
         </template>
@@ -26,7 +26,7 @@ import { ref, onMounted } from 'vue'
 const skeletons = ref([])
 
 const props = defineProps({
-    symptoms: {
+    items: {
         type: Array,
         default: []
     },

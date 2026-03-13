@@ -1,12 +1,11 @@
 <template>
     <div>
-        <template v-if="mainTopics.length">
+        <template v-if="brief_description.length">
             <span
-                v-for="main_topic in mainTopics"
-                :key="main_topic"
-                class="bg-slate-100 px-2 py-1 text-sm font-bold rounded-xl mr-1"
+                v-for="description in brief_description"
+                :key="description"
             >
-                {{ main_topic }}
+                {{ description }}
             </span>
         </template>
 
@@ -30,7 +29,7 @@ import { ref, onMounted } from 'vue'
 const skeletons = ref([])
 
 const props = defineProps({
-    mainTopics: {
+    brief_description: {
         type: Array,
         default: []
     },
