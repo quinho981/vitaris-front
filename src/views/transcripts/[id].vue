@@ -87,10 +87,7 @@
             </div>
 
             <div class="grid grid-cols-12 gap-4 mt-5">
-                <div 
-                    class="col-span-12 xl:col-span-8 rounded-lg"
-                    :class="hasMedicalInsights ? 'xl:col-span-8' : 'xl:col-span-12'"
-                >
+                <div class="col-span-12 xl:col-span-8 rounded-lg">
                     <div class="card flex ">
                         <div class="flex flex-col w-full">
                             <div class="flex gap-4 items-center w-full">
@@ -140,10 +137,7 @@
                     </div>
                 </div>
 
-                <div 
-                    v-if="hasMedicalInsights"
-                    class="col-span-12 xl:col-span-4 rounded-lg"
-                >
+                <div class="col-span-12 xl:col-span-4 rounded-lg">
                     <div class="card flex flex-col gap-5">
                         <div class="flex flex-col items-top">
                             <div class="flex gap-2">
@@ -209,6 +203,9 @@
                                 </div>
                             </div>
                         </div>
+                        <div v-if="loadingTranscript">
+                            <SkeletonLoadingInsights />
+                        </div>
                         <p class="text-xs text-gray-400 mx-auto mt-2">Esta análise é assistiva e não substitui avaliação médica.</p>
                     </div>
                 </div>
@@ -265,10 +262,6 @@ const medicalAnalysis = ref({
 })
 
 let eventSource = null;
-
-const hasMedicalInsights = computed(() => {
-    return Object.values(medicalAnalysis.value).some(arr => arr.length > 0)
-})
 
 const showTranscript = async (id) => {
     loadingTranscript.value = true;
