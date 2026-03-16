@@ -203,7 +203,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-if="loadingTranscript">
+                        <div v-if="loadingTranscript || !hasMedicalInsights">
                             <SkeletonLoadingInsights />
                         </div>
                         <p class="text-xs text-gray-400 mx-auto mt-2">Esta análise é assistiva e não substitui avaliação médica.</p>
@@ -262,6 +262,10 @@ const medicalAnalysis = ref({
 })
 
 let eventSource = null;
+
+const hasMedicalInsights = computed(() => {
+    return Object.values(medicalAnalysis.value).some(arr => arr.length > 0)
+})
 
 const showTranscript = async (id) => {
     loadingTranscript.value = true;
@@ -379,7 +383,6 @@ const updateContent = (content) => {
 }
 
 const handleSSEError = (error) => {
-    console.error("Erro SSE:", error);
     eventSource.close();
 }
 
