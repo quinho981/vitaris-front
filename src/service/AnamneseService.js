@@ -6,7 +6,7 @@ export const AnamneseService = {
     async generator(payload) {
         const token = Cookies.get('token');
         try {
-            const response = await api.post('/generate-document', payload,
+            const response = await api.post('/documents/generate', payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             
@@ -18,7 +18,7 @@ export const AnamneseService = {
     async refine(payload) {
         const token = Cookies.get('token');
         try {
-            const response = await api.post('/refine', payload,
+            const response = await api.post('/documents/refine', payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             

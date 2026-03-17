@@ -66,10 +66,10 @@ export const TranscriptsService = {
             console.error(error);
         }
     },
-    update(data) {
+    update(id, data) {
         const token = Cookies.get('token');
         try {
-            const response = api.put(`/transcripts`, data, {
+            const response = api.put(`/transcripts/${id}`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

@@ -11,7 +11,7 @@ export const SelectOptionsService = {
     },
     async getTypes() {
         const token = Cookies.get('token');
-        const response = await api.get(`/types`, { 
+        const response = await api.get(`/transcript-types`, { 
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data

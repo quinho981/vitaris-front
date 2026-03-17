@@ -218,7 +218,7 @@ const renameTranscript = async (namePatient) => {
   loadingRename.value = true;
 
   try {
-    const response = await TranscriptsService.update({ ...selectedItem.value, patient: namePatient });
+    const response = await TranscriptsService.update( selectedItem.value.id, { ...selectedItem.value, patient: namePatient });
 
     if (response.status === 200) {
       transcripts.value = transcripts.value.map(transcript => 
