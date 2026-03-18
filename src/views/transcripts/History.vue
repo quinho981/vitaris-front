@@ -265,7 +265,7 @@ const getTypes = async () => {
   const token = Cookies.get('token');
   loadingTypes.value = true;
   try {
-    const response = await api.get(`/types`, {
+    const response = await api.get(`/transcript-types`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     dropdownTypes.value = response.data
