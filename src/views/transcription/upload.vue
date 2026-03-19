@@ -271,8 +271,7 @@ const transcribeAudio = async () => {
         .then(response => {
             const result = response.data;
 
-            const processedTranscription =
-                processDeepgramResultAndCreateChatDesign(result, selectedFile.value.name);
+            const processedTranscription = processDeepgramResultAndCreateChatDesign(result, selectedFile.value.name);
 
             chatTranscription.value = processedTranscription.utterances;
             transcriptions.value.unshift(processedTranscription);
@@ -290,7 +289,9 @@ const transcribeAudio = async () => {
 
 const getLastUtteranceEndTime = (utterances) => {
     if (!utterances?.length) return null;
-    return endConversationTime.value = utterances[utterances.length - 1].end ?? null;
+    
+    const seconds = Math.round(utterances[utterances.length - 1].end);
+    return endConversationTime.value = seconds ?? null;
 };
 
 const processDeepgramResultAndCreateChatDesign = (result, fileName) => {
