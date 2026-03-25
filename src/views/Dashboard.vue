@@ -28,7 +28,7 @@
                             <FileText :size="22" class="text-blue-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">+3 vs ontem</span>
+                    <span class="text-primary font-medium">Consultas transcritas</span>
                 </div>
             </div>
             <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
@@ -43,7 +43,7 @@
                             <Clock :size="22" class="text-green-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">+45m vs ontem</span>
+                    <span class="text-primary font-medium">Duração total</span>
                 </div>
             </div>
             <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
@@ -58,7 +58,7 @@
                             <OctagonAlert :size="22" class="text-red-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">+45m vs ontem</span>
+                    <span class="text-primary font-medium">Casos urgentes</span>
                 </div>
             </div>
             <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
@@ -73,7 +73,7 @@
                             <Timer :size="22" class="text-purple-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">+1 vs ontem</span>
+                    <span class="text-primary font-medium">Média de duração</span>
                 </div>
             </div>
             
@@ -87,7 +87,7 @@
                         Ver todas
                     </router-link>
                 </div>
-                <RecentTranscriptsItem 
+                <RecentsTranscriptsItem 
                     :transcripts="recentTranscripts"
                     :loading="loadingTranscripts"
                 />
