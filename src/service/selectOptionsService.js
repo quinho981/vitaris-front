@@ -9,6 +9,13 @@ export const SelectOptionsService = {
         });
         return response.data
     },
+    async getTemplatesMinimal() {
+        const token = Cookies.get('token');
+        const response = await api.get(`/templates/minimal`, { 
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data
+    },
     async getTypes() {
         const token = Cookies.get('token');
         const response = await api.get(`/transcript-types`, { 

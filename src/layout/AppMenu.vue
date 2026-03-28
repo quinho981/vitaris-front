@@ -27,14 +27,13 @@ const model = ref([
             { label: 'Transcrição', icon: 'pi pi-fw pi-microphone', to: '/upload', visible: true },
             { label: 'Histórico', icon: 'pi pi-fw pi-history', to: '/transcripts/history', visible: true },
             { label: 'Templates', icon: 'pi pi-fw pi-file', to: '/templates', visible: true },
-            { label: 'Pacientes', icon: 'pi pi-fw pi-users', to: '/uikit/panel', visible: true }
         ]
     },
     {
         label: 'Análises',
         items: [
             { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/', visible: true },
-            { label: 'Configurações', icon: 'pi pi-fw pi-cog', to: '/uikit/input', visible: true },
+            { label: 'Configurações', icon: 'pi pi-fw pi-cog', to: '/settings/user', visible: true },
         ]
     },
     // {
