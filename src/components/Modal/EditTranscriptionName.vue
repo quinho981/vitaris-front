@@ -13,7 +13,7 @@
                         <i class="pi pi-pencil text-blue-600 text-lg"></i>
                     </div>
                     <h2 class="text-xl font-semibold text-gray-800">
-                        Renomear transcrição
+                        Renomear atendimento
                     </h2>
                 </div>
 
@@ -27,7 +27,7 @@
 
             <div class="flex flex-col gap-2">
                 <label class="text-sm font-medium text-gray-700">
-                    Título da transcrição
+                    Título do atendimento<span class="text-red-500">*</span>
                 </label>
 
                 <InputText

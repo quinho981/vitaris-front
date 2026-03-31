@@ -2,12 +2,12 @@
     <div class="card w-full md:w-1/2 flex flex-col">
         <div class="flex items-center gap-2">
             <FileAudio2 />
-            <p class="font-semibold text-2xl mb-4">Transcrições</p>
+            <p class="font-semibold text-2xl mb-4">Transcrição da consulta</p>
         </div>
         <p class="mt-1 text-slate-500 dark:text-slate-300 mb-3">Texto transcrito automaticamente pela IA</p>
         <div class="p-2 h-full w-full rounded-lg border-[1px] border-surface dark:border-surface flex flex-col gap-y-2 xl:min-h-[350px] xl:max-h-[470px] overflow-y-auto transcript-box">
             <div v-if="transcriptions.length === 0 && !isTranscribing" class="flex items-center justify-center h-full">
-                <p class="text-slate-400 text-center">A transcrição aparecerá aqui após a gravação ou o envio do áudio...</p>
+                <p class="text-slate-400 text-center">O conteúdo da consulta será exibido aqui após a gravação ou envio do áudio.</p>
             </div>
             
             <div v-if="isTranscribing" class="flex items-center justify-center p-4">
@@ -61,6 +61,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { FileAudio2 } from 'lucide-vue-next';
 
 const emit = defineEmits(['clear', 'finish']);
 

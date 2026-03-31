@@ -13,42 +13,62 @@
             </div>
             <div class="flex flex-col gap-y-4">
                 <div class="flex flex-wrap gap-4">
-                    <div 
-                        v-for="template in templates" 
-                        :key="template.id"
-                        class="card flex flex-col flex-grow gap-y-4 w-full sm:basis-[48%] lg:basis-[32%] hover:shadow-lg transition-shadow duration-300"
-                    >
-                        <component 
-                            :is="getIcon(template.name)" 
-                            :class="`p-3 rounded-lg ${getColor(template.name)}`" 
-                            :size="45" 
-                        />
-                        <h3 class="text-xl font-bold">{{ template.name }}</h3>
+                    <template v-if="loadingTemplates">
+                        <div 
+                            v-for="i in 6" 
+                            :key="i"
+                            class="card flex flex-col flex-grow gap-y-4 w-full sm:basis-[48%] lg:basis-[32%]"
+                        >
+                            <Skeleton size="3rem" />
+                            <Skeleton width="60%" height="20px" />
+                            <Skeleton width="100%" height="16px" />
+                            <Skeleton width="18%" height="16px" />
 
-                        <p class="line-clamp-2">{{ template.description || `Template para ${template.name}` }}</p>
-
-                        <div>
-                            <Tag 
-                                severity="secondary" 
-                                :value="`${template.total} uso${template.total !== 1 ? 's' : ''}`" 
-                                rounded 
-                            />
+                            <div class="flex gap-x-4 mt-2">
+                                <Skeleton width="100%" height="32px" />
+                                <Skeleton width="100%" height="32px" />
+                            </div>
                         </div>
+                    </template>
 
-                        <div class="flex gap-x-4">
-                            <Button 
-                                label="Ver estrutura" 
-                                class="w-full !bg-white border-1 !border-slate-200 !text-black hover:!bg-slate-100"
-                                @click="openTemplate(template)"
+                    <template v-else>
+                        <div 
+                            v-for="template in templates" 
+                            :key="template.id"
+                            class="card flex flex-col flex-grow gap-y-4 w-full sm:basis-[48%] lg:basis-[32%] hover:shadow-lg transition-shadow duration-300"
+                        >
+                            <component 
+                                :is="getIcon(template.name)" 
+                                :class="`p-3 rounded-lg ${getColor(template.name)}`" 
+                                :size="45" 
                             />
+                            <h3 class="text-xl font-bold">{{ template.name }}</h3>
 
-                            <Button 
-                                label="Iniciar consulta" 
-                                class="w-full" 
-                                @click="startTemplate(template)"
-                            />
+                            <p class="line-clamp-2">{{ template.description || `Template para ${template.name}` }}</p>
+
+                            <div>
+                                <Tag 
+                                    severity="secondary" 
+                                    :value="`${template.total} uso${template.total !== 1 ? 's' : ''}`" 
+                                    rounded 
+                                />
+                            </div>
+
+                            <div class="flex gap-x-4">
+                                <Button 
+                                    label="Ver estrutura" 
+                                    class="w-full !bg-white border-1 !border-slate-200 !text-black hover:!bg-slate-100"
+                                    @click="openTemplate(template)"
+                                />
+
+                                <Button 
+                                    label="Iniciar consulta" 
+                                    class="w-full" 
+                                    @click="startTemplate(template)"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -70,6 +90,7 @@ const searchQuery = ref("")
 const showModal = ref(false)
 const selectedTemplate = ref(null)
 const templates = ref([])
+const loadingTemplates = ref(true)
 
 const iconMap = {
     "Cardiologia": Heart,
@@ -113,6 +134,8 @@ const startTemplate = (template) => {
 const getTemplatesUsage = async () => {
     const token = Cookies.get('token');
 
+    loadingTemplates.value = true;
+
     try {
         const response = await api.get(`/templates/with-documents-count`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -122,7 +145,7 @@ const getTemplatesUsage = async () => {
     } catch (error) {
         console.error(error);
     } finally {
-        // loadingTypes.value = false;
+        loadingTemplates.value = false;
     }
 }
 

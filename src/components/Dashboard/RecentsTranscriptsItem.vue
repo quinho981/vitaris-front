@@ -25,9 +25,21 @@
                 </div>
             </div>
             <div
-                v-if="!transcripts && !loading"
-                class="flex justify-center p-14">
-                <p>Sem transcrições recentes no momento...</p>
+                v-if="!transcripts.length > 0 && !loading"
+                class="flex flex-col text-center p-14"
+            >
+                <p class="text-[15px]">Ainda não há atendimentos finalizados.</p>
+                <p class="text-[15px]">Ao concluir um atendimento, o documento clínico e os insights serão gerados automaticamente e exibidos aqui.</p>
+                <div>
+                    <router-link
+                        :to="{ name: 'upload' }"
+                        class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[13px] !p-2 
+                            inline-flex hover:!from-blue-600 hover:!to-blue-800 duration-300 mt-4 rounded-md"
+                    >
+                        <Mic :size="16" />
+                        Novo Atendimento
+                    </router-link>
+                </div>
             </div>
             <div v-else>
                 <div
@@ -70,7 +82,7 @@
 </template>
 <script setup>
 import { ref, watch, computed } from 'vue';
-import { FileText, Eye, Download } from 'lucide-vue-next';
+import { FileText, Eye, Download, Mic } from 'lucide-vue-next';
 import { useHelpers } from '@/utils/helper';
 
 const { convertSecondsToMinutes } = useHelpers();

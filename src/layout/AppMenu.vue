@@ -244,21 +244,6 @@ const truncatedEmail = computed(() => truncate(userStore.userEmail, 35));
                 ></app-menu-item>
                 <li v-if="item.separator" class="menu-separator"></li>
             </template>
-            <div v-if="loading && !model.length" class="flex flex-col gap-2 pr-10 pt-3">
-                <Skeleton width="4rem" class="mb-2"></Skeleton>
-                <Skeleton class="mb-2 ml-6"></Skeleton>
-                <Skeleton width="5rem" class="mb-2"></Skeleton>
-                <Skeleton class="mb-2 ml-6"></Skeleton>
-                <Skeleton class="mb-2 ml-6"></Skeleton>
-            </div>
-            <div v-if="!model.length && !loading" class="flex flex-col items-center justify-center px-6 h-full pr-[2rem]">
-                <img 
-                    class="w-10 mb-4 opacity-65 dark:invert dark:opacity-80"
-                    src="/demo/images/issue-loupe.svg"
-                    alt="No transcription finded"
-                />
-                <p class="text-base">{{ $t('transcription.noTranscriptsRegisteredYet') }}</p>
-            </div>
         </div>
         <div class="layout-sidebar-footer border-t dark:border-gray-700">
             <div class="flex flex-col">
@@ -391,21 +376,21 @@ const truncatedEmail = computed(() => truncate(userStore.userEmail, 35));
     -webkit-text-fill-color: transparent;
 }
 .icon-transition {
-  transition: all 0.3s ease;
+    transition: all 0.3s ease;
 }
 .div-icon-transition:hover .icon-transition {
-  animation: pulse-and-rotate 1s infinite alternate;
-  transform-origin: center;
+    animation: pulse-and-rotate 1s infinite alternate;
+    transform-origin: center;
 }
 @keyframes pulse-and-rotate {
-  0% {
-    transform: scale(1) rotate(0deg);
-  }
-  50% {
-    transform: scale(1.5) rotate(10deg);
-  }
-  100% {
-    transform: scale(1.3) rotate(-10deg);
-  }
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.5) rotate(10deg);
+    }
+    100% {
+        transform: scale(1.3) rotate(-10deg);
+    }
 }
 </style>

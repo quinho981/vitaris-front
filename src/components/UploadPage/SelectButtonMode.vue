@@ -7,7 +7,7 @@
                 ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md'
                 : 'text-gray-600 hover:text-gray-800'"
         >
-            Gravar consulta
+            Gravar áudio
         </button>
 
         <button
@@ -17,7 +17,7 @@
                 ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md'
                 : 'text-gray-600 hover:text-gray-800'"
         >
-            Enviar arquivo
+            Enviar áudio
         </button>
     </div>
 </template>

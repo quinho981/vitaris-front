@@ -13,7 +13,7 @@
                         <i class="pi pi-trash text-red-600 text-lg"></i>
                     </div>
                     <h2 class="text-xl font-semibold text-gray-800">
-                        Excluir transcrição
+                        Excluir atendimento
                     </h2>
                 </div>
 
@@ -26,7 +26,7 @@
             </div>
 
             <p class="text-sm text-gray-600 leading-relaxed">
-                Ao excluir esta transcrição, todos os dados associados serão removidos
+                Ao excluir este atendimento, todos os dados associados serão removidos
                 permanentemente e não poderão ser recuperados.
             </p>
 
@@ -50,7 +50,7 @@
                     <i v-if="!props.loading" class="pi pi-trash text-sm"></i>
                     <i v-else class="pi pi-spin pi-spinner text-sm"></i>
 
-                    {{ props.loading ? 'Excluindo...' : 'Excluir transcrição' }}
+                    {{ props.loading ? 'Excluindo...' : 'Excluir atendimento' }}
                 </button>
             </div>
         </div>

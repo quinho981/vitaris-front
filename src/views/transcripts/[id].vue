@@ -3,8 +3,8 @@
         <section>
             <div class="flex items-center flex-wrap justify-between mb-3 py-3">
                 <div>
-                    <h1 class="text-3xl font-bold">Detalhes da transcrição</h1>
-                    <p class="my-1 text-lg ">Consulta com {{ patient }}</p>
+                    <h1 class="text-3xl font-bold">Detalhes do documento clínico</h1>
+                    <p class="my-1 text-lg ">Documento gerado automaticamente com base na consulta</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button
@@ -332,8 +332,8 @@ const exportDocument = async () => {
 
 const shareDocument = async () => {
     const shareData = {
-        title: `Transcrição de ${patient.value}`,
-        text: `Confira os detalhes desta transcrição: ${documentTemplate.value}`,
+        title: `Atendimento de ${patient.value}`,
+        text: `Confira os detalhes deste atendimento: ${documentTemplate.value}`,
     };
 
     try {
@@ -346,7 +346,7 @@ const shareDocument = async () => {
         await navigator.clipboard.writeText(clipboardContent);
     } catch (error) {
         console.error('Erro ao compartilhar:', error);
-        showError(t('notifications.titles.error'), 'Não foi possível compartilhar a transcrição', 3000);
+        showError(t('notifications.titles.error'), 'Não foi possível compartilhar o documento', 3000);
     }
 };
 const startSSE = () => {

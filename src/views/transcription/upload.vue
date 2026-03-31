@@ -1,8 +1,8 @@
 <template>
     <section>
         <div class="mb-3 py-3">
-            <h1 class="text-3xl font-bold">Transcrição de áudio</h1>
-            <p class="my-1 text-lg ">Grave ou envie uma consulta e obtenha a transcrição automaticamente</p>
+            <h1 class="text-3xl font-bold">Novo atendimento</h1>
+            <p class="my-1 text-lg ">Grave ou envie o áudio da consulta para gerar automaticamente o documento clínico e os insights</p>
         </div>
         <div class="flex gap-x-4 flex-wrap md:flex-nowrap">
             <div class="card w-full md:w-1/2 flex flex-col mb-5 md:mb-0">
@@ -36,7 +36,7 @@
                             />
                         </div>
                         <div class="w-full">
-                            <label class=" mb-1" for="type">Tipo de consulta<span class="text-red-500">*</span></label>
+                            <label class=" mb-1" for="type">Tipo de atendimento<span class="text-red-500">*</span></label>
                             <Select 
                                 id="type" 
                                 v-model="form.type_id" 
@@ -154,7 +154,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-import { Upload, FileAudio2, FileVolume, SendHorizontal, Loader2, FileChartColumn } from 'lucide-vue-next';
+import { Upload, FileVolume, SendHorizontal, Loader2 } from 'lucide-vue-next';
 import { AnamneseService } from '@/service/AnamneseService';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { SelectOptionsService } from '@/service/SelectOptionsService';

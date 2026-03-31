@@ -1,102 +1,95 @@
 <template>
-  <section>
-    <div class="flex flex-col mb-3 py-3">
-      <h1 class="text-3xl font-bold">Histórico de transcrições</h1>
-      <p class="my-1 text-lg">Gerencie e organize suas transcrições médicas</p>
-    </div>
-    <div class="card mb-5">
-      <div class="flex flex-wrap gap-4 ">
-        <IconField class="flex-1">
-          <InputIcon class="pi pi-search" />
-          <InputText v-model="username" placeholder="Buscar transcrições..." class="w-full" />
-        </IconField>
-        <div class="relative w-full md:w-auto">
-          <DatePicker
-            v-model="date"
-            :maxDate="today"
-            showIcon
-            fluid
-            :manualInput="false"
-            placeholder="Data da transcrição"
-            class="w-full"
-          />
-         <i
-            v-if="date"
-            class="pi pi-times absolute right-12 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-red-500 transition"
-            @click="clearDate"
-          />
+    <section>
+        <div class="flex flex-col mb-3 py-3">
+            <h1 class="text-3xl font-bold">Histórico de atendimentos</h1>
+            <p class="my-1 text-lg">Visualize e gerencie seus atendimentos e documentos clínicos</p>
         </div>
-        <Select v-model="selectedType" :options="dropdownTypes" :loading="loadingTypes" optionValue="id" optionLabel="type" placeholder="Tipo de transcrição" class="w-full md:w-auto" showClear />
-      </div>
-    </div>
-    <div class="rounded-lg mb-6">
-      <div class="grid grid-cols-1 gap-4">
-        <div v-for="item in transcripts" :key="item.id" class="flex justify-between flex-wrap card p-4 hover:shadow-lg transition-shadow duration-300">
-          <div>
-            <div class="flex justify-between items-center mb-1">
-              <div class="flex gap-2 items-center w-full">
-                <p class="text-xl font-semibold">{{ item.patient }}</p>
-              </div>
+        <div class="card mb-5">
+            <div class="flex flex-wrap gap-4">
+                <IconField class="flex-1">
+                    <InputIcon class="pi pi-search" />
+                    <InputText v-model="username" placeholder="Buscar por paciente ou conteúdo..." class="w-full" />
+                </IconField>
+                <div class="relative w-full md:w-auto">
+                    <DatePicker v-model="date" :maxDate="today" showIcon fluid :manualInput="false" placeholder="Data de atendimento" class="w-full" />
+                    <i v-if="date" class="pi pi-times absolute right-12 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-red-500 transition" @click="clearDate" />
+                </div>
+                <Select v-model="selectedType" :options="dropdownTypes" :loading="loadingTypes" optionValue="id" optionLabel="type" placeholder="Tipo de atendimento" class="w-full md:w-auto" showClear />
             </div>
-            <div class="flex justify-between mb-1 text-slate-600 dark:text-slate-200">
-              <div class="flex gap-8">
-                <div class="flex items-center gap-1"><Calendar :size="15" />{{ formatDate(item.created_at) }}</div>
-                <div class="flex items-center gap-1"><Play :size="15" />{{ item.time }}</div>
-                <div v-if="item.size != null" class="flex items-center gap-1"><FileAudio :size="15" />{{ formatSize(item.size) }}</div>
-              </div>
-            </div>
-            <p class="text-slate-600 dark:text-slate-200">{{ item.description }}</p>
-          </div>
-          <div class="flex flex-col justify-between mt-3 sm:mt-0 sm:items-center">
-            <div class="flex gap-2">
-              <Tag severity="primary" :value="item.template" rounded></Tag>
-              <Tag severity="secondary" :value="item.type" rounded></Tag>
-            </div>
-            <div class="flex gap-x-2">
-              <Button text @click="goToDetail(item)" v-tooltip.top="'Visualizar'">
-                <Eye :size="18" class="text-slate-700 dark:text-slate-200" /> 
-              </Button>
-              <Button text @click="openEditDialog(item)" v-tooltip.top="'Renomear'">
-                <Pencil :size="18" class="text-slate-700 dark:text-slate-200" /> 
-              </Button>
-              <Button text severity="danger" @click="deleteConfirmation(item)" v-tooltip.top="'Excluir'">
-                <Trash :size="18" />
-              </Button>
-            </div>
-          </div>
         </div>
-      </div>
-      
-      <div v-if="loading && transcripts.length > 0" class="flex items-center justify-center py-4">
-        <Loader2 :size="24" class="animate-spin mr-2" />
-        <p class="text-slate-600 mt-2">Carregando mais transcrições...</p>
-      </div>
+        <div class="rounded-lg mb-6">
+            <div class="grid grid-cols-1 gap-4">
+                <div v-for="item in transcripts" :key="item.id" class="flex justify-between flex-wrap card p-4 hover:shadow-lg transition-shadow duration-300">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <div class="flex gap-2 items-center w-full">
+                                <p class="text-xl font-semibold">{{ item.patient }}</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between mb-1 text-slate-600 dark:text-slate-200">
+                            <div class="flex gap-8">
+                                <div class="flex items-center gap-1"><Calendar :size="15" />{{ formatDate(item.created_at) }}</div>
+                                <div class="flex items-center gap-1"><Play :size="15" />{{ item.time }}</div>
+                                <div v-if="item.size != null" class="flex items-center gap-1"><FileAudio :size="15" />{{ formatSize(item.size) }}</div>
+                            </div>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-200">{{ item.description }}</p>
+                    </div>
+                    <div class="flex flex-col justify-between mt-3 sm:mt-0 sm:items-center">
+                        <div class="flex gap-2">
+                            <Tag severity="primary" :value="item.template" rounded></Tag>
+                            <Tag severity="secondary" :value="item.type" rounded></Tag>
+                        </div>
+                        <div class="flex gap-x-2">
+                            <Button text @click="goToDetail(item)" v-tooltip.top="'Visualizar'">
+                                <Eye :size="18" class="text-slate-700 dark:text-slate-200" />
+                            </Button>
+                            <Button text @click="openEditDialog(item)" v-tooltip.top="'Renomear'">
+                                <Pencil :size="18" class="text-slate-700 dark:text-slate-200" />
+                            </Button>
+                            <Button text severity="danger" @click="deleteConfirmation(item)" v-tooltip.top="'Excluir'">
+                                <Trash :size="18" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-      <div v-if="loading && transcripts.length <= 0">
-        <SkeletonLoadingHistoric />
-      </div>
+            <div v-if="loading && transcripts.length > 0" class="flex items-center justify-center py-4">
+                <Loader2 :size="24" class="animate-spin mr-2" />
+                <p class="text-slate-600 mt-2">Carregando mais atendimentos...</p>
+            </div>
 
-      <div ref="loadMoreTrigger" class="h-4"></div>
+            <div v-if="loading && transcripts.length <= 0">
+                <SkeletonLoadingHistoric />
+            </div>
 
-      <div v-if="hasReachedEnd && transcripts.length > 0" class="text-center py-4 text-slate-500">
-        <p>Todas as transcrições foram carregadas</p>
-      </div>
-    </div>
-    <EditTranscriptionName
-      :active="dialogEditName"
-      :item="selectedItem"
-      :loading="loadingRename"
-      @close="dialogEditName = false" 
-      @confirm="renameTranscript"
-    />
-    <DeleteConfirmation 
-      :active="dialogConfirmation"
-      :item="selectedItem"
-      :loading="dialogLoading"
-      @close="dialogConfirmation = false" 
-      @confirm="deleteTranscript"
-    />
-  </section>
+            <div v-if="!loading && transcripts.length <= 0">
+                <div class="card flex flex-col text-center p-14">
+                    <p class="text-[15px]">Você ainda não possui atendimentos registrados.</p>
+                    <p class="text-[15px]">Inicie um novo atendimento para gerar automaticamente o documento clínico e os insights.</p>
+                    <div>
+                        <router-link
+                            :to="{ name: 'upload' }"
+                            class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[13px] !p-2 
+                                inline-flex hover:!from-blue-600 hover:!to-blue-800 duration-300 mt-4 rounded-md"
+                        >
+                            <Mic :size="16" />
+                            Novo Atendimento
+                        </router-link>
+                    </div>
+                </div>
+            </div>
+
+            <div ref="loadMoreTrigger" class="h-4"></div>
+
+            <div v-if="hasReachedEnd && transcripts.length > 0" class="text-center py-4 text-slate-500">
+                <p>Todas os atendimentos foram carregadas</p>
+            </div>
+        </div>
+        <EditTranscriptionName :active="dialogEditName" :item="selectedItem" :loading="loadingRename" @close="dialogEditName = false" @confirm="renameTranscript" />
+        <DeleteConfirmation :active="dialogConfirmation" :item="selectedItem" :loading="dialogLoading" @close="dialogConfirmation = false" @confirm="deleteTranscript" />
+    </section>
 </template>
 
 <script setup>
@@ -104,7 +97,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useShowToast } from '@/utils/useShowToast';
-import { FileText, Eye, Download, Trash, Star, Mic, Pencil, Calendar, Clock, Play, FileAudio, Loader2, Save } from 'lucide-vue-next';
+import { Eye, Trash, Mic, Pencil, Calendar, Play, FileAudio, Loader2 } from 'lucide-vue-next';
 import { useHelpers } from '@/utils/helper';
 import { useI18n } from 'vue-i18n';
 import Cookies from 'js-cookie';
@@ -127,197 +120,199 @@ const dialogConfirmation = ref(false);
 const dialogEditName = ref(false);
 const dialogLoading = ref(false);
 const loadingRename = ref(false);
-const username = ref(null)
+const username = ref(null);
 const date = ref(null);
-const loadingTypes = ref(false)
+const loadingTypes = ref(false);
 const selectedType = ref(null);
-const dropdownTypes = ref([])
+const dropdownTypes = ref([]);
 
 const mapperTranscript = (transcripts) => {
-  return transcripts.map(t => ({
-    ...t,
-    size: t.file_size,
-    category: t.category || 'Geral',
-    template: t.document?.document_template?.name || 'Padrão',
-    time: convertSecondsToMinutes(t.end_conversation_time),
-    type: t.transcript_type.type,
-    description: truncateText(t.description) || 'Descrição não encontrada'
-  }));
-}
+    return transcripts.map((t) => ({
+        ...t,
+        size: t.file_size,
+        category: t.category || 'Geral',
+        template: t.document?.document_template?.name || 'Padrão',
+        time: convertSecondsToMinutes(t.end_conversation_time),
+        type: t.transcript_type.type,
+        description: truncateText(t.description) || 'Descrição não encontrada'
+    }));
+};
 
 function truncateText(text, maxLength = 85) {
-  if (!text) return '';
-  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+    if (!text) return '';
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 }
 
 const clearDate = () => {
-  date.value = null;
+    date.value = null;
 };
 
 const fetchTranscripts = async (page = 1, reset = false) => {
-  if (loading.value || (hasReachedEnd.value && !reset)) return;
-  
-  loading.value = true;
-  
-  try {
-    const response = await TranscriptsService.index(page);
-    const newTranscripts = mapperTranscript(response.transcripts)
+    if (loading.value || (hasReachedEnd.value && !reset)) return;
 
-    if (reset) {
-      transcripts.value = newTranscripts;
-      currentPage.value = 1;
-      hasReachedEnd.value = false;
-    } else {
-      transcripts.value = [...transcripts.value, ...newTranscripts];
+    loading.value = true;
+
+    try {
+        const response = await TranscriptsService.index(page);
+        const newTranscripts = mapperTranscript(response.transcripts);
+
+        if (reset) {
+            transcripts.value = newTranscripts;
+            currentPage.value = 1;
+            hasReachedEnd.value = false;
+        } else {
+            transcripts.value = [...transcripts.value, ...newTranscripts];
+        }
+
+        if (newTranscripts.length === 0 || newTranscripts.length < 10) {
+            hasReachedEnd.value = true;
+        }
+
+        currentPage.value = page;
+    } catch (e) {
+        showError('Erro', 'Erro ao carregar os atendimentos', 3000);
+    } finally {
+        loading.value = false;
     }
-
-    if (newTranscripts.length === 0 || newTranscripts.length < 10) {
-      hasReachedEnd.value = true;
-    }
-
-    currentPage.value = page;
-  } catch (e) {
-    showError('Erro', 'Erro ao carregar transcrições', 3000);
-  } finally {
-    loading.value = false;
-  }
 };
 
 const loadMore = async () => {
-  if (!hasReachedEnd.value && !loading.value) {
-    await fetchTranscripts(currentPage.value + 1);
-  }
+    if (!hasReachedEnd.value && !loading.value) {
+        await fetchTranscripts(currentPage.value + 1);
+    }
 };
 
 const setupIntersectionObserver = () => {
-  if (!loadMoreTrigger.value) return;
+    if (!loadMoreTrigger.value) return;
 
-  observer.value = new IntersectionObserver(
-    (entries) => {
-      const entry = entries[0];
-      if (entry.isIntersecting && !loading.value && !hasReachedEnd.value) {
-        loadMore();
-      }
-    },
-    { rootMargin: '100px' }
-  );
+    observer.value = new IntersectionObserver(
+        (entries) => {
+            const entry = entries[0];
+            if (entry.isIntersecting && !loading.value && !hasReachedEnd.value) {
+                loadMore();
+            }
+        },
+        { rootMargin: '100px' }
+    );
 
-  observer.value.observe(loadMoreTrigger.value);
+    observer.value.observe(loadMoreTrigger.value);
 };
 
 const goToDetail = (item) => {
-  router.push({ name: 'transcriptsShow', params: { id: item.id } });
+    router.push({ name: 'transcriptsShow', params: { id: item.id } });
 };
 
 const openEditDialog = (item) => {
-  selectedItem.value = item;
-  dialogEditName.value = !dialogEditName.value;
-}
+    selectedItem.value = item;
+    dialogEditName.value = !dialogEditName.value;
+};
 
 const renameTranscript = async (namePatient) => {
-  loadingRename.value = true;
+    loadingRename.value = true;
 
-  try {
-    const response = await TranscriptsService.update( selectedItem.value.id, { ...selectedItem.value, patient: namePatient });
+    try {
+        const response = await TranscriptsService.update(selectedItem.value.id, { ...selectedItem.value, patient: namePatient });
 
-    if (response.status === 200) {
-      transcripts.value = transcripts.value.map(transcript => 
-        transcript.id === selectedItem.value.id ? { ...transcript, patient: namePatient } : transcript
-      );
-      showSuccess(t('notifications.titles.success'), t('notifications.messages.editSuccessfully'), 3000);
+        if (response.status === 200) {
+            transcripts.value = transcripts.value.map((transcript) => (transcript.id === selectedItem.value.id ? { ...transcript, patient: namePatient } : transcript));
+            showSuccess(t('notifications.titles.success'), t('notifications.messages.editSuccessfully'), 3000);
+        }
+        return response;
+    } catch (error) {
+        showError(t('notifications.titles.error'), t('notifications.messages.editError'), 3000);
+    } finally {
+        loadingRename.value = false;
+        dialogEditName.value = !dialogEditName.value;
     }
-    return response;
-  } catch (error) {
-    showError(t('notifications.titles.error'), t('notifications.messages.editError'), 3000);
-  } finally {
-    loadingRename.value = false;
-    dialogEditName.value = !dialogEditName.value;
-  }
-}
+};
 
 const deleteConfirmation = (item) => {
-  selectedItem.value = item;
-  dialogConfirmation.value = !dialogConfirmation.value;
+    selectedItem.value = item;
+    dialogConfirmation.value = !dialogConfirmation.value;
 };
 
 const deleteTranscript = async (item) => {
-  dialogLoading.value = true;
+    dialogLoading.value = true;
 
-  try {
-    await TranscriptsService.delete(item.id);
-    transcripts.value = transcripts.value.filter(t => t.id !== item.id);
-    dialogConfirmation.value = false;
-    showSuccess('Sucesso', 'Transcrição excluída', 3000);
-  } catch (e) {
-    showError('Erro', 'Erro ao excluir transcrição', 3000);
-  } finally {
-    dialogLoading.value = false;
-  }
+    try {
+        await TranscriptsService.delete(item.id);
+        transcripts.value = transcripts.value.filter((t) => t.id !== item.id);
+        dialogConfirmation.value = false;
+        showSuccess('Sucesso', 'Atendimento excluído', 3000);
+    } catch (e) {
+        showError('Erro', 'Erro ao excluir atendimento', 3000);
+    } finally {
+        dialogLoading.value = false;
+    }
 };
 
 const refreshData = async () => {
-  await fetchTranscripts(1, true);
-  await nextTick();
-  setupIntersectionObserver();
+    await fetchTranscripts(1, true);
+    await nextTick();
+    setupIntersectionObserver();
 };
 
 const getTypes = async () => {
-  const token = Cookies.get('token');
-  loadingTypes.value = true;
-  try {
-    const response = await api.get(`/transcript-types`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    dropdownTypes.value = response.data
-  } catch (error) {
-    console.error(error);
-  } finally {
-    loadingTypes.value = false;
-  }
-}
+    const token = Cookies.get('token');
+    loadingTypes.value = true;
+    try {
+        const response = await api.get(`/transcript-types`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        dropdownTypes.value = response.data;
+    } catch (error) {
+        console.error(error);
+    } finally {
+        loadingTypes.value = false;
+    }
+};
 
 const filterTranscripts = async (username, date, selectedType) => {
-  transcripts.value = []
-  loading.value = true;
+    transcripts.value = [];
+    loading.value = true;
 
-  try {
-    const transcriptFiltered = await TranscriptsService.filterTranscripts(username, date, selectedType);
-    transcripts.value = mapperTranscript(transcriptFiltered)
-  } finally {
-    loading.value = false;
-  }
+    try {
+        const transcriptFiltered = await TranscriptsService.filterTranscripts(username, date, selectedType);
+        transcripts.value = mapperTranscript(transcriptFiltered);
+    } finally {
+        loading.value = false;
+    }
 };
 
 let debounceTimer = null;
-watch([username, date, selectedType], ([newUsername, newDate, newType]) => {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
-    filterTranscripts(newUsername, newDate, newType);
-  }, 500);
-}, { immediate: false });
+watch(
+    [username, date, selectedType],
+    ([newUsername, newDate, newType]) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            filterTranscripts(newUsername, newDate, newType);
+        }, 500);
+    },
+    { immediate: false }
+);
 
 onMounted(async () => {
-  await fetchTranscripts(1, true);
-  await nextTick();
-  setupIntersectionObserver();
-  getTypes();
+    await fetchTranscripts(1, true);
+    await nextTick();
+    setupIntersectionObserver();
+    getTypes();
 });
 
 onUnmounted(() => {
-  if (observer.value) {
-    observer.value.disconnect();
-  }
+    if (observer.value) {
+        observer.value.disconnect();
+    }
 });
 </script>
 
 <style scoped>
 :deep(.p-selectbutton, ) {
-  width: 100% !important;
+    width: 100% !important;
 }
 :deep(.p-togglebutton) {
-  font-weight: bold !important;
-  width: 100% !important;
-  font-size: 15px;
-  height: 3.5rem;
+    font-weight: bold !important;
+    width: 100% !important;
+    font-size: 15px;
+    height: 3.5rem;
 }
 </style>

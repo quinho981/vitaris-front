@@ -8,10 +8,11 @@
             <div>
                 <router-link
                     :to="{ name: 'upload' }"
-                    class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[14px] !font-semibold !p-3 flex items-center gap-2 hover:!from-blue-600 hover:!to-blue-800 duration-300"
+                    class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[14px] !font-semibold 
+                        !p-3 flex items-center gap-2 hover:!from-blue-600 hover:!to-blue-800 duration-300 rounded-md"
                 >
                     <Mic :size="18" />
-                    Nova Transcrição
+                    Novo Atendimento
                 </router-link>
             </div>
         </div>
@@ -20,7 +21,7 @@
                 <div class="card mb-0">
                     <div class="flex justify-between items-end mb-4">
                         <div>
-                            <span class="block font-semibold mb-4">Transcrições hoje</span>
+                            <span class="block font-semibold mb-4">Atendimentos hoje</span>
                             <div v-if="!loadingSummary" class="text-surface-900 dark:text-surface-0 font-black text-3xl">{{ dataSummary.totalTranscripts }}</div>
                             <Skeleton v-else height="35px" width="3.2rem" class="rounded-xl" />
                         </div>
@@ -28,14 +29,14 @@
                             <FileText :size="22" class="text-blue-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">Consultas transcritas</span>
+                    <span class="text-primary font-medium">Consultas finalizadas</span>
                 </div>
             </div>
             <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
                 <div class="card mb-0">
                     <div class="flex justify-between items-end mb-4">
                         <div>
-                            <span class="block font-semibold mb-4">Tempo total (hoje)</span>
+                            <span class="block font-semibold mb-4">Tempo total hoje</span>
                             <div v-if="!loadingSummary" class="text-surface-900 dark:text-surface-0 font-black text-3xl">{{ convertSecondsToMinutes(dataSummary.totalTimeTranscripts) }}</div>
                             <Skeleton v-else height="35px" width="6.5rem" class="rounded-xl" />
                         </div>
@@ -43,14 +44,14 @@
                             <Clock :size="22" class="text-green-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">Duração total</span>
+                    <span class="text-primary font-medium">Tempo de atendimento registrado</span>
                 </div>
             </div>
             <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
                 <div class="card mb-0">
                     <div class="flex justify-between items-end mb-4">
                         <div>
-                            <span class="block font-semibold mb-4">Transcrições urgentes (hoje)</span>
+                            <span class="block font-semibold mb-4">Atendimentos urgentes hoje</span>
                             <div v-if="!loadingSummary" class="text-surface-900 dark:text-surface-0 font-black text-3xl">{{ dataSummary.totalUrgentTranscripts }}</div>
                             <Skeleton v-else height="35px" width="3.2rem" class="rounded-xl" />
                         </div>
@@ -58,14 +59,14 @@
                             <OctagonAlert :size="22" class="text-red-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">Casos urgentes</span>
+                    <span class="text-primary font-medium">Casos marcados como prioridade</span>
                 </div>
             </div>
             <div class="col-span-12 md:col-span-6 xl:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
                 <div class="card mb-0">
                     <div class="flex justify-between items-end mb-4">
                         <div>
-                            <span class="block font-semibold mb-4">Média de duração (hoje)</span>
+                            <span class="block font-semibold mb-4">Duração média hoje</span>
                             <div v-if="!loadingSummary" class="text-surface-900 dark:text-surface-0 font-black text-3xl">{{ convertSecondsToMinutes(dataSummary.averageTranscriptsTime) }}</div>
                             <Skeleton v-else height="35px" width="4.5rem" class="rounded-xl" />
                         </div>
@@ -73,18 +74,18 @@
                             <Timer :size="22" class="text-purple-500" />
                         </div>
                     </div>
-                    <span class="text-primary font-medium">Média de duração</span>
+                    <span class="text-primary font-medium">Tempo médio por atendimento</span>
                 </div>
             </div>
             
             <div class="card col-span-12">
                 <div class="flex items-center justify-between">
-                    <p class="font-semibold text-2xl">Transcrições recentes</p>
+                    <p class="font-semibold text-2xl">Documentos clínicos recentes</p>
                     <router-link
                         :to="{ name: 'transcriptsHistory' }"
                         class="p-button p-button-secondary flex items-center justify-center gap-2"
                     >
-                        Ver todas
+                        Ver todos
                     </router-link>
                 </div>
                 <RecentsTranscriptsItem 
@@ -95,7 +96,7 @@
 
             <div class="col-span-12 lg:col-span-6">
                 <div class="card">
-                    <p class="font-semibold text-2xl mb-4">Transcrições na última semana</p>
+                    <p class="font-semibold text-2xl mb-4">Atendimentos na última semana</p>
                     <div class="relative h-80">
                         <Chart
                             type="line"
@@ -116,7 +117,7 @@
 
             <div class="col-span-12 lg:col-span-6">
                 <div class="card">
-                    <p class="font-semibold text-2xl mb-4">Transcrições por tipo de consulta na semana</p>
+                    <p class="font-semibold text-2xl mb-4">Tipos de atendimento (semana)</p>
                     <div class="relative h-80">
                         <Chart
                             type="pie"
@@ -277,7 +278,7 @@ const setColorOptions = () => {
         labels: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
         datasets: [
             {
-                label: 'Transcrições',
+                label: 'Atendimentos',
                 data: weekData,
                 fill: false,
                 backgroundColor: documentStyle.getPropertyValue('--p-primary-500'),

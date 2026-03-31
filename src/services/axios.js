@@ -1,4 +1,5 @@
 import axios from 'axios';
+import router from '@/router';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
@@ -21,7 +22,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        // console.error('Erro na resposta da API:', error.response || error.message);
+        const status = error?.response?.status;
+        
+        if (status === 403) {
+            router.push({ name: 'error' }); 
+        }
+
         return Promise.reject(error);
     }
 );
