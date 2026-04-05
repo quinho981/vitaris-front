@@ -25,16 +25,16 @@
                 </button>
             </div>
 
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-[13px] text-gray-600 leading-relaxed">
                 Você já possui uma gravação em andamento.
             </p>
 
-            <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+            <p class="text-[13px] text-gray-600 mt-3 leading-relaxed">
                 Ao mudar para <strong>Envio de arquivo</strong>, todo o progresso
                 da gravação será perdido permanentemente.
             </p>
 
-            <p class="text-sm text-gray-600 mt-3">
+            <p class="text-[13px] text-gray-600 mt-3">
                 Deseja continuar?
             </p>
 

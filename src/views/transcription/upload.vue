@@ -58,56 +58,90 @@
                         @select="onFileSelect"
                         :multiple="false"
                         accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac"
-                        class="custom-uploader"
+                        class="vitalfy-uploader"
                         :showThumbnails="false"
                         v-if="!isRecordMode()"
                     >
                         <template #header><span class="hidden"></span></template>
                         <template #content="{ files }"> 
-                            <div v-if="files.length > 0">
-                                <div class="flex flex-col p-2 sm:p-5 gap-3 bg-neutral-100 rounded-lg">
-                                    <div 
-                                        v-for="(file) of files" 
-                                        :key="file.name + file.type + file.size" 
-                                        class="flex items-center justify-between w-full gap-3"
-                                    >
-                                        <div class="flex items-center gap-3 flex-1 min-w-0">
-                                            <FileVolume class="shrink-0" />
-                                            <div class="flex flex-col min-w-0">
-                                                <span class="font-semibold text-sm sm:text-base truncate">{{ file.name }}</span>
-                                                <span class="text-xs text-gray-500">{{ formatSize(file.size) }}</span>
-                                            </div>
-                                            <Badge 
-                                                :value="file.type" 
-                                                severity="warning" 
-                                                class="shrink-0"
-                                            />
+                            <div 
+                                v-if="files.length > 0" 
+                                class="space-y-3"
+                            >
+                                <div 
+                                    v-for="(file) of files" 
+                                    :key="file.name + file.type + file.size"
+                                    class="group flex items-center justify-between gap-4 p-4 rounded-2xl 
+                                        bg-white/70 backdrop-blur-md border border-slate-200
+                                        shadow-sm hover:shadow-md transition-all duration-300"
+                                >
+                                    <div class="flex items-center gap-4 flex-1 min-w-0">
+                                        <div class="flex items-center justify-center w-12 h-12 rounded-xl 
+                                                    bg-gradient-to-br from-blue-500 to-indigo-600 
+                                                    text-white shadow-md">
+                                            <FileVolume size="22"/>
                                         </div>
-                                        <Button 
-                                            icon="pi pi-times" 
-                                            @click="removeFile" 
-                                            outlined 
-                                            severity="danger" 
-                                            class="shrink-0"
-                                        />
+
+                                        <div class="flex flex-col min-w-0">
+                                            <span class="font-semibold text-sm sm:text-base truncate text-slate-800">
+                                                {{ file.name }}
+                                            </span>
+                                            <span class="text-xs text-slate-500">
+                                                {{ formatSize(file.size) }}
+                                            </span>
+                                        </div>
+
+                                        <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-600 font-medium">
+                                            {{ file.type.split('/')[1] || 'audio' }}
+                                        </span>
                                     </div>
 
+                                    <button 
+                                        @click="removeFile"
+                                        class="
+                                            w-9 h-9 flex items-center justify-center rounded-lg
+                                            hover:bg-red-50 text-red-500"
+                                    >
+                                        <i class="pi pi-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </template>
                         <template #empty>
-                            <div class="upload-area p-fileupload-choose p-fileupload-droppable gap-y-1 hover:!border-blue-400 duration-200">
-                                <Upload :size="34" class="text-slate-500 mb-1" />
-                                <p class="upload-text !text-base">
-                                    <span class="text-black">Arraste e solte seu arquivo aqui</span><br />
-                                    ou clique para selecionar
+                            <div 
+                                @click="openFileDialog"
+                                class="group relative flex flex-col items-center justify-center text-center
+                                    p-8 rounded-2xl border-2 border-dashed border-slate-300
+                                    bg-gradient-to-br from-white to-slate-50
+                                    hover:border-blue-400 hover:bg-blue-50/40
+                                    transition-all duration-300 cursor-pointer"
+                            >
+                                <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 
+                                            bg-blue-500/5 blur-xl transition"></div>
+
+                                <div class="flex items-center justify-center w-14 h-14 rounded-2xl
+                                            bg-blue-100 text-blue-600 mb-4
+                                            group-hover:scale-105 transition">
+                                    <Upload size="24"/>
+                                </div>
+
+                                <p class="text-base font-medium text-slate-700">
+                                    Arraste seu áudio aqui
                                 </p>
-                                <span class="p-button p-button-outlined p-button-md p-fileupload-choose" @click="openFileDialog">
-                                    Selecionar Arquivo
-                                </span>
+                                <p class="text-sm text-slate-500">
+                                    ou clique para selecionar um arquivo
+                                </p>
+
+                                <div class="mt-3 px-5 py-2 rounded-md text-sm font-medium
+                                            bg-blue-600 text-white shadow-sm
+                                            group-hover:shadow-md group-hover:scale-[1.02]
+                                            transition">
+                                    Selecionar arquivo
+                                </div>
                             </div>
                         </template>
                     </FileUpload>
+                    
                     <AudioRecord 
                         v-if="isRecordMode()"
                         @recorded="handleRecordedFile" 

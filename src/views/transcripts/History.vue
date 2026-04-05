@@ -29,7 +29,7 @@
                         <div class="flex justify-between mb-1 text-slate-600 dark:text-slate-200">
                             <div class="flex gap-8">
                                 <div class="flex items-center gap-1"><Calendar :size="15" />{{ formatDate(item.created_at) }}</div>
-                                <div class="flex items-center gap-1"><Play :size="15" />{{ item.time }}</div>
+                                <div class="flex items-center gap-1"><Timer :size="15" class="text-orange-500" />{{ item.time }}</div>
                                 <div v-if="item.size != null" class="flex items-center gap-1"><FileAudio :size="15" />{{ formatSize(item.size) }}</div>
                             </div>
                         </div>
@@ -97,7 +97,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useShowToast } from '@/utils/useShowToast';
-import { Eye, Trash, Mic, Pencil, Calendar, Play, FileAudio, Loader2 } from 'lucide-vue-next';
+import { Eye, Trash, Mic, Pencil, Calendar, Timer, FileAudio, Loader2 } from 'lucide-vue-next';
 import { useHelpers } from '@/utils/helper';
 import { useI18n } from 'vue-i18n';
 import Cookies from 'js-cookie';

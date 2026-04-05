@@ -1,68 +1,199 @@
 <template>
-    <div class="flex flex-column h-12rem">
-        <div class="border-2 border-dashed surface-border p-2 py-8 gap-y-4 dark:bg-neutral-800 border-round border-surface-300 surface-ground w-full flex flex-col text-center font-medium rounded-lg hover:border-blue-400 duration-200">
-            <span class="font-robotomono text-3xl font-bold">{{ formatTime(timer) }}</span>
-
-            <div class="flex justify-center gap-x-2">
-                <Button v-if="!recording" class="!w-20 !h-20 !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !rounded-full" @click="startRecording" v-tooltip.top="'Iniciar gravação'">
-                    <Mic class="dark:!text-slate-200" />
-                </Button>
-                <div v-if="recording" class="flex gap-x-4">
-                    <Button v-if="!isPaused" @click="pauseRecording" class="!w-20 !h-20 !border-1 !bg-white !border-neutral-300 !text-slate-700 hover:!bg-slate-100 !rounded-full" v-tooltip.top="'Pausar gravação'">
-                        <Pause />
-                    </Button>
-                    <Button v-else @click="resumeRecording" class="!w-20 !h-20 !border-1 !bg-white !border-neutral-300 !text-slate-700 hover:!bg-slate-100 !rounded-full" v-tooltip.top="'Retomar gravação'">
-                        <Play />
-                    </Button>
-                    <Button @click="stopRecording" severity="danger" class="!w-20 !h-20 !rounded-full" v-tooltip.top="'Concluir gravação'">
-                        <Square />
-                    </Button>
-                </div>
+    <div ref="recorderRef" class="w-full bg-white dark:bg-neutral-900 border-2 border-dashed border-slate-300 dark:border-neutral-800 rounded-2xl p-6 flex flex-col gap-0">
+        <!-- Header -->
+        <div 
+            class="flex items-center justify-between"
+            :class="!recording && !audioUrl ? 'mb-3' : 'mb-5'"
+        >
+            <div class="flex items-center gap-2">
+                <span
+                    class="w-2 h-2 rounded-full transition-colors duration-300"
+                    :class="{
+                        'bg-red-500 animate-pulse': recording && !isPaused,
+                        'bg-yellow-500': isPaused,
+                        'bg-emerald-500': audioUrl && !recording,
+                        'bg-neutral-300 dark:bg-neutral-600': !recording && !audioUrl
+                    }"
+                />
+                <span class="text-xs font-medium uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
+                    {{ stateLabel }}
+                </span>
             </div>
+            <span
+                class="text-xs font-medium px-3 py-1 rounded-full border transition-colors duration-300"
+                :class="{
+                    'bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800': recording && !isPaused,
+                    'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950 dark:text-yellow-400 dark:border-yellow-800': isPaused,
+                    'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800': audioUrl && !recording,
+                    'bg-neutral-100 text-neutral-400 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-500 dark:border-neutral-700': !recording && !audioUrl
+                }"
+            >
+                {{ badgeLabel }}
+            </span>
+        </div>
 
-            <div v-if="recording" class="flex flex-col items-center mt-2">
-                <div class="relative flex items-end justify-center w-full h-20 bg-white/5 dark:bg-black/20 rounded-xl px-4 py-2">
-                    <div class="flex items-end justify-center gap-1">
-                    <div
-                        v-for="(bar, i) in bars"
-                        :key="i"
-                        class="w-2 rounded-full bg-gradient-to-t from-blue-400 to-blue-600 transition-all duration-150 ease-out"
-                        :style="{ height: Math.min(Math.max(bar * 1.1, 4), 80) + 'px' }"
-                    ></div>
+        <div 
+            class="flex items-baseline gap-1.5"
+            :class="!recording && !audioUrl ? 'mb-0' : 'mb-5'"    
+        >
+            <span class="font-robotomono text-5xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 leading-none tabular-nums">
+                {{ formatTime(timer) }}
+            </span>
+            <span class="font-mono text-sm text-neutral-400 dark:text-neutral-500">
+                {{ timer >= 60 ? 'min' : 'seg' }}
+            </span>
+        </div>
+
+        <div
+            v-if="recording || audioUrl" 
+            class="w-full h-14 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center gap-[3px] px-3 overflow-hidden mb-6"
+        >
+            <div
+                v-for="(bar, i) in bars"
+                :key="i"
+                class="w-[3px] rounded-full transition-all duration-[120ms] ease-out"
+                :class="{
+                    'bg-blue-500 dark:bg-blue-400': recording && !isPaused,
+                    'bg-yellow-400': isPaused,
+                    'bg-neutral-300 dark:bg-neutral-600': !recording && !isPaused
+                }"
+                :style="{ height: Math.min(Math.max(bar * 1.1, 4), 48) + 'px' }"
+            />
+        </div>
+
+        <div class="flex items-center justify-center gap-3 mb-4">
+            <button
+                v-if="!recording && !audioUrl"
+                class="w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white flex items-center justify-center shadow-md shadow-blue-200 dark:shadow-blue-900 transition-all duration-150"
+                v-tooltip.top="'Iniciar gravação'"
+                @click="startRecording"
+            >
+                <Mic :size="22" />
+            </button>
+
+            <template v-else-if="recording">
+                <button
+                    v-if="!isPaused"
+                    class="w-11 h-11 rounded-full bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 active:scale-95 flex items-center justify-center transition-all duration-150"
+                    v-tooltip.top="'Pausar gravação'"
+                    @click="pauseRecording"
+                >
+                    <Pause :size="18" />
+                </button>
+                <button
+                    v-else
+                    class="w-11 h-11 rounded-full bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 active:scale-95 flex items-center justify-center transition-all duration-150"
+                    v-tooltip.top="'Retomar gravação'"
+                    @click="resumeRecording"
+                >
+                    <Play :size="18" />
+                </button>
+                <button
+                    class="w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white flex items-center justify-center shadow-md shadow-blue-200 dark:shadow-blue-900 transition-all duration-150"
+                    v-tooltip.top="'Concluir gravação'"
+                    @click="stopRecording"
+                >
+                    <Square :size="16" />
+                </button>
+            </template>
+
+            <button
+                v-else-if="audioUrl"
+                class="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 text-sm font-medium active:scale-95 transition-all duration-150"
+                @click="resetRecorder"
+            >
+                <Mic :size="14" />
+                Nova gravação
+            </button>
+        </div>
+
+        <p v-if="!recording" class="text-center text-xs transition-colors duration-300" :class="audioUrl ? 'text-emerald-600 dark:text-emerald-400' : 'text-neutral-400 dark:text-neutral-500'">
+            {{ audioUrl ? 'Gravação salva com sucesso' : 'Clique para iniciar a gravação de áudio' }}
+        </p>
+
+        <template v-if="audioUrl">
+            <div class="w-full h-px bg-neutral-100 dark:bg-neutral-800 my-4" />
+                <div class="w-full">
+                    <div class="flex items-center justify-between mb-2.5">
+                        <p class="text-[11px] font-medium uppercase tracking-widest text-neutral-400 dark:text-neutral-500">Gravação</p>
+                        <a
+                            :href="audioUrl"
+                            :download="`gravacao-${Date.now()}.webm`"
+                            class="inline-flex items-center gap-1.5 text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-150"
+                            v-tooltip.top="'Baixar gravação'"
+                        >
+                            <Download :size="13" />
+                            Baixar
+                        </a>
+                    </div>
+                    <div class="flex items-center gap-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-3.5 py-3">
+                        <audio ref="audioRef" :src="audioUrl" @timeupdate="onTimeUpdate" @loadedmetadata="onMetadata" @ended="isPlaying = false" />
+                        <button
+                            class="w-9 h-9 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white flex items-center justify-center flex-shrink-0 transition-all duration-150"
+                            @click="togglePlay"
+                        >
+                            <component :is="isPlaying ? Pause : Play" :size="14" />
+                        </button>
+                        <div class="flex flex-col gap-1.5 flex-1 min-w-0">
+                            <div
+                                class="h-[3px] bg-neutral-200 dark:bg-neutral-700 rounded-full cursor-pointer relative"
+                                @click="seek"
+                            >
+                            <div
+                                class="h-full bg-blue-500 rounded-full pointer-events-none transition-[width] duration-100"
+                                :style="{ width: playbackProgress + '%' }"
+                            />
+                        </div>
+                        <div class="flex justify-between font-mono text-[11px] text-neutral-400 dark:text-neutral-500 tabular-nums">
+                            <span>{{ formatTime(Math.round(currentTime)) }}</span>
+                            <span>{{ formatTime(Math.round(duration)) }}</span>
+                        </div>
                     </div>
                 </div>
-                <p class="text-lg mt-3 font-semibold"
-                    :class="isPaused ? 'text-yellow-500' : 'text-blue-500'">
-                    {{ isPaused ? 'Pausado' : 'Gravando...' }}
-                </p>
             </div>
-
-            <div v-if="audioUrl" class="mt-4">
-                <p class="text-slate-600 mb-2">▶️ Sua gravação:</p>
-                <audio :src="audioUrl" controls class="w-full"></audio>
-            </div>
-        </div>
+        </template>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { Mic, Pause, Play, Square } from 'lucide-vue-next';
+import { ref, computed } from 'vue';
+import { Mic, Pause, Play, Square, Download  } from 'lucide-vue-next';
 import { useHelpers } from '@/utils/helper';
 
 const emit = defineEmits(['recorded', 'recording-started'])
 const { formatTime } = useHelpers();
 
+const recorderRef = ref(null);
 const recording = ref(false);
 const isPaused = ref(false);
 const audioUrl = ref(null);
 const timer = ref(0);
-const bars = ref([5, 10, 8, 12, 7, 15, 9, 6, 9, 7, 1, 1]);
-let interval = null;
+const bars = ref(Array(28).fill(4));
+const audioRef = ref(null);
+const isPlaying = ref(false);
+const currentTime = ref(0);
+const duration = ref(0);
 
+let interval = null;
 let mediaRecorder;
 let audioChunks = [];
 let audioContext, analyser, dataArray, source, rafId;
+
+const playbackProgress = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0));
+
+const stateLabel = computed(() => {
+    if (recording.value && !isPaused.value) return 'Gravando';
+    if (isPaused.value) return 'Pausado';
+    if (audioUrl.value) return 'Concluído';
+    return 'Pronto';
+});
+
+const badgeLabel = computed(() => {
+    if (recording.value && !isPaused.value) return '● REC';
+    if (isPaused.value) return '⏸ Pausado';
+    if (audioUrl.value) return '✓ Pronto';
+    return 'Aguardando';
+});
 
 const startRecording = async () => {
     try {
@@ -71,32 +202,27 @@ const startRecording = async () => {
         let file = null;
         initConfigAudio(file);
 
-        mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-                audioChunks.push(event.data);
-            }
+        mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) audioChunks.push(e.data);
         };
 
-        mediaRecorder.onstop = () => {
+        mediaRecorder.onstop = async () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-
-            file = new File(
-                [audioBlob],
-                `record-${Date.now()}.webm`,
-                { type: 'audio/webm' }
-            );
-
+            const file = new File([audioBlob], `record-${Date.now()}.webm`, { type: 'audio/webm' });
             emit('recorded', file);
             audioUrl.value = URL.createObjectURL(audioBlob);
-            cleanupRecordingProcesses(interval, rafId);
-            if (audioContext) audioContext.close();
+            cleanup();
+
+            await emit('recording-started')
         };
 
         mediaRecorder.start();
         recording.value = true;
         isPaused.value = false;
         timer.value = 0;
-        emit('recording-started')
+        emit('recording-started');
+
+        await emit('recording-started')
 
         interval = setInterval(() => {
             timer.value++;
@@ -105,49 +231,55 @@ const startRecording = async () => {
         audioContext = new AudioContext();
         source = audioContext.createMediaStreamSource(stream);
         analyser = audioContext.createAnalyser();
-        analyser.fftSize = 32;
+        analyser.fftSize = 64;
         source.connect(analyser);
-
         dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-        updateBars();
+        animateBars();
     } catch (err) {
         console.error('Erro ao acessar microfone:', err);
     }
 };
 
 const pauseRecording = () => {
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
+    if (mediaRecorder?.state === 'recording') {
         mediaRecorder.pause();
         isPaused.value = true;
-        cleanupRecordingProcesses(interval, rafId);
+        cleanup()
     }
 };
 
 const resumeRecording = () => {
-    if (mediaRecorder && mediaRecorder.state === 'paused') {
+    if (mediaRecorder?.state === 'paused') {
         mediaRecorder.resume();
         isPaused.value = false;
-
         interval = setInterval(() => {
             timer.value++;
         }, 1000);
-
-        updateBars();
+        animateBars();
     }
 };
 
 const stopRecording = () => {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    if (mediaRecorder?.state !== 'inactive') {
         mediaRecorder.stop();
         recording.value = false;
         isPaused.value = false;
-        cleanupRecordingProcesses(interval, rafId);
-        if (audioContext) audioContext.close();
+        cleanup();
+        audioContext?.close();
     }
 };
 
-const cleanupRecordingProcesses = (interval, rafId) => {
+const resetRecorder = () => {
+    audioUrl.value = null;
+    timer.value = 0;
+    bars.value = Array(28).fill(4);
+    isPlaying.value = false;
+    currentTime.value = 0;
+    duration.value = 0;
+    emit('recorded', null);
+};
+
+const cleanup = () => {
     clearInterval(interval);
     cancelAnimationFrame(rafId);
 }
@@ -158,21 +290,32 @@ const initConfigAudio = (file) => {
     audioUrl.value = null;
 };
 
-const updateBars = () => {
+const animateBars = () => {
     analyser.getByteFrequencyData(dataArray);
-
-    const shuffled = [...dataArray].sort(() => Math.random() - 0.5);
-
-    bars.value = bars.value.map((bar, i) => {
-        const target = shuffled[i % shuffled.length];
-        const noise = Math.random() * 2 - 1;
-        const newHeight = Math.max(target / 2 + noise, 4);
-        return bar + (newHeight - bar) * 0.03;
+    bars.value = bars.value.map((v, i) => {
+        const target = dataArray[i % dataArray.length] / 2;
+        return v + (Math.max(target, 4) - v) * 0.2;
     });
+    rafId = requestAnimationFrame(animateBars);
+};
 
-    rafId = requestAnimationFrame(updateBars);
+const togglePlay = () => {
+    if (!audioRef.value) return;
+    isPlaying.value ? audioRef.value.pause() : audioRef.value.play();
+    isPlaying.value = !isPlaying.value;
+};
+
+const onTimeUpdate = () => {
+    currentTime.value = audioRef.value?.currentTime ?? 0;
+};
+
+const onMetadata = () => {
+    duration.value = audioRef.value?.duration ?? 0;
+};
+
+const seek = (e) => {
+    if (!audioRef.value || !duration.value) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    audioRef.value.currentTime = ((e.clientX - rect.left) / rect.width) * duration.value;
 };
 </script>
-
-<style scoped>
-</style>

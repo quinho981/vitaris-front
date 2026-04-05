@@ -14,7 +14,6 @@
                                 <div class="flex gap-8">
                                     <div class="flex items-center gap-1"><Skeleton height="1.5rem" width="7rem" class="mb-1"></Skeleton></div>
                                     <div class="flex items-center gap-1"><Skeleton height="1.5rem" width="5rem" class="mb-1"></Skeleton></div>
-                                    <div class="flex items-center gap-1"><Skeleton height="1.5rem" width="3rem" class="mb-1"></Skeleton></div>
                                 </div>
                             </div>
                             <p class="text-slate-600 dark:text-slate-200"><Skeleton height="1.6rem" width="35rem"></Skeleton></p>

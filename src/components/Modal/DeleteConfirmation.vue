@@ -25,7 +25,7 @@
                 </button>
             </div>
 
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-[13px] text-gray-600 leading-relaxed">
                 Ao excluir este atendimento, todos os dados associados serão removidos
                 permanentemente e não poderão ser recuperados.
             </p>
