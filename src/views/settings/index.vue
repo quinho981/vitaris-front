@@ -2,7 +2,7 @@
     <section>
         <div class="mb-3 py-3">
             <h1 class="text-3xl font-bold">Configurações</h1>
-            <p class="my-1 text-lg">Gerencie suas informações e preferências</p>
+            <p class="my-1 text-lg text-surface-500">Gerencie suas informações e preferências</p>
         </div>
 
         <div class="card mb-5">

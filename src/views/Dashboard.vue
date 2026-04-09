@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between mb-3 py-3">
             <div>
                 <h1 class="text-3xl font-bold">Dashboard</h1>
-                <p class="my-1 text-lg">Bem-vindo de volta, <span class="font-semibold">{{ userStore.username }}</span></p>
+                <p class="my-1 text-lg text-surface-500">Bem-vindo de volta, <span class="font-semibold text-surface-700 dark:text-surface-300">{{ userStore.username }}</span></p>
             </div>
             <div>
                 <router-link

@@ -2,6 +2,28 @@
 module.exports = {
     darkMode: ['selector', '[class*="app-dark"]'],
     content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+    safelist: [
+        'bg-pink-50', 
+        'text-pink-600',
+        'bg-indigo-50', 
+        'text-indigo-600',
+        'bg-green-50', 
+        'text-green-700',
+        'bg-purple-50', 
+        'text-purple-600',
+        'dark:bg-blue-500/10', 
+        'dark:text-blue-400',
+        'dark:bg-green-500/10', 
+        'dark:text-green-400',
+        'dark:bg-purple-500/10', 
+        'dark:text-purple-400',
+        'dark:bg-pink-500/10', 
+        'dark:text-pink-400',
+        'dark:bg-indigo-500/10', 
+        'dark:text-indigo-400',
+        'dark:bg-red-500/10', 
+        'dark:text-red-400',
+    ],
     plugins: [require('tailwindcss-primeui')],
     theme: {
         screens: {

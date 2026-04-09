@@ -2,7 +2,7 @@
     <section>
         <div class="mb-3 py-3">
             <h1 class="text-3xl font-bold">Novo atendimento</h1>
-            <p class="my-1 text-lg ">Grave ou envie o áudio da consulta para gerar automaticamente o documento clínico e os insights</p>
+            <p class="my-1 text-lg text-surface-500">Grave ou envie o áudio da consulta para gerar automaticamente o documento clínico e os insights</p>
         </div>
         <div class="flex gap-x-4 flex-wrap md:flex-nowrap">
             <div class="card w-full md:w-1/2 flex flex-col mb-5 md:mb-0">
@@ -194,12 +194,13 @@ import { TranscriptsService } from '@/service/TranscriptsService';
 import { SelectOptionsService } from '@/service/SelectOptionsService';
 import { useShowToast } from '@/utils/useShowToast';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import api from '@/services/axios';
 import Cookies from 'js-cookie';
 import { useHelpers } from '@/utils/helper';
 
 const router = useRouter();
+const route = useRoute();
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
 const { formatSize } = useHelpers();
@@ -441,6 +442,12 @@ async function loadTemplates() {
     loadingTemplates.value = true
     try {
         dropdownTemplates.value = await SelectOptionsService.getTemplates()
+
+        const templateFromUrl = route.query.template
+
+        if (templateFromUrl) {
+            form.value.template_id = Number(templateFromUrl)
+        }
     } catch (error) {
         console.error(error)
     } finally {

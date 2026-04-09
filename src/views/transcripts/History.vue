@@ -2,7 +2,7 @@
     <section>
         <div class="flex flex-col mb-3 py-3">
             <h1 class="text-3xl font-bold">Histórico de atendimentos</h1>
-            <p class="my-1 text-lg">Visualize e gerencie seus atendimentos e documentos clínicos</p>
+            <p class="my-1 text-lg text-surface-500">Visualize e gerencie seus atendimentos e documentos clínicos</p>
         </div>
         <div class="card mb-5">
             <div class="flex flex-wrap gap-4">
@@ -66,8 +66,8 @@
 
             <div v-if="!loading && transcripts.length <= 0">
                 <div class="card flex flex-col text-center p-14">
-                    <p class="text-[15px]">Você ainda não possui atendimentos registrados.</p>
-                    <p class="text-[15px]">Inicie um novo atendimento para gerar automaticamente o documento clínico e os insights.</p>
+                    <p class="text-[14px]">Você ainda não possui atendimentos registrados.</p>
+                    <p class="text-[14px]">Inicie um novo atendimento para gerar automaticamente o documento clínico e os insights.</p>
                     <div>
                         <router-link
                             :to="{ name: 'upload' }"

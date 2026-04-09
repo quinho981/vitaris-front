@@ -2,155 +2,232 @@
     <section>
         <div class="mb-3 py-3">
             <h1 class="text-3xl font-bold">Templates</h1>
-            <p class="my-1 text-lg ">Modelos pré-configurados para diferentes especialidades</p>
+            <p class="my-1 text-lg text-surface-500">Modelos pré-configurados para diferentes especialidades</p>
         </div>
+
         <div class="flex flex-col gap-y-4">
-            <div class="card">
-                <IconField>
+            <div class="card flex flex-col gap-y-3 sm:flex-row sm:items-center sm:gap-x-3">
+                <IconField class="flex-1">
                     <InputIcon class="pi pi-search" />
-                    <InputText v-model="searchQuery" placeholder="Pesquisar templates..." class="w-full" />
+                    <InputText
+                        v-model="searchQuery"
+                        placeholder="Pesquisar por especialidade..."
+                        class="w-full"
+                    />
                 </IconField>
-            </div>
-            <div class="flex flex-col gap-y-4">
-                <div class="flex flex-wrap gap-4">
-                    <template v-if="loadingTemplates">
-                        <div 
-                            v-for="i in 6" 
-                            :key="i"
-                            class="card flex flex-col flex-grow gap-y-4 w-full sm:basis-[48%] lg:basis-[32%]"
-                        >
-                            <Skeleton size="3rem" />
-                            <Skeleton width="60%" height="20px" />
-                            <Skeleton width="100%" height="16px" />
-                            <Skeleton width="18%" height="16px" />
 
-                            <div class="flex gap-x-4 mt-2">
-                                <Skeleton width="100%" height="32px" />
-                                <Skeleton width="100%" height="32px" />
-                            </div>
-                        </div>
-                    </template>
-
-                    <template v-else>
-                        <div 
-                            v-for="template in templates" 
-                            :key="template.id"
-                            class="card flex flex-col flex-grow gap-y-4 w-full sm:basis-[48%] lg:basis-[32%] hover:shadow-lg transition-shadow duration-300"
-                        >
-                            <component 
-                                :is="getIcon(template.name)" 
-                                :class="`p-3 rounded-lg ${getColor(template.name)}`" 
-                                :size="45" 
-                            />
-                            <h3 class="text-xl font-bold">{{ template.name }}</h3>
-
-                            <p class="line-clamp-2">{{ template.description || `Template para ${template.name}` }}</p>
-
-                            <div>
-                                <Tag 
-                                    severity="secondary" 
-                                    :value="`${template.total} uso${template.total !== 1 ? 's' : ''}`" 
-                                    rounded 
-                                />
-                            </div>
-
-                            <div class="flex gap-x-4">
-                                <Button 
-                                    label="Ver estrutura" 
-                                    class="w-full !bg-white border-1 !border-slate-200 !text-black hover:!bg-slate-100"
-                                    @click="openTemplate(template)"
-                                />
-
-                                <Button 
-                                    label="Iniciar consulta" 
-                                    class="w-full" 
-                                    @click="startTemplate(template)"
-                                />
-                            </div>
-                        </div>
-                    </template>
+                <div class="flex items-center gap-x-2">
+                    <span class="text-sm text-surface-500 hidden sm:inline">Exibir como:</span>
+                    <SelectButton
+                        v-model="viewMode"
+                        :options="viewOptions"
+                        option-label="label"
+                        option-value="value"
+                        :allow-empty="false"
+                    >
+                        <template #option="{ option }">
+                            <i :class="option.icon" class="text-sm" />
+                        </template>
+                    </SelectButton>
                 </div>
             </div>
+
+            <div class="flex items-center gap-x-2 gap-y-2 flex-wrap">
+                <FiltersByCategory
+                    :categories="categories"
+                    :selected-category="selectedCategory"
+                    v-model:selectedCategory="selectedCategory"
+                />
+            </div>
+
+            <template v-if="loadingTemplates">
+                <SkeletonsLoading 
+                    :viewMode="viewMode"
+                />
+            </template>
+            <template v-else>
+                <TableInfoCount
+                    :filtered-templates="allTemplates"
+                    :all-templates="allTemplates"
+                    :search-query="appliedSearch"
+                />
+
+                <div 
+                    v-if="viewMode === 'list'" 
+                    class="card !p-0 overflow-hidden"
+                >
+                    <ListMode 
+                        :search-query="appliedSearch"
+                        :selected-category="selectedCategory"
+                        :current-page="currentPage"
+                        :top-templates="topTemplates"
+                        :rest-templates="restTemplates"
+                        :filtered-templates="allTemplates"
+                        :show-top="shouldShowTop"
+                        @open="openTemplate"
+                        @start="redirectTo"
+                    />
+                </div>
+                <div v-else>
+                    <CardMode
+                        :filtered-templates="allTemplates"
+                        @open="openTemplate"
+                        @start="redirectTo"
+                    />
+                </div>
+
+                <div 
+                    v-if="totalPages > 1"
+                    class="flex items-center justify-between mt-2"
+                >
+                    <span class="text-xs text-surface-400">
+                        Página {{ currentPage }} de {{ totalPages }}
+                    </span>
+                    <Paginator
+                        :rows="perPage"
+                        :total-records="totalRecords"
+                        :first="(currentPage - 1) * perPage"
+                        :rows-per-page-options="[10, 30, 50]"
+                        template="PrevPageLink PageLinks NextPageLink RowsPerPageDropdown"
+                        @page="onPageChange"
+                    />
+                </div>
+            </template>
         </div>
         <TemplateDetails
             v-model:visible="showModal"
             :template="selectedTemplate"
-            @start="startTemplate"
+            @start="redirectTo"
         />
     </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
-import { Heart, Brain, Bone, Eye, Stethoscope, Users, FileText } from 'lucide-vue-next';
-import Cookies from 'js-cookie';
-import api from '@/services/axios';
+import { ref, computed, onMounted, watch } from "vue"
+import { TableInfoCount, FiltersByCategory, SkeletonsLoading, ListMode, CardMode } from './components'
+import { TemplatesService } from '@/service/TemplateService'
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const searchQuery = ref("")
 const showModal = ref(false)
 const selectedTemplate = ref(null)
-const templates = ref([])
+const allTemplates = ref([])
 const loadingTemplates = ref(true)
+const viewMode = ref(localStorage.getItem("viewMode") || "list")
+const selectedCategory = ref("all")
+const appliedSearch = ref("")
 
-const iconMap = {
-    "Cardiologia": Heart,
-    "Neurologia": Brain,
-    "Ortopedia": Bone,
-    "Oftalmologia": Eye,
-    "Clínica médica": Stethoscope,
-    "Pediatria": Users
-}
+watch(viewMode, (newValue) => {
+    localStorage.setItem("viewMode", newValue)
+})
 
-const colors = [
-    "bg-blue-50 text-blue-600",
-    "bg-green-50 text-green-600",
-    "bg-purple-50 text-purple-600",
-    "bg-yellow-50 text-yellow-600",
-    "bg-pink-50 text-pink-600",
-    "bg-indigo-50 text-indigo-600",
+const viewOptions = [
+    { label: "Lista", value: "list", icon: "pi pi-list" },
+    { label: "Cards", value: "grid", icon: "pi pi-th-large" },
 ]
 
-const getColor = (name) => {
-    let hash = 0
-    for (let i = 0; i < name.length; i++) {
-        hash += name.charCodeAt(i)
-    }
-    return colors[hash % colors.length]
+const totalAllRecords = ref(0)
+const categoriesCount = ref([])
+const getCategoriesCount = () => {
+    TemplatesService.getCountCategories()
+        .then((response) => {
+            categoriesCount.value = response.categories
+            totalAllRecords.value = response.total
+        })
 }
+const categories = computed(() => {
+    return [
+        { value: "all", label: "Todos", count: totalAllRecords.value },
+        ...categoriesCount.value.map(cat => ({
+            value: cat.name,
+            label: cat.name,
+            count: cat.total
+        }))
+    ]
+})
 
-const getIcon = (name) => {
-    return iconMap[name] || FileText
-}
+// TODO: PASSAR A LÓGICA DE TOP E REST PARA O BACKEND
+const shouldShowTop = computed(() => {
+    return (
+        currentPage.value === 1 &&
+        !appliedSearch.value &&
+        selectedCategory.value === 'all' &&
+        topTemplates.value.length > 0
+    )
+})
+
+const TOP_COUNT = 3
+const topIds = computed(() => new Set(topTemplates.value.map(t => t.id)))
+
+const restTemplates = computed(() => {
+    if (!shouldShowTop.value) {
+        return allTemplates.value
+    }
+
+    return allTemplates.value.filter(t => !topIds.value.has(t.id))
+})
+
+watch(selectedCategory, () => {
+    getTemplatesUsage(1)
+})
+
+let debounceTimer = null;
+watch(searchQuery, () => {
+    clearTimeout(debounceTimer)
+
+    debounceTimer = setTimeout(() => {
+        appliedSearch.value = searchQuery.value.trim()
+        getTemplatesUsage(1)
+    }, 600)
+})
 
 const openTemplate = (template) => {
     selectedTemplate.value = template
     showModal.value = true
 }
 
-const startTemplate = (template) => {
-    console.log("iniciar consulta com template:", template)
+const redirectTo = (template) => {
+    router.push({
+        name: 'upload',
+        query: { template: template.id }
+    });
 }
 
-const getTemplatesUsage = async () => {
-    const token = Cookies.get('token');
+const currentPage = ref(1)
+const totalPages = ref(1)
+const totalRecords = ref(0)
+const perPage = ref(10)
+const topTemplates = ref([])
+const getTemplatesUsage = (page = 1) => {
+    loadingTemplates.value = true
 
-    loadingTemplates.value = true;
+    TemplatesService.getTemplatesWithDocumentsCount(page, appliedSearch.value, selectedCategory.value, perPage.value)
+        .then((response) => {
+            topTemplates.value = response.top || []
+            allTemplates.value = response.data
 
-    try {
-        const response = await api.get(`/templates/with-documents-count`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-
-        templates.value = response.data
-    } catch (error) {
-        console.error(error);
-    } finally {
-        loadingTemplates.value = false;
-    }
+            currentPage.value = response.meta.current_page
+            totalPages.value = response.meta.last_page
+            totalRecords.value = response.meta.total
+            perPage.value = response.meta.per_page
+        })
+        .finally(() => {
+            loadingTemplates.value = false
+        })
 }
 
-onMounted(async () => {
-    getTemplatesUsage();
-});
+const onPageChange = (event) => {
+    const page = event.page + 1
 
+    perPage.value = event.rows
+
+    getTemplatesUsage(page)
+}
+
+onMounted(() => {
+    getTemplatesUsage()
+    getCategoriesCount()
+})
 </script>
