@@ -12,32 +12,32 @@
                     <div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50">
                         <i class="pi pi-trash text-red-600 text-lg"></i>
                     </div>
-                    <h2 class="text-xl font-semibold text-gray-800">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
                         Excluir atendimento
                     </h2>
                 </div>
 
                 <button
                     @click="close"
-                    class="text-gray-400 hover:text-gray-600 transition"
+                    class="text-gray-400 hover:text-gray-600 transition dark:hover:text-white dark:text-gray-200"
                 >
                     ✕
                 </button>
             </div>
 
-            <p class="text-[13px] text-gray-600 leading-relaxed">
+            <p class="text-[13px] text-gray-600 leading-relaxed dark:text-gray-300">
                 Ao excluir este atendimento, todos os dados associados serão removidos
                 permanentemente e não poderão ser recuperados.
             </p>
 
             <p class="text-xs text-gray-400 mt-3">
-                Esta ação é irreversível.
+                Esta ação é <u>irreversível.</u>
             </p>
 
             <div class="flex justify-end gap-3 mt-6">
                 <button
                     @click="close"
-                    class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+                    class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                 >
                     Cancelar
                 </button>

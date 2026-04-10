@@ -9,24 +9,24 @@
         <div class="p-3">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-50">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-500/20 dark:text-blue-400">
                         <i class="pi pi-pencil text-blue-600 text-lg"></i>
                     </div>
-                    <h2 class="text-xl font-semibold text-gray-800">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
                         Renomear atendimento
                     </h2>
                 </div>
 
                 <button
                     @click="close"
-                    class="text-gray-400 hover:text-gray-600 transition"
+                    class="text-gray-400 hover:text-gray-600 transition dark:hover:text-white dark:text-gray-200"
                 >
                     ✕
                 </button>
             </div>
 
             <div class="flex flex-col gap-2">
-                <label class="text-sm font-medium text-gray-700">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Título do atendimento<span class="text-red-500">*</span>
                 </label>
 
@@ -36,7 +36,7 @@
                     autofocus
                 />
 
-                <p class="text-xs text-gray-400 mt-1">
+                <p class="text-xs text-gray-400 mt-1 dark:text-gray-300">
                     Utilize um título que facilite a identificação futura.
                 </p>
             </div>
@@ -45,7 +45,7 @@
 
                 <button
                     @click="close"
-                    class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+                    class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                 >
                     Cancelar
                 </button>
