@@ -73,8 +73,8 @@
             <div class="w-12 h-12 rounded-full bg-surface-100 flex items-center justify-center mb-1 dark:bg-surface-700/50">
                 <FileAudio :size="22" class="text-surface-400 dark:text-surface-500" />
             </div>
-            <p class="text-sm font-medium text-surface-700 dark:text-surface-300">Nenhum atendimento encontrado</p>
-            <p class="text-xs text-surface-400 max-w-xs dark:text-surface-500">
+            <p class="text-[13px] font-medium text-surface-700 dark:text-surface-300">Nenhum atendimento encontrado</p>
+            <p class="text-xs text-surface-400 max-w-xs dark:text-surface-400">
                 {{ username || date || selectedType
                     ? 'Tente ajustar os filtros para encontrar o que procura.'
                     : 'Inicie um novo atendimento para gerar automaticamente o documento clínico e os insights.' }}
