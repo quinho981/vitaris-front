@@ -9,8 +9,8 @@
         <div class="p-3">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50">
-                        <i class="pi pi-trash text-red-600 text-lg"></i>
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50 dark:bg-red-900">
+                        <i class="pi pi-trash text-red-600 text-lg dark:text-red-400"></i>
                     </div>
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
                         Excluir atendimento

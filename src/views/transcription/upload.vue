@@ -73,7 +73,7 @@
                                     :key="file.name + file.type + file.size"
                                     class="group flex items-center justify-between gap-4 p-4 rounded-2xl 
                                         bg-white/70 backdrop-blur-md border border-slate-200
-                                        shadow-sm hover:shadow-md transition-all duration-300"
+                                        shadow-sm hover:shadow-md transition-all duration-300 dark:bg-neutral-700/70 dark:border-neutral-700"
                                 >
                                     <div class="flex items-center gap-4 flex-1 min-w-0">
                                         <div class="flex items-center justify-center w-12 h-12 rounded-xl 
@@ -83,15 +83,15 @@
                                         </div>
 
                                         <div class="flex flex-col min-w-0">
-                                            <span class="font-semibold text-sm sm:text-base truncate text-slate-800">
+                                            <span class="font-semibold text-sm sm:text-base truncate text-slate-800 dark:text-slate-300">
                                                 {{ file.name }}
                                             </span>
-                                            <span class="text-xs text-slate-500">
+                                            <span class="text-xs text-slate-500 dark:text-slate-400">
                                                 {{ formatSize(file.size) }}
                                             </span>
                                         </div>
 
-                                        <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-600 font-medium">
+                                        <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-600 font-medium dark:bg-blue-500/20 dark:text-blue-400">
                                             {{ file.type.split('/')[1] || 'audio' }}
                                         </span>
                                     </div>
@@ -100,7 +100,7 @@
                                         @click="removeFile"
                                         class="
                                             w-9 h-9 flex items-center justify-center rounded-lg
-                                            hover:bg-red-50 text-red-500"
+                                            hover:bg-red-50 text-red-500 dark:hover:bg-red-900 transition"
                                     >
                                         <i class="pi pi-times"></i>
                                     </button>
@@ -114,21 +114,23 @@
                                     p-8 rounded-2xl border-2 border-dashed border-slate-300
                                     bg-gradient-to-br from-white to-slate-50
                                     hover:border-blue-400 hover:bg-blue-50/40
-                                    transition-all duration-300 cursor-pointer"
+                                    transition-all duration-300 cursor-pointer 
+                                    dark:bg-gradient-to-br dark:from-neutral-800 dark:to-neutral-900 
+                                    dark:border-neutral-700 dark:hover:border-blue-500"
                             >
                                 <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 
                                             bg-blue-500/5 blur-xl transition"></div>
 
                                 <div class="flex items-center justify-center w-14 h-14 rounded-2xl
                                             bg-blue-100 text-blue-600 mb-4
-                                            group-hover:scale-105 transition">
+                                            group-hover:scale-105 transition dark:bg-blue-500/20 dark:text-blue-400">
                                     <Upload size="24"/>
                                 </div>
 
-                                <p class="text-base font-medium text-slate-700">
+                                <p class="text-base font-medium text-slate-700 dark:text-slate-300">
                                     Arraste seu áudio aqui
                                 </p>
-                                <p class="text-sm text-slate-500">
+                                <p class="text-sm text-slate-500 dark:text-slate-400">
                                     ou clique para selecionar um arquivo
                                 </p>
 

@@ -9,21 +9,24 @@
                 <div class="flex items-center gap-2">
                     <button
                         @click="copyText"
-                        class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
+                        class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300 
+                            dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-gray-700"
                     >
                         <Copy :size="17" />
                         Copiar
                     </button>
                     <button
                         @click="shareDocument"
-                        class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
+                        class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300
+                            dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-gray-700"
                     >
                         <Share2 :size="17" />
                         Compartilhar
                     </button>
                     <button
                         @click="exportDocument"
-                        class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300"
+                        class="!text-[14px] !font-semibold !py-2 px-3 flex items-center gap-2 border border-slate-200 rounded-lg bg-white hover:bg-gray-100 duration-300
+                            dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-gray-700"
                     >
                         <Download :size="17" />
                         Exportar
@@ -88,26 +91,39 @@
 
             <div class="grid grid-cols-12 gap-4 mt-5">
                 <div class="col-span-12 xl:col-span-8 rounded-lg">
-                    <div class="card flex ">
+                    <div class="card flex">
                         <div class="flex flex-col w-full">
                             <div class="flex gap-4 items-center w-full">
                                 <Tabs v-model:value="activeTab" class="w-full ml-2 mr-2">
                                     <TabList>
-                                        <Tab value="0" @click="getConversations">Contexto da consulta</Tab>
-                                        <Tab value="1">{{ documentTemplate }}</Tab>
+                                        <Tab 
+                                            value="0" 
+                                            @click="getConversations" 
+                                            class="dark:!text-white dark:hover:!text-gray-300"
+                                            :class="activeTab === '0' ? 'dark:!text-blue-400 dark:hover:!text-blue-400' : ''"
+                                        >
+                                            Contexto da consulta
+                                        </Tab>
+                                        <Tab 
+                                            value="1" 
+                                            class="dark:!text-white dark:hover:!text-gray-300"
+                                            :class="activeTab === '1' ? 'dark:!text-blue-400 dark:hover:!text-blue-400' : ''"
+                                        >
+                                            {{ documentTemplate }}
+                                        </Tab>
                                     </TabList>
                                 </Tabs>
                             </div>
                             <div v-if="!loadingConversations">
-                                <div v-show="activeTab === '0'" class="border border-slate-200 rounded-lg p-4 min-h-[21rem] max-h-[39rem] overflow-y-auto">
+                                <div v-show="activeTab === '0'" class="border border-slate-200 rounded-lg p-4 min-h-[21rem] max-h-[39rem] overflow-y-auto dark:border-gray-700">
                                     <div v-for="(conversation, uttIndex) in conversations" :key="uttIndex" class="mb-2">
                                         <div class="rounded-lg p-2">
                                             <div class="flex items-start mb-2">
                                                 <div>
                                                     <div class="flex items-center gap-2 ">
-                                                        <span class="text-xs text-gray-500">{{ conversation.start }}s</span>
+                                                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ conversation.start }}s</span>
                                                     </div>
-                                                    <p class="text-gray-800 p-2 rounded-lg bg-surface-100">{{ conversation.text }}</p>
+                                                    <p class="text-gray-800 p-2 rounded-lg bg-surface-100 dark:bg-neutral-800 dark:dark:text-gray-200">{{ conversation.text }}</p>
                                                 </div>
                                             </div>
                                         </div>

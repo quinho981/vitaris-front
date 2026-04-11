@@ -4,7 +4,7 @@
             <span 
                 v-for="red_flag in red_flags" 
                 :key="red_flag"
-                class="bg-red-200 p-2 rounded-full mr-2 inline-block mb-1"
+                class="bg-red-200 p-2 rounded-full mr-2 inline-block mb-1 dark:bg-red-900 dark:text-white"
             >
                 {{ red_flag }}
             </span>

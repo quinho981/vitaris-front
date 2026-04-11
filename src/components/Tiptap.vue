@@ -1,24 +1,24 @@
 <template>
     <div v-if="editor" class="tiptap">
-        <section class="flex items-center flex-wrap gap-3 p-2 pl-4 border border-slate-200 border-b-0 rounded-t-lg">
+        <section class="flex items-center flex-wrap gap-3 p-2 pl-4 border border-slate-200 border-b-0 rounded-t-lg dark:border-gray-700">
             <button
                 @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
                 :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
-                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300"
+                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
             >
                 <Heading1 :size="18" />
             </button>
             <button
                 @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
                 :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
-                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300"
+                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
             >
                 <Heading2 :size="18" />
             </button>
             <button
                 @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
                 :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
-                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300"
+                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
             >
                 <Heading3 :size="18" />
             </button>
@@ -26,7 +26,7 @@
                 @click="editor.chain().focus().toggleBold().run()"
                 :disabled="!editor.can().chain().focus().toggleBold().run()"
                 :class="{ 'is-active': editor.isActive('bold') }"
-                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300"
+                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
             >
                 <Bold :size="18" />
             </button>
@@ -34,28 +34,28 @@
                 @click="editor.chain().focus().toggleItalic().run()"
                 :disabled="!editor.can().chain().focus().toggleItalic().run()"
                 :class="{ 'is-active': editor.isActive('italic') }"
-                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300"
+                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
             >
                 <Italic :size="18" />
             </button>
             <button
                 @click="editor.chain().focus().toggleBulletList().run()"
                 :class="{ 'is-active': editor.isActive('bulletList') }"
-                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300"
+                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
             >
                 <List />
             </button>
             <button
                 @click="editor.chain().focus().toggleOrderedList().run()"
                 :class="{ 'is-active': editor.isActive('orderedList') }"
-                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300"
+                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
             >
                 <ListOrdered />
             </button>
             <button 
                 @click="editor.chain().focus().undo().run()" 
                 :disabled="!editor.can().chain().focus().undo().run()"
-                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300"
+                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
                 :class="!editor.can().chain().focus().undo().run() ? 'text-gray-400' : 'text-gray-700'"
             >
                 <Undo />
@@ -63,7 +63,7 @@
             <button 
                 @click="editor.chain().focus().redo().run()" 
                 :disabled="!editor.can().chain().focus().redo().run()"
-                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300"
+                class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
                 :class="!editor.can().chain().focus().redo().run() ? 'text-gray-400' : 'text-gray-700'"
             >
                 <Redo />
@@ -103,7 +103,7 @@ const emit = defineEmits(['open-refine-modal', 'update:content']);
 const editor = useEditor({
     editorProps: {
         attributes: {
-            class: 'border border-slate-200 rounded-b-lg p-4 min-h-[21rem] max-h-[37rem] overflow-y-auto outline-none',
+            class: 'border border-slate-200 rounded-b-lg p-4 min-h-[21rem] max-h-[37rem] overflow-y-auto outline-none dark:border-gray-700',
         },
     },
     content: props.content,

@@ -4,7 +4,7 @@
             <span 
                 v-for="exam in suggested_exams" 
                 :key="exam"
-                class="bg-gray-200 p-2 rounded-full mr-2 inline-block mb-1"
+                class="bg-gray-200 p-2 rounded-full mr-2 inline-block mb-1 dark:bg-neutral-700 dark:text-white"
             >
                 {{ exam }}
             </span>

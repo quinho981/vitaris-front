@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="font-semibold">Gerar insights automaticamente</p>
-                <p class="text-sm text-slate-500">Ativar análise clínica por IA ao finalizar</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Ativar análise clínica por IA ao finalizar</p>
             </div>
             <InputSwitch v-model="form.autoInsights" />
         </div>
@@ -11,7 +11,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="font-semibold">Modo escuro</p>
-                <p class="text-sm text-slate-500">Alternar tema da interface</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Alternar tema da interface</p>
             </div>
             <InputSwitch v-model="form.darkMode" />
         </div>

@@ -12,14 +12,14 @@
             
             <div v-if="isTranscribing" class="flex items-center justify-center p-4">
                 <Loader2 :size="24" class="animate-spin mr-2" />
-                <p class="text-slate-600">Transcrevendo áudio...</p>
+                <p class="text-slate-600 dark:text-slate-400">Transcrevendo áudio...</p>
             </div>
 
             <div v-for="(transcription, index) in transcriptions" :key="index" class="transcription-item">
                 <div class="flex items-center gap-2 mb-3">
                     <FileAudio2 :size="16" class="text-blue-500" />
-                    <span class="font-semibold text-sm text-gray-700">{{ transcription.fileName }}</span>
-                    <span class="text-xs text-gray-500">{{ transcription.timestamp }}</span>
+                    <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">{{ transcription.fileName }}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ transcription.timestamp }}</span>
                 </div>
                 
                 <div v-for="(utterance, uttIndex) in transcription.utterances" :key="uttIndex" class="mb-2">
@@ -27,9 +27,9 @@
                         <div class="flex items-start mb-2">
                             <div>
                                 <div class="flex items-center gap-2 ">
-                                    <span class="text-xs text-gray-500">{{ utterance.start }}s</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-300">{{ utterance.start }}s</span>
                                 </div>
-                                <p class="text-gray-800 p-2 rounded-lg bg-surface-100">{{ utterance.text }}</p>
+                                <p class="text-gray-800 p-2 rounded-lg bg-surface-100 dark:bg-neutral-700 dark:text-slate-300">{{ utterance.text }}</p>
                             </div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                 label="Limpar" 
                 outlined 
                 severity="danger" 
-                class="mr-3" 
+                class="mr-3 dark:hover:!bg-red-950" 
                 @click="emit('clear')" 
                 :disabled="loadingFinish"
             />
@@ -61,7 +61,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { FileAudio2 } from 'lucide-vue-next';
+import { FileAudio2, FileChartColumn, Loader2 } from 'lucide-vue-next';
 
 const emit = defineEmits(['clear', 'finish']);
 

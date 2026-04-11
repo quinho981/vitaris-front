@@ -9,10 +9,10 @@
         <div class="p-3">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50">
-                        <i class="pi pi-eraser text-red-600 text-lg"></i>
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50 dark:bg-red-900">
+                        <i class="pi pi-eraser text-red-600 text-lg dark:text-red-400"></i>
                     </div>
-                    <h2 class="text-xl font-semibold text-gray-800">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
                         Limpar transcrição
                     </h2>
                 </div>
@@ -25,19 +25,19 @@
                 </button>
             </div>
 
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm text-gray-600 leading-relaxed dark:text-gray-300">
                 Todos os dados preenchidos serão removidos e não poderão ser recuperados.
             </p>
 
-            <p class="text-xs text-gray-400 mt-3">
-                Esta ação é irreversível.
+            <p class="text-xs text-gray-400 mt-3 dark:text-gray-400">
+                Esta ação é <u>irreversível.</u>
             </p>
 
             <div class="flex justify-end gap-3 mt-6">
 
                 <button
                     @click="close"
-                    class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+                    class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition dark:hover:bg-neutral-700 dark:border-neutral-600 dark:text-gray-300"
                 >
                     Cancelar
                 </button>
