@@ -6,13 +6,80 @@
         </div>
         <p class="mt-1 text-slate-500 dark:text-slate-300 mb-3">Texto transcrito automaticamente pela IA</p>
         <div class="p-2 h-full w-full rounded-lg border-[1px] border-surface dark:border-surface flex flex-col gap-y-2 xl:min-h-[350px] xl:max-h-[470px] overflow-y-auto transcript-box">
-            <div v-if="transcriptions.length === 0 && !isTranscribing" class="flex items-center justify-center h-full">
-                <p class="text-slate-400 text-center">O conteúdo da consulta será exibido aqui após a gravação ou envio do áudio.</p>
+            <div 
+                v-if="transcriptions.length === 0 && !isTranscribing && !loadingTranscribeAndGenerate" 
+                class="flex items-center justify-center h-full"
+            >
+                <p class="text-slate-400 text-center">Clique em <strong>Transcrever</strong> para visualizar o texto da consulta aqui,<br> ou em <strong>Transcrever e gerar documento</strong> para criar o documento completo automaticamente.</p>
+            </div>
+
+            <div v-if="isTranscribing" class="flex flex-col gap-5 px-2 py-4 animate-[fadeUp_0.4s_ease]">
+                <div class="flex items-center gap-3 px-4 py-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50 rounded-xl">
+                    <div class="flex items-center gap-[3px] h-9 shrink-0">
+                        <span
+                            v-for="i in 10" :key="i"
+                            class="block w-1 rounded-full bg-blue-400 dark:bg-blue-400 animate-[wave_1s_ease-in-out_infinite]"
+                            :style="{ animationDelay: waveDelay(i) }"
+                        ></span>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                        <p class="text-sm font-semibold text-blue-800 dark:text-blue-300">Analisando áudio da consulta</p>
+                        <p class="text-xs text-blue-500 dark:text-blue-400">Identificando falantes e transcrevendo...</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 px-1">
+                    <div v-for="(item, i) in skeletonLines" :key="i" class="flex flex-col gap-2">
+                        <Skeleton :width="item.tag" height="15px" class="rounded-lg" />
+                        <Skeleton :width="item.line" height="30px" class="rounded-lg mb-3" />
+                    </div>
+                </div>
             </div>
             
-            <div v-if="isTranscribing" class="flex items-center justify-center p-4">
-                <Loader2 :size="24" class="animate-spin mr-2" />
-                <p class="text-slate-600 dark:text-slate-400">Transcrevendo áudio...</p>
+            <div v-if="loadingTranscribeAndGenerate" class="flex flex-col gap-4 px-2 py-4 animate-[fadeUp_0.4s_ease]">
+                <div class="flex items-center gap-3 px-4 py-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50 rounded-xl">
+                    <div class="flex flex-col gap-0.5">
+                        <p class="text-[12.5px] font-semibold text-blue-800 dark:text-blue-300">
+                            Preparando o resultado da consulta
+                        </p>
+                        <p class="text-[11.5px] text-blue-500 dark:text-blue-400 mb-1">
+                            {{ currentStep.label }}
+                        </p>
+                        <p class="text-[11px] text-slate-400">
+                            Isso pode levar alguns segundos, dependendo da duração do áudio.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2 px-2">
+                    <div
+                        v-for="(step, index) in steps"
+                        :key="step.key"
+                        class="flex items-center gap-2 text-sm"
+                    >
+                        <div
+                            class="w-5 h-5 flex items-center justify-center rounded-full text-[11px] font-semibold transition-all duration-300"
+                            :class="{
+                                'bg-blue-600 text-white scale-110 shadow-sm': index === currentStepIndex,
+                                'bg-blue-500 text-white': index < currentStepIndex,
+                                'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300 opacity-70': index > currentStepIndex
+                            }"
+                        >
+                            <span v-if="index < currentStepIndex" class="text-[12px]">✓</span>
+                            <span v-else>{{ index + 1 }}</span>
+                        </div>
+
+                        <span
+                            class="mb-2"
+                            :class="{
+                                'text-blue-700 dark:text-blue-300 font-medium': index === currentStepIndex,
+                                'text-gray-500 opacity-70': index > currentStepIndex
+                            }"
+                        >
+                            {{ step.label }}
+                        </span>
+                    </div>
+                </div>
             </div>
 
             <div v-for="(transcription, index) in transcriptions" :key="index" class="transcription-item">
@@ -21,7 +88,7 @@
                     <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">{{ transcription.fileName }}</span>
                     <span class="text-xs text-gray-500 dark:text-gray-400">{{ transcription.timestamp }}</span>
                 </div>
-                
+
                 <div v-for="(utterance, uttIndex) in transcription.utterances" :key="uttIndex" class="mb-2">
                     <div class="rounded-lg p-2">
                         <div class="flex items-start mb-2">
@@ -36,14 +103,14 @@
                 </div>
             </div>
         </div>
-        <div v-if="transcriptions.length != 0 && !isTranscribing" class="flex justify-end mt-4">
-            <Button 
-                icon="pi pi-trash" 
-                label="Limpar" 
-                outlined 
-                severity="danger" 
-                class="mr-3 dark:hover:!bg-red-950" 
-                @click="emit('clear')" 
+        <div ref="bottomAnchor" v-show="transcriptions.length != 0 && !isTranscribing" class="flex justify-end mt-4">
+            <Button
+                icon="pi pi-trash"
+                label="Limpar"
+                outlined
+                severity="danger"
+                class="mr-3 dark:hover:!bg-red-950"
+                @click="emit('clear')"
                 :disabled="loadingFinish"
             />
             <Button
@@ -60,15 +127,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, nextTick, computed } from 'vue';
 import { FileAudio2, FileChartColumn, Loader2 } from 'lucide-vue-next';
-
+import Skeleton from 'primevue/skeleton';
+ 
 const emit = defineEmits(['clear', 'finish']);
-
+ 
 const props = defineProps({
     transcriptions: {
         type: Array,
-        default: []
+        default: () => []
     },
     isTranscribing: {
         type: Boolean,
@@ -81,9 +149,85 @@ const props = defineProps({
     loadingFinish: {
         type: Boolean,
         default: false
+    },
+    loadingTranscribeAndGenerate: {
+        type: Boolean,
+        default: false
+    }
+})
+
+const bottomAnchor = ref(null)
+ 
+const delays = [0, 0.08, 0.16, 0.24, 0.32, 0.32, 0.24, 0.16, 0.08, 0]
+const waveDelay = (i) => `${delays[i - 1]}s`
+ 
+const randWidth = (min, max) => `${Math.floor(Math.random() * (max - min + 1)) + min}%`
+ 
+const generateSkeletonLines = () =>
+    Array.from({ length: 5 }, () => ({
+        tag:  randWidth(4, 6),
+        line: randWidth(15, 45),
+    }))
+ 
+const skeletonLines = ref(generateSkeletonLines())
+ 
+watch(() => props.isTranscribing, (val) => {
+    if (val) skeletonLines.value = generateSkeletonLines()
+})
+
+watch(
+    () => props.transcriptions,
+    () => {
+        scrollToBottom()
+    },
+    { deep: true }
+)
+
+const scrollToBottom = async () => {
+    await nextTick()
+
+    setTimeout(() => {
+        bottomAnchor.value?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'end'
+        })
+    }, 100)
+}
+
+const steps = [
+    { key: 'sending', label: 'Recebendo o áudio...' },
+    { key: 'transcribing', label: 'Transcrevendo a consulta...' },
+    { key: 'generating', label: 'Organizando as informações clínicas...' }
+]
+
+const currentStepIndex = ref(0)
+
+const currentStep = computed(() => steps[currentStepIndex.value])
+
+let stepInterval = null
+
+watch(() => props.loadingTranscribeAndGenerate, (val) => {
+    if (val) {
+        currentStepIndex.value = 0
+
+        stepInterval = setInterval(() => {
+            if (currentStepIndex.value < steps.length - 1) {
+                currentStepIndex.value++
+            }
+        }, 2000)
+    } else {
+        clearInterval(stepInterval)
     }
 })
 </script>
 
 <style>
+@keyframes wave {
+    0%, 100% { height: 6px;  opacity: 0.35; }
+    50%       { height: 30px; opacity: 1;    }
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
 </style>

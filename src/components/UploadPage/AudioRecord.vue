@@ -1,6 +1,5 @@
 <template>
-    <div ref="recorderRef" class="w-full bg-white dark:bg-neutral-900 border-2 border-dashed border-slate-300 dark:border-neutral-800 rounded-2xl p-6 flex flex-col gap-0">
-        <!-- Header -->
+    <div ref="recorderRef" class="w-full bg-white dark:bg-neutral-900 border-2 border-dashed border-slate-300 dark:border-neutral-700 rounded-2xl p-6 flex flex-col gap-0">
         <div 
             class="flex items-center justify-between"
             :class="!recording && !audioUrl ? 'mb-3' : 'mb-5'"

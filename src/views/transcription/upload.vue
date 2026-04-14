@@ -16,7 +16,19 @@
 
                 <div class="flex flex-col">
                     <div>
-                        <label class="mb-1" for="name">Nome do Paciente</label>
+                        <div class="flex gap-x-1">
+                            <label class="mb-1" for="name">Nome do Paciente</label>
+                            <button
+                                v-tooltip.top="{
+                                    value: `<span class='text-sm'>Caso o nome do paciente não seja informado, um título será gerado automaticamente com base na consulta.</span>`,
+                                    escape: false,
+                                    showDelay: 300
+                                }"
+                                class="flex items-center justify-center rounded-full border-none text-gray-400 transition"
+                            >
+                                <HelpCircle :size="13" />
+                            </button>
+                        </div>
                         <InputText id="name" v-model="form.patient" type="text" class="w-full" placeholder="Digite o nome do paciente..." />
                     </div>
                     <div class="flex gap-4 flex-wrap xl:flex-nowrap mt-2 mb-5">
@@ -150,17 +162,37 @@
                         @recording-started="scrollAfterRecordingStart"
                     />
                     
-                    <div class="flex justify-end mt-3">
+                    <div class="flex justify-end mt-3 gap-x-1">
                         <Button
                             ref="submitBtn"
                             @click="transcribeAudio"
-                            :disabled="!selectedFile || isTranscribing"
-                            class="!bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !rounded-lg font-semibold hover:!from-blue-600 hover:!to-blue-800 duration-300"
+                            :disabled="!selectedFile || isTranscribing || loadingTranscribeAndGenerate"
+                            class="!border !border-blue-500 mr-2 !text-blue-500 !bg-white !rounded-lg font-semibold hover:!bg-blue-100 duration-300 dark:!border-2 dark:!bg-neutral-800 dark:hover:!bg-neutral-700 "
                         >
                             <Loader2 v-if="isTranscribing" :size="17" class="animate-spin mr-2" />
-                            <SendHorizontal v-else :size="17" class="mr-1" />
-                            {{ isTranscribing ? 'Transcrevendo...' : 'Enviar' }}
+                            <MessagesSquare v-else :size="17" class="mr-1" />
+                            {{ isTranscribing ? 'Transcrevendo...' : 'Transcrever' }}
                         </Button>
+                        <Button
+                            @click="transcribeAndGenerateDocument"
+                            :disabled="!selectedFile || isTranscribing || loadingTranscribeAndGenerate"
+                            class="!bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !rounded-lg font-semibold hover:!from-blue-600 hover:!to-blue-800 duration-300"
+                        >
+                            <Loader2 v-if="loadingTranscribeAndGenerate" :size="17" class="animate-spin mr-2" />
+                            <FilePlus v-else :size="17" />
+                            {{ loadingTranscribeAndGenerate ? 'Transcrevendo...' : 'Transcrever e gerar documento' }}
+                        </Button>
+                        <button
+                            v-tooltip.top="{
+                                value: `<span class='text-sm'><u>Transcrever</u>: exibe o texto da consulta nesta tela. Você poderá gerar o documento clínico em seguida.</span>\n
+                                    <span class='text-sm'><u>Transcrever e gerar documento</u>: cria o documento automaticamente. A transcrição poderá ser vista nos detalhes do documento.</span>`,
+                                escape: false,
+                                showDelay: 300
+                            }"
+                            class="flex items-center justify-center rounded-full border-none text-gray-400 transition"
+                        >
+                            <HelpCircle :size="15" />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -169,6 +201,7 @@
                 :is-transcribing="isTranscribing"
                 :dialog-clear="dialogClear"
                 :loading-finish="loadingFinish"
+                :loading-transcribe-and-generate="loadingTranscribeAndGenerate"
                 @clear="dialogClear = true"
                 @finish="finishConversation"
             />
@@ -190,7 +223,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-import { Upload, FileVolume, SendHorizontal, Loader2 } from 'lucide-vue-next';
+import { Upload, FileVolume, Loader2, FilePlus, MessagesSquare, HelpCircle } from 'lucide-vue-next';
 import { AnamneseService } from '@/service/AnamneseService';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { SelectOptionsService } from '@/service/SelectOptionsService';
@@ -219,6 +252,7 @@ const dialogChangeInputMode = ref(false)
 const transcriptions = ref([])
 const loadingTemplates = ref(false)
 const loadingTypes = ref(false)
+const loadingTranscribeAndGenerate = ref(false)
 const endConversationTime = ref('')
 const dropdownTemplates = ref([]);
 const dropdownTypes = ref([]);
@@ -322,6 +356,34 @@ const transcribeAudio = async () => {
         .finally(() => {
             isTranscribing.value = false;
         });
+};
+
+const transcribeAndGenerateDocument = async () => {
+    if (!validateForm()) return;
+    if (!hasSelectedFile()) return;
+
+    loadingTranscribeAndGenerate.value = true;
+
+    const formData = new FormData();
+    formData.append('audio', selectedFile.value);
+
+    const { patient, template_id: template, type_id: type } = form.value;
+    formData.append('patient', patient);
+    formData.append('template', template);
+    formData.append('type', type);
+
+    try {
+        const response = await TranscriptsService.storeAndGenerateDocument(formData);
+        const result = response.data;
+
+        if (result) {
+            loadingTranscribeAndGenerate.value = false
+            redirectTo(result.transcript_id);
+        }
+    } catch (error) {
+        loadingTranscribeAndGenerate.value = false
+        alert('Erro ao transcrever o áudio.');
+    }
 };
 
 const getLastUtteranceEndTime = (utterances) => {
