@@ -1,6 +1,7 @@
 import api from '@/services/axios';
 import Cookies from 'js-cookie';
 
+// TODO: Mudar para documentService
 export const AnamneseService = {
 
     async generator(payload) {

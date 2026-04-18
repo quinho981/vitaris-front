@@ -22,5 +22,12 @@ export const SelectOptionsService = {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data
+    },
+    async getTypesMinimal() {
+        const token = Cookies.get('token');
+        const response = await api.get(`/transcript-types/minimal`, { 
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data
     }
 };

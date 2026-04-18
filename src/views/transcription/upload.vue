@@ -17,19 +17,9 @@
                 <div class="flex flex-col">
                     <div>
                         <div class="flex gap-x-1">
-                            <label class="mb-1" for="name">Nome do Paciente</label>
-                            <button
-                                v-tooltip.top="{
-                                    value: `<span class='text-sm'>Caso o nome do paciente não seja informado, um título será gerado automaticamente com base na consulta.</span>`,
-                                    escape: false,
-                                    showDelay: 300
-                                }"
-                                class="flex items-center justify-center rounded-full border-none text-gray-400 transition"
-                            >
-                                <HelpCircle :size="13" />
-                            </button>
+                            <label class="mb-1" for="name">Nome do Paciente<span class="text-red-500">*</span></label>
                         </div>
-                        <InputText id="name" v-model="form.patient" type="text" class="w-full" placeholder="Digite o nome do paciente..." />
+                        <InputText id="name" v-model="form.patient" type="text" class="w-full" placeholder="Digite o nome do paciente..." :class="{ 'p-invalid': errorMessagePatient }" />
                     </div>
                     <div class="flex gap-4 flex-wrap xl:flex-nowrap mt-2 mb-5">
                         <div class="w-full">
@@ -54,7 +44,7 @@
                                 v-model="form.type_id" 
                                 :options="dropdownTypes"
                                 :loading="loadingTypes"
-                                :class="{ 'p-invalid': errorMessage }"
+                                :class="{ 'p-invalid': errorMessageType }"
                                 optionValue="id" 
                                 optionLabel="type" 
                                 placeholder="Selecione" 
@@ -300,6 +290,7 @@ const clearTranscriptionData = () => {
     chatTranscription.value = null;
     fileSize.value = ''
     endConversationTime.value = ''
+    transcriptId.value = '' 
 }
 
 const validateAudioFile = (file) => {
@@ -329,6 +320,7 @@ const validateAudioFile = (file) => {
     return { valid: true };
 };
 
+const transcriptId = ref()
 const transcribeAudio = async () => {
     if (!validateForm()) return;
     if (!hasSelectedFile()) return;
@@ -338,12 +330,18 @@ const transcribeAudio = async () => {
     const formData = new FormData();
     formData.append('audio', selectedFile.value);
 
+    const { patient, template_id: template, type_id: type } = form.value;
+    formData.append('patient', patient);
+    formData.append('template', template);
+    formData.append('type', type);
+
     TranscriptsService.store(formData)
         .then(response => {
             const result = response.data;
+            transcriptId.value = result.id
 
-            const processedTranscription = processDeepgramResultAndCreateChatDesign(result, selectedFile.value.name);
-
+            const processedTranscription = processDeepgramResultAndCreateChatDesign(result.conversation, selectedFile.value.name);
+            
             chatTranscription.value = processedTranscription.utterances;
             transcriptions.value.unshift(processedTranscription);
 
@@ -393,42 +391,15 @@ const getLastUtteranceEndTime = (utterances) => {
     return endConversationTime.value = seconds ?? null;
 };
 
-const processDeepgramResultAndCreateChatDesign = (result, fileName) => {
-    const utterances = [];
-    
-    if (result.results?.utterances) {
-        getLastUtteranceEndTime(result.results?.utterances)
-
-        // Se a diarização estiver disponível, usar utterances
-        result.results.utterances.forEach((utterance) => {
-            utterances.push({
-                text: utterance.transcript,
-                start: Math.round(utterance.start * 100) / 100,
-                end: Math.round(utterance.end * 100) / 100
-            });
-        });
-    } else if (result.results?.channels?.[0]?.alternatives?.[0]) {
-        // Fallback: usar transcrição simples se diarização não estiver disponível
-        const transcript = result.results.channels[0].alternatives[0].transcript;
-        
-        // Dividir em partes simulando diferentes utterances
-        const sentences = transcript.split(/[.!?]+/).filter(s => s.trim().length > 0);
-        sentences.forEach((sentence, index) => {
-            utterances.push({
-                text: sentence.trim() + '.',
-                start: index * 10,
-                end: (index + 1) * 10
-            });
-        });
-    }
-
+// TODO: VER A NECESSIDADE DESSA FUNÇÃO E EXCLUIR SE DESNECESSÁRIO
+const processDeepgramResultAndCreateChatDesign = (conversation, fileName) => {
     return {
         fileName: fileName,
         timestamp: new Date().toLocaleTimeString('pt-BR', { 
             hour: '2-digit', 
             minute: '2-digit' 
         }),
-        utterances: utterances
+        utterances: conversation
     };
 };
 
@@ -474,21 +445,44 @@ const buildPayload = () => {
         conversation: chatTranscription.value,
         patient,
         template,
-        type,
-        endConversationTime: endConversationTime.value,
-        fileSize: fileSize.value
+        transcript_id: transcriptId.value
     };
 };
 
+const errorMessagePatient = ref(false)
+const errorMessageType = ref(false)
 const validateForm = () => {
-    if (!form.value.template_id) {
-        errorMessage.value = true;
+    errorMessage.value = false
+    errorMessagePatient.value = false
+    errorMessageType.value = false
 
-        showError(t('notifications.titles.error'), "Por favor, verifique os campos do formulário.", 3000);
-        return false;
+    let isValid = true
+
+    if (!form.value.template_id) {
+        errorMessage.value = true
+        isValid = false
     }
-    return true;
-};
+
+    if (!form.value.patient) {
+        errorMessagePatient.value = true
+        isValid = false
+    }
+
+    if (!form.value.type_id) {
+        errorMessageType.value = true
+        isValid = false
+    }
+
+    if (!isValid) {
+        showError(
+            t('notifications.titles.error'),
+            "Por favor, verifique os campos do formulário.",
+            4000
+        )
+    }
+
+    return isValid
+}
 
 const redirectTo = (id) => {
     router.push({
@@ -505,7 +499,7 @@ const hasTranscriptions = () => transcriptions.value.length > 0;
 async function loadTemplates() {
     loadingTemplates.value = true
     try {
-        dropdownTemplates.value = await SelectOptionsService.getTemplates()
+        dropdownTemplates.value = await SelectOptionsService.getTemplatesMinimal()
 
         const templateFromUrl = route.query.template
 
@@ -522,7 +516,7 @@ async function loadTemplates() {
 async function loadTypes() {
     loadingTypes.value = true
     try {
-        dropdownTypes.value = await SelectOptionsService.getTypes()
+        dropdownTypes.value = await SelectOptionsService.getTypesMinimal()
     } catch (error) {
         console.error(error)
     } finally {
