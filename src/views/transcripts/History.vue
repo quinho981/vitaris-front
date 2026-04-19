@@ -214,11 +214,10 @@ import api from '@/services/axios';
 
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
-const { formatDate, formatSize, convertSecondsToMinutes } = useHelpers();
+const { formatDate, formatSize, convertSecondsToMinutes, getInitials, getPatientAvatar } = useHelpers();
 const router = useRouter();
 const today = new Date();
 
-// ── state ──────────────────────────────────────────────────────────────────
 const transcripts = ref([]);
 const loading = ref(false);
 const currentPage = ref(1);
@@ -236,31 +235,6 @@ const loadingTypes = ref(false);
 const selectedType = ref(null);
 const dropdownTypes = ref([]);
 
-// ── avatar por hash do nome do paciente ────────────────────────────────────
-const AVATAR_PALETTES = [
-    'bg-blue-100 text-blue-800 dark:bg-blue-700/50 dark:text-blue-200',
-    'bg-teal-100 text-teal-800 dark:bg-teal-700/50 dark:text-teal-200',
-    'bg-purple-100 text-purple-800 dark:bg-purple-700/50 dark:text-purple-200',
-    'bg-amber-100 text-amber-800 dark:bg-amber-700/50 dark:text-amber-200',
-    'bg-pink-100 text-pink-800 dark:bg-pink-700/50 dark:text-pink-200',
-    'bg-green-100 text-green-800 dark:bg-green-700/50 dark:text-green-200',
-    'bg-orange-100 text-orange-800 dark:bg-orange-700/50 dark:text-orange-200',
-    'bg-slate-100 text-slate-700 dark:bg-slate-700/50 dark:text-slate-200',
-]
-
-const hashName = (name = '') => {
-    let h = 0
-    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff
-    return h
-}
-
-const getInitials = (name = '') =>
-    name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase()
-
-const getPatientAvatar = (name = '') =>
-    AVATAR_PALETTES[hashName(name) % AVATAR_PALETTES.length]
-
-// ── mapper ─────────────────────────────────────────────────────────────────
 const mapperTranscript = (list) =>
     list.map((t) => ({
         ...t,
@@ -279,7 +253,6 @@ function truncateText(text, maxLength = 100) {
 
 const clearDate = () => { date.value = null }
 
-// ── fetch ──────────────────────────────────────────────────────────────────
 const fetchTranscripts = async (page = 1, reset = false) => {
     if (loading.value || (hasReachedEnd.value && !reset)) return
     loading.value = true
@@ -317,7 +290,6 @@ const setupIntersectionObserver = () => {
     observer.value.observe(loadMoreTrigger.value)
 }
 
-// ── ações ──────────────────────────────────────────────────────────────────
 const goToDetail = (item) => router.push({ name: 'transcriptsShow', params: { id: item.id } })
 
 const openEditDialog = (item) => {
@@ -362,7 +334,6 @@ const deleteTranscript = async (item) => {
     }
 }
 
-// ── tipos ──────────────────────────────────────────────────────────────────
 const getTypes = async () => {
     const token = Cookies.get('token')
     loadingTypes.value = true
@@ -376,7 +347,6 @@ const getTypes = async () => {
     }
 }
 
-// ── filtros com debounce ───────────────────────────────────────────────────
 const filterTranscripts = async (username, date, selectedType) => {
     transcripts.value = []
     loading.value = true
@@ -395,7 +365,6 @@ watch([username, date, selectedType],
     debounceTimer = setTimeout(() => filterTranscripts(username, date, selectedType), 500)
 }, { immediate: false })
 
-// ── lifecycle ──────────────────────────────────────────────────────────────
 onMounted(async () => {
     await fetchTranscripts(1, true)
     await nextTick()

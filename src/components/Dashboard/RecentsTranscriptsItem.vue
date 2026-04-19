@@ -49,20 +49,27 @@
                 >
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-x-3">
-                            <div class="p-3 rounded-full !bg-gradient-to-br !from-blue-500 !to-blue-700">
-                                <FileText class="text-white dark:text-surface-200" />
+                            <div :class="`w-10 h-10 rounded-full flex items-center justify-center text-[11.5px] font-semibold flex-shrink-0 mt-0.5 ${getPatientAvatar(transcript.patient)}`">
+                                {{ getInitials(transcript.patient) }}
                             </div>
                             <div class="flex flex-col">
-                                <h4 class="text-lg font-bold">{{ transcript.patient }}</h4>
-                                <p>
-                                    {{ transcript.document.document_template.name }} •
-                                    {{ convertSecondsToMinutes(transcript.end_conversation_time) }}
+                                <h4 class="text-md font-semibold">{{ transcript.patient }}</h4>
+                                <p class="text-sm flex items-center gap-x-2 text-surface-400">
+                                    {{ transcript.document.document_template.name }}
+                                    <span class="flex items-center gap-x-1">
+                                        <Calendar :size="12" class="text-surface-500" />
+                                        {{ formatDate(transcript.created_at) }}
+                                    </span>
+                                    <span class="flex items-center gap-x-1">
+                                        <Timer :size="12" class="text-orange-400" />
+                                        {{ convertSecondsToMinutes(transcript.end_conversation_time) }}
+                                    </span>
                                 </p>
                             </div>
                         </div>
 
                         <div class="flex items-center gap-x-2">
-                            <Tag severity="secondary" :value="transcript.transcript_type.type" rounded />
+                            <Tag severity="secondary" :value="transcript.transcript_type.type" rounded class="!text-xs" />
                             
                             <Button
                                 as="router-link"
@@ -71,7 +78,7 @@
                                 text
                                 v-tooltip.top="'Visualizar'"
                             >
-                                <Eye :size="22" />
+                                <Eye :size="20" />
                             </Button>
                         </div>
                     </div>
@@ -82,10 +89,10 @@
 </template>
 <script setup>
 import { ref, watch, computed } from 'vue';
-import { FileText, Eye, Download, Mic } from 'lucide-vue-next';
+import { FileText, Eye, Download, Mic, Calendar, Timer } from 'lucide-vue-next';
 import { useHelpers } from '@/utils/helper';
 
-const { convertSecondsToMinutes } = useHelpers();
+const { convertSecondsToMinutes, formatDate, getInitials, getPatientAvatar } = useHelpers();
 
 const props = defineProps({
     transcripts: {
@@ -100,5 +107,4 @@ const props = defineProps({
 </script>
 
 <style scoped>
-
 </style>

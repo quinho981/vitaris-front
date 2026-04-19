@@ -95,6 +95,29 @@ export const useHelpers = () => {
         return `${m}:${s}`;
     };
 
+    const AVATAR_PALETTES = [
+    'bg-blue-100 text-blue-800 dark:bg-blue-700/50 dark:text-blue-200',
+    'bg-teal-100 text-teal-800 dark:bg-teal-700/50 dark:text-teal-200',
+    'bg-purple-100 text-purple-800 dark:bg-purple-700/50 dark:text-purple-200',
+    'bg-amber-100 text-amber-800 dark:bg-amber-700/50 dark:text-amber-200',
+    'bg-pink-100 text-pink-800 dark:bg-pink-700/50 dark:text-pink-200',
+    'bg-green-100 text-green-800 dark:bg-green-700/50 dark:text-green-200',
+    'bg-orange-100 text-orange-800 dark:bg-orange-700/50 dark:text-orange-200',
+    'bg-slate-100 text-slate-700 dark:bg-slate-700/50 dark:text-slate-200',
+]
+
+    const hashName = (name = '') => {
+        let h = 0
+        for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff
+        return h
+    }
+
+    const getInitials = (name = '') =>
+        name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase()
+
+    const getPatientAvatar = (name = '') =>
+        AVATAR_PALETTES[hashName(name) % AVATAR_PALETTES.length]
+
     return {
         exportPDF,
         formatPtBrCurto,
@@ -102,6 +125,8 @@ export const useHelpers = () => {
         capitalizeArray,
         formatDate,
         formatSize,
-        formatTime
+        formatTime,
+        getInitials,
+        getPatientAvatar
     };
 }

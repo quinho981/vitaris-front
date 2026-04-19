@@ -309,8 +309,8 @@ const handleBarChart = (response, data) => {
 const handlePieChart = (response) => {
     const documentStyle = getComputedStyle(document.documentElement)
     const data = response.transcriptsByType
-    const colors = ['--p-indigo-500', '--p-purple-500', '--p-teal-500', '--p-orange-500', '--p-pink-500']
-    const hoverColors = ['--p-indigo-400', '--p-purple-400', '--p-teal-400', '--p-orange-400', '--p-pink-400']
+    const colors = ['--p-indigo-500', '--p-purple-500', '--p-red-400', '--p-teal-500', '--p-orange-500', '--p-pink-500']
+    const hoverColors = ['--p-indigo-400', '--p-purple-400', '--p-red-300', '--p-teal-400', '--p-orange-400', '--p-pink-400']
 
     pieData.value = {
         labels: data.map(item => item.type),
