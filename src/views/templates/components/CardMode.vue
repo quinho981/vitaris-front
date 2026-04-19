@@ -12,8 +12,23 @@
             :key="template.id"
             class="card flex flex-col flex-grow gap-y-4 w-full sm:basis-[48%] lg:basis-[32%] hover:shadow-lg transition-shadow duration-300"
         >
-            <div :class="`p-3 rounded-lg w-fit ${template.category.color || 'bg-slate-100 text-slate-600'}`">
-                <component :is="getIcon(template.category.icon)" :size="32" />
+            <div class="flex justify-between items-start">
+                <div :class="`p-3 rounded-lg w-fit ${template.category.color || 'bg-slate-100 text-slate-600'}`">
+                    <component :is="getIcon(template.category.icon)" :size="32" />
+                </div>
+                <div>
+                    <Star
+                        :size="18"
+                        @click.stop="makeFavorite(template.id)"
+                        v-tooltip="isFavorite(template) ? 'Remover dos favoritos' : 'Marcar como favorito'"
+                        :class="[
+                            'cursor-pointer transition-all',
+                            isFavorite(template)
+                                ? 'text-yellow-400 fill-yellow-400'
+                                : 'text-surface-400 fill-transparent hover:text-yellow-400 hover:fill-yellow-400'
+                        ]"
+                    />
+                </div>
             </div>
             <h3 class="text-[16.5px] font-bold">{{ template.name }}</h3>
             <p class="line-clamp-2 text-sm text-surface-500 dark:text-surface-400">{{ template.description || `Template para ${template.name}` }}</p>
@@ -39,8 +54,11 @@
 </template>
 
 <script setup>
-import { Stethoscope, Slice, TestTubeDiagonal, Baby, Brain, Activity, FileText } from 'lucide-vue-next'
+import { ref, computed, onMounted } from 'vue'
+import { Stethoscope, Slice, TestTubeDiagonal, Baby, Brain, Activity, FileText, Star  } from 'lucide-vue-next'
 const iconMap = { Stethoscope, Slice, TestTubeDiagonal, Baby, Brain, Activity, FileText }
+
+const favoriteId = ref(null)
 
 const props = defineProps({
     filteredTemplates: {
@@ -48,7 +66,7 @@ const props = defineProps({
         required: true
     }
 })
-const emit = defineEmits(['open', 'start'])
+const emit = defineEmits(['open', 'start', 'favorite'])
 
 const openTemplate = (template) => {
     emit('open', template)
@@ -61,8 +79,20 @@ const startTemplate = (template) => {
 const getIcon = (iconName) => {
     return iconMap[iconName] || FileText
 }
+
+const makeFavorite = (id) => {
+    favoriteId.value = id
+    localStorage.setItem("favorite", id)
+}
+
+const isFavorite = (template) => {
+    return String(template.id) === String(favoriteId.value)
+}
+
+onMounted(() => {
+    favoriteId.value = localStorage.getItem("favorite")
+})
 </script>
 
 <style scoped>
-
 </style>

@@ -21,6 +21,8 @@
                 >
                     <TemplateListItem
                         :template="template"
+                        :favoriteId="favoriteId"
+                        @favorite="setFavorite"
                         @open="openTemplate"
                         @start="startTemplate"
                     />
@@ -44,6 +46,8 @@
             >
                 <TemplateListItem
                     :template="template"
+                    :favoriteId="favoriteId"
+                    @favorite="setFavorite"
                     @open="openTemplate"
                     @start="startTemplate"
                 />
@@ -53,8 +57,10 @@
 </template>
 
 <script setup>
-import { computed } from "vue"
+import { ref, computed, onMounted } from "vue"
 import TemplateListItem from './TemplateListItem.vue'
+
+const favoriteId = ref(null)
 
 const props = defineProps({
     searchQuery: {
@@ -96,6 +102,15 @@ const openTemplate = (template) => {
 const startTemplate = (template) => {
     emit('start', template)
 }
+
+const setFavorite = (id) => {
+    favoriteId.value = id
+    localStorage.setItem("favorite", id)
+}
+
+onMounted(() => {
+    favoriteId.value = localStorage.getItem("favorite")
+})
 </script>
 
 <style scoped>

@@ -13,7 +13,7 @@
             </p>
         </div>
 
-        <div class="hidden sm:flex items-center gap-x-2 flex-shrink-0">
+        <div class="hidden sm:flex items-center gap-x-3 flex-shrink-0">
             <div :class="`py-1 px-2 rounded-full font-semibold flex text-xs items-center justify-center ${template.category.color || 'bg-slate-100 text-slate-600'}`">
                 {{template.category.name}}
             </div>
@@ -22,6 +22,17 @@
                 :value="`${template.total} uso${template.total !== 1 ? 's' : ''}`"
                 rounded
                 class="!text-xs !py-0.5"
+            />
+            <Star 
+                :size="18" 
+                @click="makeFavoriteTemplate(template)"
+                v-tooltip.top="isFavorite ? 'Remover dos favoritos' : 'Marcar como favorito'"
+                :class="[
+                    'cursor-pointer transition-all',
+                    isFavorite 
+                        ? 'text-yellow-400 fill-yellow-400' 
+                        : 'text-surface-400 fill-transparent hover:text-yellow-400 hover:fill-yellow-400'
+                ]"
             />
         </div>
 
@@ -54,7 +65,8 @@
 </template>
 
 <script setup>
-import { Stethoscope, Slice, TestTubeDiagonal, Baby, Brain, Activity, FileText } from 'lucide-vue-next'
+import { computed } from 'vue'
+import { Stethoscope, Slice, TestTubeDiagonal, Baby, Brain, Activity, FileText, Star } from 'lucide-vue-next'
 
 const iconMap = {
     Stethoscope, Slice, TestTubeDiagonal, Baby, Brain, Activity, FileText
@@ -64,12 +76,24 @@ const props = defineProps({
     template: {
         type: Object,
         required: true
+    },
+    favoriteId: {
+        type: [String, Number],
+        default: null
     }
 })
 
-defineEmits(['open', 'start'])
+const emit = defineEmits(['open', 'start', 'favorite'])
 
 const getIcon = (iconName) => {
     return iconMap[iconName] || FileText
+}
+
+const isFavorite = computed(() => {
+    return String(props.template.id) === String(props.favoriteId)
+})
+
+const makeFavoriteTemplate = (template) => {
+    emit('favorite', template.id)
 }
 </script>

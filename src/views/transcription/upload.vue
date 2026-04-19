@@ -500,6 +500,7 @@ async function loadTemplates() {
     loadingTemplates.value = true
     try {
         dropdownTemplates.value = await SelectOptionsService.getTemplatesMinimal()
+        form.value.template_id = Number(localStorage.getItem("favorite")) || null
 
         const templateFromUrl = route.query.template
 
