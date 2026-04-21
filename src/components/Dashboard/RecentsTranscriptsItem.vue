@@ -46,6 +46,9 @@
                     v-for="transcript in transcripts"
                     :key="transcript.id"
                     class="border-[1px] border-surface p-3 rounded-lg mt-4 hover:border-blue-400 duration-200"
+                    :class="[
+                        transcript.document ? '' : 'hover:border-yellow-400 bg-yellow-200/10 dark:bg-yellow-900/30 hover:bg-yellow-300/10 dark:hover:bg-yellow-800/30 dark:hover:border-yellow-600',
+                    ]"
                 >
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-x-3">
@@ -53,9 +56,18 @@
                                 {{ getInitials(transcript.patient) }}
                             </div>
                             <div class="flex flex-col">
-                                <h4 class="text-md font-semibold">{{ transcript.patient }}</h4>
+                                <div class="flex">
+                                    <h4 class="text-md font-semibold">{{ transcript.patient }}</h4>
+                                    <Tag
+                                        v-if="!transcript.document"
+                                        severity="warn" 
+                                        value="Só transcrição" 
+                                        rounded 
+                                        class="!text-xs !py-0 ml-2" 
+                                    />
+                                </div>
+                                
                                 <p class="text-sm flex items-center gap-x-2 text-surface-400">
-                                    {{ transcript.document.document_template.name }}
                                     <span class="flex items-center gap-x-1">
                                         <Calendar :size="12" class="text-surface-500" />
                                         {{ formatDate(transcript.created_at) }}
@@ -64,14 +76,21 @@
                                         <Timer :size="12" class="text-orange-400" />
                                         {{ convertSecondsToMinutes(transcript.end_conversation_time) }}
                                     </span>
+                                    <span v-if="transcript.document">
+                                        |
+                                    </span>
+                                    <span v-if="transcript.document" class="text-surface-500 dark:text-surface-300">
+                                        {{ transcript.document?.document_template?.name || '-' }}
+                                    </span>
                                 </p>
                             </div>
                         </div>
 
                         <div class="flex items-center gap-x-2">
-                            <Tag severity="secondary" :value="transcript.transcript_type.type" rounded class="!text-xs" />
+                            <Tag :severity="transcript.transcript_type.type == 'Urgente' ? 'danger' : 'secondary'" :value="transcript.transcript_type.type" rounded class="!text-xs" />
                             
                             <Button
+                                v-if="transcript.document"
                                 as="router-link"
                                 :to="'/transcripts/' + transcript.id"
                                 severity="secondary"

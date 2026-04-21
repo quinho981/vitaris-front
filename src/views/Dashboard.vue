@@ -109,7 +109,7 @@
 
                 <div class="flex flex-col items-center justify-center py-4 border border-surface-100 rounded-lg bg-surface-50 mb-4 dark:bg-surface-900 dark:border-surface-700">
                     <template v-if="!loadingSummary">
-                        <span class="text-3xl font-bold text-surface-800 dark:text-surface-400">{{ aiUsage.utilization }}%</span>
+                        <span class="text-3xl font-bold text-surface-800 dark:text-surface-400">{{ Number(aiUsage.utilization || 0).toFixed(1) }}%</span>
                         <span class="text-xs text-surface-400 mt-1 flex items-end gap-x-1">
                             aproveitamento
                             <button

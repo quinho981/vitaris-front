@@ -95,7 +95,8 @@
                 :key="item.id"
                 :class="[
                     'flex items-start gap-x-3 px-4 py-3 hover:bg-surface-50 transition-colors duration-150 group dark:hover:bg-surface-700/30',
-                    idx < transcripts.length - 1 ? 'border-b border-surface-100 dark:border-surface-600' : ''
+                    idx < transcripts.length - 1 ? 'border-b border-surface-100 dark:border-surface-600' : '',
+                    item.documentNotGenerated ? ' border-l-4 border-l-yellow-400 dark:border-l-yellow-500 bg-yellow-200/10 dark:bg-yellow-900/30 hover:bg-yellow-300/10 dark:hover:bg-yellow-800/30' : ''
                 ]"
             >
                 <div :class="`w-9 h-9 rounded-full flex items-center justify-center text-[11.5px] font-semibold flex-shrink-0 mt-0.5 ${getPatientAvatar(item.patient)}`">
@@ -105,15 +106,34 @@
                 <div class="flex-1 min-w-0">
                     <div class="flex items-start justify-between gap-x-3">
                         <div class="min-w-0">
-                            <p class="text-[13.5px] font-semibold text-surface-800 leading-tight truncate dark:text-surface-200">{{ item.patient }}</p>
+                            <p class="text-[13.5px] font-semibold text-surface-800 leading-tight truncate dark:text-surface-200">
+                                {{ item.patient }}
+                                <Tag
+                                    v-if="item.documentNotGenerated"
+                                    severity="warn" 
+                                    value="Só transcrição" 
+                                    rounded 
+                                    class="!text-xs !py-0 ml-2" 
+                                />
+                            </p>
                             <p class="text-[12.4px] text-surface-500 mt-0.5 line-clamp-1 dark:text-surface-400">{{ item.description }}</p>
                         </div>
 
                         <div class="hidden sm:flex items-center gap-x-2 flex-shrink-0 mt-0.5">
-                            <div :class="`py-1 px-2 rounded-full font-semibold flex text-xs items-center justify-center ${item.color}`">
+                            <div v-if="item.documentNotGenerated">
+                                <Button
+                                    text
+                                    size="small"
+                                    @click="openGenerateModal(item)"
+                                    class="!bg-blue-500 !text-white !font-semibold hover:!bg-blue-600 transition-colors dark:!bg-blue-700 dark:hover:!bg-blue-800 dark:!text-surface-200"
+                                >
+                                    <FileText :size="16" class="text-white dark:text-surface-200" /> Gerar documento clínico
+                                </Button>
+                            </div>
+                            <div v-if="!item.documentNotGenerated" :class="`py-1 px-2 rounded-full font-semibold flex text-xs items-center justify-center ${item.color}`">
                                 {{item.template}}
                             </div>
-                            <Tag :severity="item.type == 'Urgente' ? 'danger' : 'secondary'" :value="item.type" rounded class="!text-xs !py-0.5" />
+                            <Tag  v-if="!item.documentNotGenerated" :severity="item.type == 'Urgente' ? 'danger' : 'secondary'" :value="item.type" rounded class="!text-xs !py-0.5" />
                         </div>
                     </div>
 
@@ -142,6 +162,7 @@
 
                 <div class="flex items-center gap-x-0.5 flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
                     <Button
+                        v-if="!item.documentNotGenerated"
                         text
                         rounded
                         size="small"
@@ -184,6 +205,11 @@
 
         <div ref="loadMoreTrigger" class="h-4" />
 
+        <GenerateDocument 
+            v-if="showGenerate"
+            v-model:visible="showGenerate"
+            :template="selectedTranscriptToGenerated"
+        />
         <EditTranscriptionName
             :active="dialogEditName"
             :item="selectedItem"
@@ -206,7 +232,7 @@ import { ref, nextTick, onMounted, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useShowToast } from '@/utils/useShowToast';
-import { Eye, Trash, Mic, Pencil, Calendar, Timer, FileAudio, Loader2 } from 'lucide-vue-next';
+import { Eye, Trash, Mic, Pencil, Calendar, Timer, FileAudio, Loader2, FileText } from 'lucide-vue-next';
 import { useHelpers } from '@/utils/helper';
 import { useI18n } from 'vue-i18n';
 import Cookies from 'js-cookie';
@@ -234,16 +260,18 @@ const date = ref(null);
 const loadingTypes = ref(false);
 const selectedType = ref(null);
 const dropdownTypes = ref([]);
+const showGenerate = ref(false)
 
 const mapperTranscript = (list) =>
     list.map((t) => ({
         ...t,
         size: t.file_size,
-        template: t.document?.document_template?.name || 'Padrão',
+        template: t.document?.document_template?.name || '-',
         time: convertSecondsToMinutes(t.end_conversation_time),
         type: t.transcript_type.type,
         color: t.document?.document_template?.category?.color || 'bg-slate-100 text-slate-600',
-        description: truncateText(t.description) || 'Sem descrição'
+        description: truncateText(t.description) || 'Documento clínico ainda não gerado',
+        documentNotGenerated: !t.document
     }))
 
 function truncateText(text, maxLength = 100) {
@@ -291,6 +319,12 @@ const setupIntersectionObserver = () => {
 }
 
 const goToDetail = (item) => router.push({ name: 'transcriptsShow', params: { id: item.id } })
+
+const selectedTranscriptToGenerated = ref(null)
+const openGenerateModal = (template) => {
+    selectedTranscriptToGenerated.value = template
+    showGenerate.value = true
+}
 
 const openEditDialog = (item) => {
     selectedItem.value = item
