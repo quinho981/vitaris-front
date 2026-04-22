@@ -39,9 +39,9 @@
                         <div>
                             <User class="text-blue-500" />
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <p>Paciente</p>
-                            <p v-if="!loadingTranscript" class="font-bold text-lg">{{ patient }}</p>
+                            <p v-if="!loadingTranscript" class="font-bold text-lg truncate">{{ patient }}</p>
                             <Skeleton v-else width="11rem" height="1.4rem" class="mt-2"></Skeleton>
                         </div>
                     </div>

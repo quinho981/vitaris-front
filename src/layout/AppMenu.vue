@@ -219,9 +219,6 @@ const truncate = (text, maxLength) => {
     return (text.length >= maxLength) ? text.slice(0, maxLength) + '...' : text;
 }
 
-const truncatedUsername = computed(() => truncate(userStore.username, 29));
-const truncatedEmail = computed(() => truncate(userStore.userEmail, 35));
-
 // onMounted(() => {
 //     // index();
 //     emitter.on('refresh-sidebar', index)
@@ -301,12 +298,12 @@ const truncatedEmail = computed(() => truncate(userStore.userEmail, 35));
                             {{ userStore.plan }}
                         </span>
                     </div>
-                    <div class="flex flex-col w-full">
-                        <span class="flex justify-start text-base font-bold">
-                            {{ truncatedUsername }}
+                    <div class="flex flex-col w-full min-w-0">
+                        <span class="block text-base font-bold truncate">
+                            {{ userStore.username }}
                         </span>
-                        <span class="flex justify-start text-sm font-medium text-gray-500 dark:text-gray-300">
-                            {{ truncatedEmail }}
+                        <span class="block text-left text-sm font-medium text-gray-500 dark:text-gray-300 truncate">
+                            {{ userStore.userEmail }}
                         </span>
                     </div>
                 </div>

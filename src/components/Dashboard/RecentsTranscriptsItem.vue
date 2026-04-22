@@ -28,15 +28,15 @@
                 v-if="!transcripts.length > 0 && !loading"
                 class="flex flex-col text-center p-14"
             >
-                <p class="text-[15px]">Ainda não há atendimentos finalizados.</p>
-                <p class="text-[15px]">Ao concluir um atendimento, o documento clínico e os insights serão gerados automaticamente e exibidos aqui.</p>
+                <p class="text-[14px]">Ainda não há atendimentos finalizados.</p>
+                <p class="text-[14px]">Ao concluir um atendimento, o documento clínico e os insights serão gerados automaticamente e exibidos aqui.</p>
                 <div>
                     <router-link
                         :to="{ name: 'upload' }"
                         class="p-button p-component !bg-gradient-to-br !from-blue-500 !to-blue-700 !border-none !text-white !text-[13px] !p-2 
                             inline-flex hover:!from-blue-600 hover:!to-blue-800 duration-300 mt-4 rounded-md"
                     >
-                        <Mic :size="16" />
+                        <Mic :size="16" class="mr-1" />
                         Novo Atendimento
                     </router-link>
                 </div>
@@ -51,13 +51,13 @@
                     ]"
                 >
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-x-3">
+                        <div class="flex items-center gap-x-3 min-w-0">
                             <div :class="`w-10 h-10 rounded-full flex items-center justify-center text-[11.5px] font-semibold flex-shrink-0 mt-0.5 ${getPatientAvatar(transcript.patient)}`">
                                 {{ getInitials(transcript.patient) }}
                             </div>
-                            <div class="flex flex-col">
+                            <div class="flex flex-col min-w-0">
                                 <div class="flex">
-                                    <h4 class="text-md font-semibold">{{ transcript.patient }}</h4>
+                                    <h4 class="text-md font-semibold truncate w-[95%]">{{ transcript.patient }}</h4>
                                     <Tag
                                         v-if="!transcript.document"
                                         severity="warn" 
