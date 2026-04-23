@@ -3,61 +3,120 @@
         :visible="isVisible"
         @update:visible="close"
         :dismissable-mask="true"
-        :breakpoints="{ '1024px': '75vw', '960px': '75vw', '350px': '85vw' }" 
-        :style="{ width: '55vw' }" 
+        :breakpoints="{ '1024px': '75vw', '960px': '80vw', '640px': '92vw' }"
+        :style="{ width: '52vw' }"
         modal
-        class="!border-none"
-        :pt="{
-            mask: {
-                style: 'backdrop-filter: blur(2px)'
-            }
-        }"
+        class="!border-none !p-0 !rounded-2xl overflow-hidden"
+        :pt="{ mask: { style: 'backdrop-filter: blur(3px)' }, content: { style: 'padding: 0' } }"
     >
         <template #container>
-            <div class="flex flex-col md:flex-row overflow-auto">
-                <div class="flex-1 py-6 px-2 bg-[#14b8a6] text-white rounded-l-xl flex flex-col text-center">
-                    <div class="flex-1 justify-center mb-2">
-                        <SelectButton 
-                            v-model="selectButtonValue" 
-                            :options="selectButtonValues" 
-                            optionLabel="name" 
-                            class="py-4"
-                        />
+            <div class="flex flex-col md:flex-row overflow-hidden rounded-2xl">
+                <div class="md:w-[44%] bg-[#1e3a5f] p-7 flex flex-col">
+                    <div class="flex gap-1.5 mb-5 justify-center">
+                        <button
+                            v-for="opt in periods"
+                            :key="opt.key"
+                            @click="selected = opt.key"
+                            :class="[
+                                'px-3 py-1 rounded-lg text-sm font-medium border transition-all duration-150',
+                                selected === opt.key 
+                                ? 'bg-blue-600 border-blue-600 text-white' 
+                                : 'bg-transparent border-blue-300/30 text-blue-300 hover:bg-surface-900/40 hover:text-white'
+                            ]"
+                        >
+                            {{ opt.label }}
+                        </button>
                     </div>
-                    <p class="text-2xl font-semibold py-1">{{ $t("signature.modal.proPlan") }} - <u>{{ $t("signature.modal.economize") }} <b>{{ $t("signature.modal.forty") }}</b></u> </p>
-                    <p class="text-md pt-1 px-2">
-                        {{ $t("signature.modal.signatureDescription") }}
+
+                    <div class="flex items-center gap-1.5 bg-white/[0.07] rounded-lg px-2.5 py-1 w-fit mb-4">
+                        <i class="pi pi-bolt text-blue-200 text-xs"></i>
+                        <span class="text-blue-200 text-[12px] font-medium">
+                            <span v-if="currentPeriod.key === 'anual'">Mais escolhido ·</span> Economize 40%
+                        </span>
+                    </div>
+
+                    <h2 class="text-white text-xl font-semibold mb-2 leading-snug">
+                        Pare de perder tempo escrevendo prontuários
+                    </h2>
+
+                    <p class="text-slate-300 text-xs leading-relaxed mb-5">
+                        A Vitalfy transcreve, organiza e estrutura suas consultas automaticamente — 
+                        para você focar no paciente, não na digitação.
                     </p>
-                    <div class="prices py-2">
-                        <p class="text-4xl font-bold mt-3">
-                            R$249,00 <span class=" md:text-lg">{{ $t("signature.modal.month") }}</span>
+
+                    <div class="mb-2">
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-white text-3xl font-semibold">
+                                {{ currentPeriod.price }}
+                            </span>
+                            <span class="text-slate-300 text-xs">/mês</span>
+                        </div>
+
+                        <p class="text-emerald-400 text-[11px] mt-1">
+                            Menos de R$ 10 por dia
                         </p>
-                        <p class="text-sm line-through">
-                            {{ $t("signature.modal.signaturePrice", {priceTotal: '4.788,00', pricePromotion: '2.988,00', signatureType: 'ano'}) }}
+
+                        <p 
+                            v-if="currentPeriod.original" 
+                            class="text-slate-400 text-[11px] line-through mt-1"
+                        >
+                            {{ currentPeriod.original }}
                         </p>
                     </div>
-                    <Button label="Desbloquear plano Pro" class=" mt-6 mb-5 w-11/12 m-auto"  severity="secondary"/>
-                    <p class="text-sm mt-2 pb-2">
-                        {{ $t("signature.modal.totalDoctorsDescription", {totalDoctors: 18.001}) }}
+
+                    <div class="flex-1"></div>
+
+                    <button 
+                        class="w-full mt-5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] 
+                               text-white text-sm font-semibold py-3 rounded-xl 
+                               cursor-pointer transition-all duration-150 shadow-md hover:shadow-lg"
+                    >
+                        Quero economizar tempo nas consultas
+                    </button>
+
+                    <p class="text-slate-300 text-[11px] text-center mt-3">
+                        Mais de 500 médicos já usam a Vitalfy diariamente
                     </p>
                 </div>
-                <div class="flex-1 pt-6 ml-6 p-0 px-2 lg:px-0">
-                    <div class="header flex justify-between ">
-                        <h3 class="font-bold  md:text-lg mb-2">{{ $t("signature.modal.seeTheBenefits") }}</h3>
-                        <span 
-                            class="mr-6 md:text-lg font-semibold cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800 duration-300 px-2 pt-1 rounded-3xl"
-                            @click="close"
-                        >X</span>
+
+                <div class="flex-1 p-7 flex flex-col">
+                    <div class="flex justify-between items-center mb-5">
+                        <p class="text-sm font-medium text-gray-800 dark:text-slate-200 m-0">
+                            O que você ganha com o Pro
+                        </p>
+
+                        <button 
+                            @click="close" 
+                            class="w-7 h-7 flex items-center justify-center rounded-md 
+                                   hover:bg-gray-100 dark:hover:bg-slate-800 
+                                   transition-colors duration-150"
+                        >
+                            <i class="pi pi-times text-gray-400 text-xs"></i>
+                        </button>
                     </div>
-                    <ul class="mt-2 flex flex-col gap-y-4 md:text-lg">
-                        <li><i class="pi pi-check text-green-500 mr-2"></i> {{ $t("signature.modal.benefits.benefit1") }}</li>
-                        <li><i class="pi pi-check text-green-500 mr-2"></i> {{ $t("signature.modal.benefits.benefit2") }}</li>
-                        <li><i class="pi pi-check text-green-500 mr-2"></i> {{ $t("signature.modal.benefits.benefit3") }}</li>
-                        <li><i class="pi pi-check text-green-500 mr-2"></i> {{ $t("signature.modal.benefits.benefit4") }}</li>
-                        <li><i class="pi pi-check text-green-500 mr-2"></i> {{ $t("signature.modal.benefits.benefit5") }}</li>
-                        <li><i class="pi pi-check text-green-500 mr-2"></i> {{ $t("signature.modal.benefits.benefit6") }}</li>
-                        <li><i class="pi pi-check text-green-500 mr-2"></i> {{ $t("signature.modal.benefits.benefit7") }}</li>
+
+                    <ul class="flex flex-col m-0 p-0 list-none divide-y divide-gray-100 dark:divide-slate-800">
+                        <li 
+                            v-for="benefit in benefits" 
+                            :key="benefit" 
+                            class="flex items-start gap-2.5 py-2.5"
+                        >
+                            <div class="w-[18px] h-[18px] rounded-full bg-green-100 flex items-center justify-center mt-0.5">
+                                <i class="pi pi-check text-green-600 text-[9px]"></i>
+                            </div>
+
+                            <span class="text-sm text-gray-700 dark:text-slate-300 leading-snug">
+                                {{ $t(benefit) }}
+                            </span>
+                        </li>
                     </ul>
+
+                    <div class="mt-auto pt-4 flex items-center gap-1.5">
+                        <i class="pi pi-lock text-slate-400 text-xs"></i>
+                        <p class="text-[11px] text-slate-400 m-0">
+                            Pagamento seguro · Cancele quando quiser
+                        </p>
+                    </div>
                 </div>
             </div>
         </template>
@@ -65,27 +124,34 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue';
 
-const selectButtonValue = ref(null);
-const selectButtonValues = ref([{ name: 'Anual' }, { name: 'Semestral' }, { name: 'Mensal' }]);
+const props = defineProps({ active: { type: Boolean, default: false } });
+const emit = defineEmits(['close']);
+
+const close = () => emit('close', false);
 
 const isVisible = computed(() => props.active);
 
-const emit = defineEmits(['close']);
+const selected = ref('anual');
 
-const props = defineProps({
-    active: {
-        type: Boolean,
-        default: false
-    }
-});
+const periods = [
+    { key: 'anual', label: 'Anual', price: 'R$ 249', original: 'R$ 4.788,00/ano → R$ 2.988,00' },
+    { key: 'semestral', label: 'Semestral', price: 'R$ 299', original: 'R$ 2.394,00/semestre' },
+    { key: 'mensal', label: 'Mensal', price: 'R$ 399', original: '' }
+];
 
-const close = () => {
-    emit('close', false);
-}
+const currentPeriod = computed(() => 
+    periods.find((p) => p.key === selected.value)
+);
+
+const benefits = [
+    'signature.modal.benefits.benefit1',
+    "Gere documentos clínicos organizados em segundos",
+    'signature.modal.benefits.benefit3',
+    'signature.modal.benefits.benefit4',
+    'signature.modal.benefits.benefit5',
+    'signature.modal.benefits.benefit6',
+    'signature.modal.benefits.benefit7'
+];
 </script>
-
-<style lang="scss" scoped>
-
-</style>

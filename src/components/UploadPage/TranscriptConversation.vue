@@ -1,8 +1,8 @@
 <template>
     <div class="card w-full md:w-1/2 flex flex-col">
         <div class="flex items-center gap-2">
-            <FileAudio2 />
-            <p class="font-semibold text-2xl mb-4">Transcrição da consulta</p>
+            <FileAudio2 :size="20" />
+            <p class="font-semibold text-xl mb-4">Transcrição da consulta</p>
         </div>
         <p class="mt-1 text-slate-500 dark:text-slate-300 mb-3">Texto transcrito automaticamente pela IA</p>
         <div class="p-2 h-full w-full rounded-lg border-[1px] border-surface dark:border-surface flex flex-col gap-y-2 xl:min-h-[350px] xl:max-h-[470px] overflow-y-auto transcript-box">

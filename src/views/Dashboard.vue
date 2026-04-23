@@ -1,17 +1,10 @@
 <template>
     <section>
-        <div class="flex items-center justify-between mb-3 py-3">
+        <div class="mb-3 py-3">
             <div>
                 <h1 class="text-3xl font-bold">Dashboard</h1>
                 <p class="my-1 text-lg text-surface-500">Bem-vindo de volta, <span class="font-semibold text-surface-700 dark:text-surface-300">{{ userStore.username }}</span></p>
             </div>
-            <router-link
-                :to="{ name: 'upload' }"
-                class="inline-flex items-center gap-x-2 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors"
-            >
-                <Mic :size="16" />
-                Novo Atendimento
-            </router-link>
         </div>
 
         <div class="grid grid-cols-12 gap-5">

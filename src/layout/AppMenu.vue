@@ -7,7 +7,7 @@ import { useUserStore } from '@/stores/userStore'
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { emitter } from '@/eventBus';
 import { useRouter } from 'vue-router';
-import { CircleQuestionMark } from 'lucide-vue-next';
+import { CircleQuestionMark, Plus } from 'lucide-vue-next';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -232,6 +232,11 @@ const truncate = (text, maxLength) => {
 <template>
     <div class="layout-sidebar">
         <div class="layout-menu">
+            <Button 
+                class="w-full !bg-blue-600 mb-2 mt-1 !rounded-xl !border-none dark:!text-white hover:!bg-blue-700"
+            >
+                <Plus :size="14  " /> Novo Atendimento
+            </Button>
             <template v-for="(item, i) in model" :key="item">
                 <app-menu-item
                     v-if="!item.separator" 
@@ -252,22 +257,29 @@ const truncate = (text, maxLength) => {
                     <p>{{ $t("sidebar.helpAndSupport") }}</p>
                 </a>
 
-                <!-- <div 
-                    class="bg-gradient-to-r from-teal-500 to-green-400 rounded-[5px] p-[0.150rem] my-1"
-                    @click="modalSignatureActive = !modalSignatureActive"
-                >
-                    <div class="flex gap-x-2 justify-center items-center rounded-[5px] bg-white dark:bg-[#18181b] p-1 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-teal-400/50 div-icon-transition">
-                        <div class="mr-2">
-                            <i class="gradient-text pi pi-fw pi-bolt !text-xl icon-transition"></i>
+                <div class="pt-2">
+                    <button
+                        class="w-full bg-transparent hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-blue-400 dark:border-blue-500/50 active:scale-95 rounded-xl px-3.5 py-3 text-left cursor-pointer transition-all duration-150 outline-none"
+                        @click="modalSignatureActive = !modalSignatureActive"
+                    >
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-blue-100 dark:bg-blue-400/15">
+                                <i class="pi pi-bolt text-sm text-blue-600 dark:text-blue-400"></i>
+                            </div>
+
+                            <div>
+                                <p class="text-xs font-medium leading-tight m-0 text-blue-800 dark:text-blue-300">
+                                    {{ $t("button.signature.unlockProPlan") }}
+                                </p>
+                                <p class="text-[11px] leading-tight mt-0.5 m-0 text-slate-500 dark:text-slate-400">
+                                    {{ $t("button.signature.onlyRemaining") }}
+                                    <span class="font-medium text-blue-600 dark:text-blue-400">3</span>
+                                    {{ $t("button.signature.transcriptions") }}
+                                </p>
+                            </div>
                         </div>
-                        <div class="text-sm">
-                            <ul>
-                                <li class="gradient-text font-bold">{{ $t("button.signature.unlockProPlan") }}</li>
-                                <li class="dark:text-white font-semibold">{{ $t("button.signature.onlyRemaining") }} <b>3</b> {{ $t("button.signature.transcriptions") }}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div> -->
+                    </button>
+                </div>
 
                 <!-- <div class="flex border-2 border-solid border-[#99f6e4] bg-[#dff7f5] p-2 rounded-lg mt-1">
                     <div class="flex my-1">
@@ -286,7 +298,7 @@ const truncate = (text, maxLength) => {
                         <Avatar 
                             :label="userStore.username.charAt(0)"
                             :class="{'mr-[8px]': userStore.plan !== 'free'}"
-                            class="mr-3 flex-shrink-0 uppercase !bg-gradient-to-br !from-blue-500 !to-blue-700" 
+                            class="mr-3 flex-shrink-0 uppercase !bg-gradient-to-br !from-blue-500 !to-blue-700 pb-1" 
                             size="small" 
                             :style="{ color: '#ffffff', border: `3px solid ${planColorHexdecimal}`, height: '2.4rem', width: '2.4rem' }" 
                             shape="circle">
@@ -299,7 +311,7 @@ const truncate = (text, maxLength) => {
                         </span>
                     </div>
                     <div class="flex flex-col w-full min-w-0">
-                        <span class="block text-base font-bold truncate">
+                        <span class="block text-base text-left font-bold truncate">
                             {{ userStore.username }}
                         </span>
                         <span class="block text-left text-sm font-medium text-gray-500 dark:text-gray-300 truncate">

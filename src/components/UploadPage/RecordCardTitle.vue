@@ -1,8 +1,8 @@
 <template>
     <div class="mb-3">
         <div class="flex items-center gap-2">
-            <AudioLines  />
-            <p class="font-semibold text-xl">Gravar áudio</p>
+            <AudioLines :size="20"  />
+            <p class="font-semibold text-lg">Gravar áudio</p>
         </div>
         <p class="text-slate-500 dark:text-slate-300">Controle a gravação da consulta</p>
     </div>

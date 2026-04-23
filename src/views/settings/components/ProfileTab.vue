@@ -64,7 +64,7 @@ const loadUserData = () => {
     form.email = userStore.userEmail
     form.name = userStore.username
     // form.phone = userStore.phone
-    // form.specialty = userStore.specialty
+    form.specialty = Number(localStorage.getItem("favorite")) || null
 }
 
 const updateUser = () => {
@@ -74,6 +74,10 @@ const updateUser = () => {
 
     UserService.update(form)
         .then((response) => {
+            if(form.specialty) {
+                localStorage.setItem("favorite", form.specialty)
+            }
+            
             emit('actionResponse', {'success': true, 'message': 'Usuário atualizado com sucesso!'});
         })
         .catch((error) => {
