@@ -36,7 +36,6 @@ module.exports = {
             '2xl': '1920px'
         },
         fontFamily: {
-            poppins: ['Poppins', 'sans-serif'],
             robotomono: ['RobotoMono', 'monospace'],
         },
     }

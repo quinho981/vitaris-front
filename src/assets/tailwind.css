@@ -3,44 +3,41 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Poppins';
-  src: url('@/assets/fonts/poppins/Poppins-Light.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url('@/assets/fonts/poppins/Poppins-Regular.ttf') format('truetype');
+  font-family: 'RobotoMono';
+  src: url('/fonts/roboto-mono/RobotoMono.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
+@font-face {
+  font-family: 'Lato';
+  src: url('/fonts/Lato/Lato-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 @font-face {
-  font-family: 'Poppins';
-  src: url('@/assets/fonts/poppins/Poppins-Medium.ttf') format('truetype');
+  font-family: 'Lato';
+  src: url('/fonts/Lato/Lato-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: 'Poppins';
-  src: url('@/assets/fonts/poppins/Poppins-SemiBold.ttf') format('truetype');
+  font-family: 'Lato';
+  src: url('/fonts/Lato/Lato-SemiBold.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: 'Poppins';
-  src: url('@/assets/fonts/poppins/Poppins-Bold.ttf') format('truetype');
+  font-family: 'Lato';
+  src: url('/fonts/Lato/Lato-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
-}
-
-@font-face {
-  font-family: 'RobotoMono';
-  src: url('@/assets/fonts/roboto-mono/RobotoMono.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
+  font-display: swap;
 }
