@@ -1,20 +1,33 @@
 <template>
-    <div class="hidden md:flex md:w-1/2 h-screen items-center justify-center relative">
-        <div class="absolute inset-0 bg-blue-500">
-            <svg class="absolute bottom-0 w-full h-auto" xmlns="http://www.w3.org/2000/svg" viewBox="100 0 870 320">
-                <path fill="#173c78" fill-opacity="1" d="M0,0L34.3,10.7C68.6,21,137,43,206,80C274.3,117,343,171,411,197.3C480,224,549,224,617,202.7C685.7,181,754,139,823,122.7C891.4,107,960,117,1029,133.3C1097.1,149,1166,171,1234,192C1302.9,213,1371,235,1406,245.3L1440,256L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z"></path>
-            </svg>
+    <div class="hidden md:flex md:w-1/2 h-screen relative items-center justify-center overflow-hidden
+                bg-gradient-to-br from-blue-500 via-blue-600 to-blue-900 text-white px-12"
+    >
+        <div class="absolute inset-0">
+            <div class="absolute bottom-0 w-full overflow-hidden leading-[0]">
+                <svg class="relative block w-full h-[17rem]" preserveAspectRatio="none" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#0a192f" fill-opacity="0.3" d="M0,128L60,144C120,160,240,192,360,186.7C480,181,600,139,720,117.3C840,96,960,96,1080,122.7C1200,149,1320,203,1380,229.3L1440,256V320H1380C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320H0V128Z"></path>
+                    <path fill="#0a192f" fill-opacity="0.3" d="M0,224L60,213.3C120,203,240,181,360,186.7C480,192,600,224,720,224C840,224,960,192,1080,181.3C1200,171,1320,181,1380,186.7L1440,192V320H1380C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320H0V224Z"></path>
+                </svg>
+            </div>
         </div>
-        <img 
-            src="/demo/images/login/work-chat.svg"
-            alt="Login illustration"
-            class="relative z-10 w-3/4 md:w-4/5 lg:w-full max-w-3xl"
-        />
+
+        <div class="relative z-10 max-w-xl text-center mb-24">
+            <h1 class="text-4xl font-bold leading-tight mb-6 text-white">
+                Transforme consultas em documentos clínicos com IA
+            </h1>
+
+            <p class="text-lg text-white/90 mb-10">
+                Transcreva, organize e gere prontuários automaticamente — com precisão e rapidez.
+            </p>
+
+            <img 
+                src="/demo/images/login/medicine.svg"
+                alt="Ilustração Medica IA"
+                class="w-full max-w-md mx-auto drop-shadow-2xl"
+            />
+        </div>
     </div>
 </template>
-
-<script setup>
-</script>
 
 <style scoped>
 </style>
