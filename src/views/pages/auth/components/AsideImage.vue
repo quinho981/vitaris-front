@@ -1,5 +1,5 @@
 <template>
-    <div class="hidden md:flex md:w-1/2 h-screen relative items-center justify-center overflow-hidden
+    <div class="md:flex hidden md:w-1/2 h-screen relative items-center justify-center overflow-hidden
                 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-900 text-white px-12"
     >
         <div class="absolute inset-0">
@@ -12,7 +12,7 @@
         </div>
 
         <div class="relative z-10 max-w-xl text-center mb-24">
-            <h1 class="text-4xl font-bold leading-tight mb-6 text-white">
+            <h1 class="text-4xl font-bold leading-tight mb-6 text-white/90">
                 Transforme consultas em documentos clínicos com IA
             </h1>
 
@@ -20,11 +20,9 @@
                 Transcreva, organize e gere prontuários automaticamente — com precisão e rapidez.
             </p>
 
-            <img 
-                src="/demo/images/login/medicine.svg"
-                alt="Ilustração Medica IA"
-                class="w-full max-w-md mx-auto drop-shadow-2xl"
-            />
+            <div class="w-full max-w-md mx-auto drop-shadow-2xl brightness-95">
+                <MedicineIlustration />
+            </div>
         </div>
     </div>
 </template>
