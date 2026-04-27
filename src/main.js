@@ -8,7 +8,7 @@ import { createPinia } from 'pinia'
 import Aura from '@primevue/themes/aura';
 import { definePreset } from '@primevue/themes';
 import PrimeVue from 'primevue/config';
-import { setPrimeVueApp } from '@/plugins/primevueServices';
+import { ensurePrimeVueFeedbackServices, setPrimeVueApp } from '@/plugins/primevueServices';
 
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
@@ -49,4 +49,9 @@ app.use(PrimeVue, {
 app.use(pinia);
 app.use(i18n);
 
-app.mount('#app');
+const bootstrap = async () => {
+    await ensurePrimeVueFeedbackServices();
+    app.mount('#app');
+};
+
+bootstrap();
