@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', () => {
     const userId = ref(Cookies.get('id') || null)
     const username = ref(Cookies.get('username') || null)
     const userEmail = ref(Cookies.get('user_email') || null)
+    const userPhone = ref(Cookies.get('user_phone') || null)
     const plan = ref(Cookies.get('plan') || null)
     const active = ref(Cookies.get('active') || null)
 
@@ -20,12 +21,14 @@ export const useUserStore = defineStore('user', () => {
             userId.value = response.data.id
             username.value = response.data.name
             userEmail.value = response.data.email
+            userPhone.value = response.data.phone
             plan.value = response.data.plans[0].name
             active.value = response.data.plans[0].pivot.active
 
             Cookies.set('id', userId.value)
             Cookies.set('username', username.value)
             Cookies.set('user_email', userEmail.value)
+            Cookies.set('user_phone', userPhone.value || '')
             Cookies.set('plan', plan.value)
             Cookies.set('active', active.value)
 
@@ -39,6 +42,7 @@ export const useUserStore = defineStore('user', () => {
         userId.value = null
         username.value = null
         userEmail.value = null
+        userPhone.value = null
         plan.value = null
         active.value = null
     }
@@ -47,6 +51,7 @@ export const useUserStore = defineStore('user', () => {
         userId,
         username,
         userEmail,
+        userPhone,
         plan,
         active,
         getUserInfo,

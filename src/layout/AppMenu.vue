@@ -77,6 +77,12 @@ const truncate = (text, maxLength) => {
     return (text.length >= maxLength) ? text.slice(0, maxLength) + '...' : text;
 }
 
+const redirectToTranscript = () => {
+    if (router.currentRoute.value.name !== 'upload') {
+        router.push({ name: 'upload' });
+    }
+};
+
 // onMounted(() => {
 //     // index();
 //     emitter.on('refresh-sidebar', index)
@@ -92,6 +98,7 @@ const truncate = (text, maxLength) => {
         <div class="layout-menu">
             <Button 
                 class="w-full !bg-blue-600 mb-2 mt-1 !rounded-xl !border-none dark:!text-white hover:!bg-blue-700"
+                @click="redirectToTranscript"
             >
                 <Plus :size="14  " /> Novo Atendimento
             </Button>
