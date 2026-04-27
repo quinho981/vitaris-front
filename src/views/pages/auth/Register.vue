@@ -148,15 +148,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { defineAsyncComponent, ref } from "vue";
 import { authStore } from '@/stores/authStore'
 import AsideImage from './components/AsideImage.vue'
-import ToastService from 'primevue/toastservice';
 import { registerSchema } from '@/validations/authSchema.js';
 import { useRouter } from 'vue-router';
 import TermOfUse from '@/components/Modal/TermOfUse.vue';
 import { useShowToast } from '@/utils/useShowToast';
 import { useI18n } from 'vue-i18n';
+
+const Toast = defineAsyncComponent(() => import('primevue/toast'));
 
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();

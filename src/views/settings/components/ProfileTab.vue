@@ -14,7 +14,15 @@
 
         <div>
             <label class="mb-1">Telefone</label>
-            <InputMask id="phone" v-model="form.phone" mask="(99) 99999-9999" placeholder="(99) 99999-9999" fluid />
+            <InputMask
+                id="phone"
+                v-model="form.phone"
+                mask="(99) 99999-9999"
+                placeholder="(99) 99999-9999"
+                class="w-full"
+                :invalid="errors.phone.length > 0"
+            />
+            <small v-if="errors.phone" class="text-red-500">{{ errors.phone }}</small>
         </div>
 
         <div>
@@ -32,6 +40,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore'
 import { UserService } from '@/service/UserService'
+import Cookies from 'js-cookie'
 
 const userStore = useUserStore();
 
@@ -45,7 +54,8 @@ const form = reactive({
 })
 const errors = reactive({
     name: '',
-    email: ''
+    email: '',
+    phone: ''
 })
 const loadingUpdate = ref(false)
 
@@ -60,10 +70,26 @@ const props = defineProps({
     }
 }); 
 
+const onlyDigits = (value = '') => value.replace(/\D/g, '')
+
+const formatPhone = (value = '') => {
+    const digits = onlyDigits(value)
+
+    if (digits.length === 11) {
+        return digits.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
+    }
+
+    if (digits.length === 10) {
+        return digits.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3')
+    }
+
+    return value || ''
+}
+
 const loadUserData = () => {
     form.email = userStore.userEmail
     form.name = userStore.username
-    // form.phone = userStore.phone
+    form.phone = formatPhone(userStore.userPhone || '')
     form.specialty = Number(localStorage.getItem("favorite")) || null
 }
 
@@ -72,8 +98,20 @@ const updateUser = () => {
 
     loadingUpdate.value = true
 
-    UserService.update(form)
+    const payload = {
+        ...form,
+        phone: onlyDigits(form.phone)
+    }
+
+    UserService.update(payload)
         .then((response) => {
+            userStore.username = form.name
+            userStore.userEmail = form.email
+            userStore.userPhone = payload.phone || null
+            Cookies.set('username', form.name)
+            Cookies.set('user_email', form.email)
+            Cookies.set('user_phone', payload.phone || '')
+
             if(form.specialty) {
                 localStorage.setItem("favorite", form.specialty)
             }
@@ -103,6 +141,12 @@ const validateForm = () => {
         isValid = false
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
         errors.email = 'Email inválido'
+        isValid = false
+    }
+
+    const phoneDigits = onlyDigits(form.phone)
+    if (phoneDigits && !/^\d{10,11}$/.test(phoneDigits)) {
+        errors.phone = 'Telefone inválido'
         isValid = false
     }
 

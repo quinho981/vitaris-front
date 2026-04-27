@@ -8,14 +8,14 @@ import { createPinia } from 'pinia'
 import Aura from '@primevue/themes/aura';
 import { definePreset } from '@primevue/themes';
 import PrimeVue from 'primevue/config';
-import ConfirmationService from 'primevue/confirmationservice';
-import ToastService from 'primevue/toastservice';
+import { ensurePrimeVueFeedbackServices, setPrimeVueApp } from '@/plugins/primevueServices';
 
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
 
 const pinia = createPinia()
 const app = createApp(App);
+setPrimeVueApp(app);
 
 // Documentation to alter project's primary color  https://primevue.org/theming/styled/#noir
 const MyPreset = definePreset(Aura, {
@@ -47,8 +47,11 @@ app.use(PrimeVue, {
     }
 });
 app.use(pinia);
-app.use(ToastService);
-app.use(ConfirmationService);
 app.use(i18n);
 
-app.mount('#app');
+const bootstrap = async () => {
+    await ensurePrimeVueFeedbackServices();
+    app.mount('#app');
+};
+
+bootstrap();

@@ -189,7 +189,7 @@
                         </div>
                     </div>
                     <div class="relative h-72">
-                        <Chart type="line" :data="lineData" :options="lineOptions" class="w-full h-full" />
+                        <ChartLite type="line" :data="lineData" :options="lineOptions" class="w-full h-full" />
                         <div v-if="loadingSummary" class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-black/50 rounded-lg">
                             <ProgressSpinner style="width:48px;height:48px" />
                         </div>
@@ -209,7 +209,7 @@
                         </div>
                     </div>
                     <div class="relative h-72">
-                        <Chart type="pie" :data="pieData" :options="pieOptions" class="w-full h-full" />
+                        <ChartLite type="pie" :data="pieData" :options="pieOptions" class="w-full h-full" />
                         <div v-if="loadingCharts" class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-black/50 rounded-lg">
                             <ProgressSpinner style="width:48px;height:48px" />
                         </div>
@@ -222,12 +222,15 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, computed } from 'vue'
+import { defineAsyncComponent, onMounted, ref, watch, computed } from 'vue'
 import { useLayout } from '@/layout/composables/layout'
 import { useUserStore } from '@/stores/userStore'
 import { DashboardService } from '@/service/DashboardService'
 import { Mic, FileText, Clock, OctagonAlert, Timer, Sparkles, TrendingUp, PieChart, HelpCircle } from 'lucide-vue-next'
 import { useHelpers } from '@/utils/helper'
+import ChartLite from '@/components/ChartLite.vue'
+
+const ProgressSpinner = defineAsyncComponent(() => import('primevue/progressspinner'))
 
 const { convertSecondsToMinutes } = useHelpers()
 const userStore = useUserStore()

@@ -6,8 +6,7 @@ export const useShowToast = () => {
     const showSuccess = (summary, detail, life) => {
         toast.add({ severity: 'success', summary, detail, life });
     };
-    
-    
+
     const showError = (summary, detail, life) => {
         toast.add({ severity: 'error', summary, detail, life });
     };

@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
-import AppConfigurator from './AppConfigurator.vue';
 import { authStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router';
 import { Stethoscope, PanelLeft  } from 'lucide-vue-next';
