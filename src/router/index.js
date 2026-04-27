@@ -1,4 +1,3 @@
-import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import authGuard from './middleware/authGuard';
 
@@ -7,7 +6,7 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            component: AppLayout,
+            component: () => import('@/layout/AppLayout.vue'),
             children: [
                 // remover transcript
                 {

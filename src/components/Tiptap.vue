@@ -24,19 +24,19 @@
             </button>
             <button
                 @click="editor.chain().focus().toggleBold().run()"
-                :disabled="!editor.can().chain().focus().toggleBold().run()"
+                :disabled="!editor?.can().chain().focus().toggleBold().run()"
                 :class="{ 'is-active': editor.isActive('bold') }"
                 class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
             >
-                <Bold :size="18" />
+                <BoldIcon :size="18" />
             </button>
             <button
                 @click="editor.chain().focus().toggleItalic().run()"
-                :disabled="!editor.can().chain().focus().toggleItalic().run()"
+                :disabled="!editor?.can().chain().focus().toggleItalic().run()"
                 :class="{ 'is-active': editor.isActive('italic') }"
                 class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
             >
-                <Italic :size="18" />
+                <ItalicIcon :size="18" />
             </button>
             <button
                 @click="editor.chain().focus().toggleBulletList().run()"
@@ -54,7 +54,7 @@
             </button>
             <button 
                 @click="editor.chain().focus().undo().run()" 
-                :disabled="!editor.can().chain().focus().undo().run()"
+                :disabled="!editor?.can().chain().focus().undo().run()"
                 class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
                 :class="!editor.can().chain().focus().undo().run() ? 'text-gray-400' : 'text-gray-700'"
             >
@@ -62,10 +62,9 @@
             </button>
             <button 
                 @click="editor.chain().focus().redo().run()" 
-                :disabled="!editor.can().chain().focus().redo().run()"
+                :disabled="!editor?.can().chain().focus().redo().run()"
                 class="rounded-lg p-2 bg-white hover:bg-gray-100 duration-300 dark:bg-neutral-900 dark:hover:bg-gray-700 dark:text-white"
-                :class="!editor.can().chain().focus().redo().run() ? 'text-gray-400' : 'text-gray-700'"
-            >
+                :class="!editor.can().chain().focus().redo().run() ? 'text-gray-400' : 'text-gray-700'">
                 <Redo />
             </button>
             <button
@@ -77,15 +76,13 @@
                 Refinar anamnese
             </button>
         </section>
-        <EditorContent :editor="editor" />
+        <component :is="EditorContent" :editor="editor" />
     </div>
 </template>
 
 <script setup>
-import { watch } from 'vue';
-import { useEditor, EditorContent } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
-import { Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, Undo, Redo, Sparkles  } from 'lucide-vue-next';
+import { markRaw, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import { Heading1, Heading2, Heading3, Bold as BoldIcon, Italic as ItalicIcon, List, ListOrdered, Undo, Redo, Sparkles } from 'lucide-vue-next';
 
 const props = defineProps({
     content: {
@@ -93,41 +90,83 @@ const props = defineProps({
         required: true
     },
     allowRefine: {
-        type:  Boolean,
+        type: Boolean,
         default: true
     }
 }); 
 
 const emit = defineEmits(['open-refine-modal', 'update:content']);
 
-const editor = useEditor({
-    editorProps: {
-        attributes: {
-            class: 'border border-slate-200 rounded-b-lg p-4 min-h-[21rem] max-h-[37rem] overflow-y-auto outline-none dark:border-gray-700',
+const editor = ref(null);
+const EditorContent = shallowRef(null);
+
+onMounted(() => {
+    initEditor();
+});
+
+const initEditor = async () => {
+    const { EditorContent: EC, Editor } = await import('@tiptap/vue-3');
+
+    const Document = (await import('@tiptap/extension-document')).default;
+    const Paragraph = (await import('@tiptap/extension-paragraph')).default;
+    const Text = (await import('@tiptap/extension-text')).default;
+    const Bold = (await import('@tiptap/extension-bold')).default;
+    const Italic = (await import('@tiptap/extension-italic')).default;
+    const Heading = (await import('@tiptap/extension-heading')).default;
+    const BulletList = (await import('@tiptap/extension-bullet-list')).default;
+    const OrderedList = (await import('@tiptap/extension-ordered-list')).default;
+    const ListItem = (await import('@tiptap/extension-list-item')).default;
+    const History = (await import('@tiptap/extension-history')).default;
+
+    EditorContent.value = markRaw(EC);
+
+    editor.value = new Editor({
+        editorProps: {
+            attributes: {
+                class: 'border border-slate-200 rounded-b-lg p-4 min-h-[21rem] max-h-[37rem] overflow-y-auto outline-none dark:border-gray-700',
+            },
         },
-    },
-    content: props.content,
-    extensions: [StarterKit],
-    onUpdate({ editor }) {
-        emit('update:content', editor.getHTML())
+        content: props.content,
+        extensions: [
+            Document,
+            Paragraph,
+            Text,
+            Bold,
+            Italic,
+            Heading.configure({ levels: [1, 2, 3] }),
+            BulletList,
+            OrderedList,
+            ListItem,
+            History
+        ],
+        onUpdate({ editor }) {
+            emit('update:content', editor.getHTML())
+        }
+    });
+};
+
+onBeforeUnmount(() => {
+    if (editor.value) {
+        editor.value.destroy();
+        editor.value = null;
     }
-})
+});
 
 watch(
     () => props.content,
     (newContent) => {
-        if (!editor.value) return
+        if (!editor.value) return;
 
-        const current = editor.value.getHTML()
+        const current = editor.value.getHTML();
 
         if (newContent !== current) {
-            editor.value.commands.setContent(newContent, false)
+            editor.value.commands.setContent(newContent, false);
         }
     }
-)
+);
 </script>
 
-<style >
+<style>
 .is-active {
     @apply bg-blue-500;
     color: white;

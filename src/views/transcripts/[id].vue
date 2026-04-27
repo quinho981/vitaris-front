@@ -239,13 +239,16 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue';
+import { defineAsyncComponent, ref, watch, onMounted, onBeforeUnmount, computed } from 'vue';
 import { User, Calendar, Clock, Share2, Download, BrainCircuit, LayoutTemplate, Loader2, Copy } from 'lucide-vue-next';
 import { TranscriptsService } from '@/service/TranscriptsService';
 import { useRoute, useRouter } from "vue-router";
 import { useShowToast } from '@/utils/useShowToast';
 import { useHelpers } from '@/utils/helper';
 import { useI18n } from 'vue-i18n';
+
+const Tiptap = defineAsyncComponent(() => import('@/components/Tiptap.vue'));
+const RefineAnamnesis = defineAsyncComponent(() => import('@/components/Modal/RefineAnamnesis.vue'));
 
 const { t } = useI18n();
 const { showSuccess, showError } = useShowToast();
